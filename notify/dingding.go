@@ -345,8 +345,8 @@ func SendRequest(webhook string, params []byte) {
 
 func HookTextDingGroup(text string) {
 	var receiver Robot
-	receiver.access_token = "9a1ee27a05e029252aac7a768c6d0c8efe0e323735add6585807bb71d44f181c"
-	receiver.secret = "SEC6d0f6814aae8e1df258fe44209ec7079185d5439c79b8ed084e98b356192921d"
+	receiver.access_token = ""
+	receiver.secret = ""
 	//receiver.access_token = config.Conf.DingHookToken
 	//receiver.secret = config.Conf.DingHookSecret
 	webHookUrl := receiver.Signature()
