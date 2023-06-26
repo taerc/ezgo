@@ -29,7 +29,7 @@ func Get16MD5Encode(data string) string {
 	return GetMD5Encode(data)[8:24]
 }
 
-// split @str by @seps to a string array
+// StringSplits split @str by @seps to a string array
 func StringSplits(str string, seps []string) []string {
 
 	strs := []string{str}
