@@ -13,6 +13,10 @@ type ResponseTemplate struct {
 	Message string      `json:"message" example:"响应信息"`
 }
 
+type GContext struct {
+	gin.Context
+}
+
 // gin.context typedef 处理一下，后面可以自由替换
 // 控制器的处理
 type GinFlow struct {
@@ -97,5 +101,4 @@ func (gf *GinFlow) ResponseJson(ctx *gin.Context, er int, data interface{}) {
 		Message: "",
 	})
 }
-
 //

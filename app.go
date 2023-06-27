@@ -81,6 +81,13 @@ func InitAppFlow(init, exec, done Executor) *AppFlow {
 	return appFlow
 }
 
+func NewAppFlow(init, exec, done Executor) *AppFlow {
+	appFlow.Init = init
+	appFlow.Exec = exec
+	appFlow.Done = done
+	return appFlow
+}
+
 func Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
 	return appFlow.HTTP.Engine.Group(relativePath, handlers...)
 }
