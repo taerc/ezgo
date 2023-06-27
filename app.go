@@ -3,6 +3,7 @@ package ezgo
 import (
 	"flag"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"os"
 )
 
@@ -24,7 +25,22 @@ type AppFlow struct {
 	Application
 }
 
-func (af *AppFlow) Run(data interface{}) int {
+func (af *AppFlow) Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
+	return af.HTTP.Engine.Group(relativePath, handlers...)
+}
+
+func (af *AppFlow) Use(middleware ...gin.HandlerFunc) gin.IRoutes {
+	return af.HTTP.Engine.Use(middleware...)
+}
+
+func (af *AppFlow) Run(ipaddress ...string) error {
+	return af.HTTP.Engine.Run(ipaddress...)
+}
+func (af *AppFlow) SetWhiteList(basePath, relativePath string) {
+	af.HTTP.SetWhiteList(basePath, relativePath)
+}
+
+func (af *AppFlow) Do(data interface{}) int {
 
 	// show version
 
@@ -48,19 +64,35 @@ func (af *AppFlow) Run(data interface{}) int {
 	return Success
 }
 
+var appFlow *AppFlow = nil
+
 func init() {
 	flag.BoolVar(&ShowVersion, "version", false, "print program build version")
 	flag.StringVar(&ConfigPath, "c", "conf/config.toml", "path of configure file.")
 	flag.Parse()
+	appFlow = new(AppFlow)
+	appFlow.HTTP = NewGinContext()
 }
 
-func NewAppFlow(init, exec, done Executor) *AppFlow {
+func InitAppFlow(init, exec, done Executor) *AppFlow {
+	appFlow.Init = init
+	appFlow.Exec = exec
+	appFlow.Done = done
+	return appFlow
+}
 
-	af := new(AppFlow)
-	af.Init = init
-	af.Exec = exec
-	af.Done = done
-	af.HTTP = NewGinContext()
+func Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
+	return appFlow.HTTP.Engine.Group(relativePath, handlers...)
+}
 
-	return af
+func Use(middleware ...gin.HandlerFunc) gin.IRoutes {
+	return appFlow.HTTP.Engine.Use(middleware...)
+}
+
+func Run(ipaddress ...string) error {
+	return appFlow.HTTP.Engine.Run(ipaddress...)
+}
+
+func Do(data interface{}) int {
+	return appFlow.Do(data)
 }
