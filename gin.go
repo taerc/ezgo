@@ -3,6 +3,7 @@ package ezgo
 // ResponseTemplate
 import (
 	"github.com/gin-gonic/gin"
+	"path/filepath"
 	"strings"
 )
 
@@ -11,6 +12,8 @@ type ResponseTemplate struct {
 	Data    interface{} `json:"data"`
 	Message string      `json:"message" example:"响应信息"`
 }
+
+// gin.context typedef 处理一下，后面可以自由替换
 
 // 控制器的处理
 type GinFlow struct {
@@ -22,11 +25,44 @@ type Processor interface {
 	PostProc(ctx *gin.Context)
 }
 
-func AddPostProc(route *gin.RouterGroup, relativePath string, processor Processor) {
+// 路由分组的管理
+// 模块化路由注册的管理
+type GinContext struct {
+	Engine    *gin.Engine
+	whiteList map[string]bool
+	urlRole   map[string]int
+}
+
+// Group 如果给了 HandlerFunc 会是怎样的处理流程
+func (gc *GinContext) Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
+	return gc.Engine.Group(relativePath, handlers...)
+}
+
+func (gc *GinContext) Use(middleware ...gin.HandlerFunc) gin.IRoutes {
+	return gc.Engine.Use(middleware...)
+}
+
+func (gc *GinContext) Run(ipaddress ...string) error {
+	return gc.Engine.Run(ipaddress...)
+}
+
+func (gc *GinContext) SetPostProc(route *gin.RouterGroup, relativePath string, processor Processor) {
+	gc.SetWhiteList(route.BasePath(), relativePath)
+	route.POST(relativePath, processor.PreProc, processor.Proc, processor.PreProc)
+}
+func (gc *GinContext) SetGetProc(route *gin.RouterGroup, relativePath string, processor Processor) {
+	gc.SetWhiteList(route.BasePath(), relativePath)
+	route.GET(relativePath, processor.PreProc, processor.Proc, processor.PreProc)
+}
+func (gc *GinContext) SetWhiteList(basePath, relativePath string) {
+	gc.whiteList[filepath.Join(basePath, relativePath)] = true
+}
+
+func SetPostProc(route *gin.RouterGroup, relativePath string, processor Processor) {
 	route.POST(relativePath, processor.PreProc, processor.Proc, processor.PreProc)
 }
 
-func AddGetProc(route *gin.RouterGroup, relativePath string, processor Processor) {
+func SetGetProc(route *gin.RouterGroup, relativePath string, processor Processor) {
 	route.GET(relativePath, processor.PreProc, processor.Proc, processor.PostProc)
 }
 
@@ -56,8 +92,5 @@ func (gf *GinFlow) ResponseJson(ctx *gin.Context, er int, data interface{}) {
 		Message: "",
 	})
 }
-
-// 路由分组的管理
-// 模块化路由注册的管理
 
 //
