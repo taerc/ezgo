@@ -33,6 +33,12 @@ type GinContext struct {
 	urlRole   map[string]int
 }
 
+func NewGinContext() *GinContext {
+	HTTP := new(GinContext)
+	HTTP.Engine = gin.New()
+	return HTTP
+}
+
 // Group 如果给了 HandlerFunc 会是怎样的处理流程
 func (gc *GinContext) Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
 	return gc.Engine.Group(relativePath, handlers...)
