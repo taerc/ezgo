@@ -14,7 +14,6 @@ type ResponseTemplate struct {
 }
 
 // gin.context typedef 处理一下，后面可以自由替换
-
 // 控制器的处理
 type GinFlow struct {
 }
@@ -34,9 +33,9 @@ type GinContext struct {
 }
 
 func NewGinContext() *GinContext {
-	HTTP := new(GinContext)
-	HTTP.Engine = gin.New()
-	return HTTP
+	gc := new(GinContext)
+	gc.Engine = gin.New()
+	return gc
 }
 
 // Group 如果给了 HandlerFunc 会是怎样的处理流程
