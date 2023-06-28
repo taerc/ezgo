@@ -8,9 +8,10 @@ import (
 )
 
 type ResponseTemplate struct {
-	Code    int         `json:"code"`
-	Data    interface{} `json:"data"`
-	Message string      `json:"message" example:"响应信息"`
+	Code      int         `json:"code"`
+	Data      interface{} `json:"data"`
+	Message   string      `json:"message"`
+	RequestId string      `json:"request_id"`
 }
 
 type GContext struct {
@@ -96,9 +97,11 @@ func (gf *GinFlow) BindJson(ctx *gin.Context, data interface{}) int {
 }
 func (gf *GinFlow) ResponseJson(ctx *gin.Context, er int, data interface{}) {
 	ctx.JSON(Success, ResponseTemplate{
-		Code:    er,
-		Data:    data,
-		Message: "",
+		Code:      er,
+		Data:      data,
+		Message:   "",
+		RequestId: GetRequestId(ctx),
 	})
 }
+
 //
