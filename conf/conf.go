@@ -3,9 +3,12 @@ package conf
 import "gopkg.in/ini.v1"
 
 type Configure struct {
-	Host string `ini:"host"`
-	Port string `ini:"port"`
-	LogConfigure
+	Host            string `ini:"host"`
+	Port            string `ini:"port"`
+	LogDir          string `ini:"log_dir"`
+	LogMaxAge       int64  `ini:"log_max_age"`
+	LogRotationTime int64  `ini:"log_rotation_time"` //日志切割时间间隔（小时）
+	LogFileName     string `ini:"log_filename"`
 	MySQLConfigure
 }
 
@@ -13,10 +16,6 @@ var Config *Configure = nil
 
 // LogConfigure @description: 日志配置文件
 type LogConfigure struct {
-	LogDir          string `ini:"log_dir"`
-	LogMaxAge       int64  `ini:"log_max_age"`
-	LogRotationTime int64  `ini:"log_rotation_time"` //日志切割时间间隔（小时）
-	LogFileName     string `ini:"log_filename"`
 }
 
 type MySQLConfigure struct {
