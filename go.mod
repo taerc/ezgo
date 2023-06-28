@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/gin-gonic/gin v1.9.1
+	github.com/google/uuid v1.3.0
 	github.com/sirupsen/logrus v1.9.3
 	gopkg.in/ini.v1 v1.67.0
 )
