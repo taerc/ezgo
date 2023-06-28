@@ -17,7 +17,7 @@ var ShowVersion bool
 type Executor func(data interface{}) int
 
 type Application struct {
-	Conf conf.ConfParams
+	Conf conf.Configure
 	HTTP *GinContext
 }
 
