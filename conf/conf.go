@@ -27,7 +27,7 @@ type Configure struct {
 	MySQLMaxOpenConnection int    `ini:"max_open_connection"`
 	Charset                string `ini:"charset"`
 	Loc                    string `ini:"loc"`
-	ParseTime              string `int:"parse_time"`
+	ParseTime              string `ini:"parse_time"`
 	Timeout                string `ini:"timeout"`
 	MaxLifeTime            string `ini:"max_life_time"`
 	TablePre               string `ini:"table_pre"`
