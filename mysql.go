@@ -46,6 +46,7 @@ func initMySQL(c *conf.Configure) error {
 	//}
 	var err error
 	// 建立连接
+	Info(nil, M, "open database begin")
 	myClient, err = gorm.Open(mysql.New(mysql.Config{
 		DSN:                       dsn,   // DSN data source name
 		DefaultStringSize:         256,   // string 类型字段的默认长度
