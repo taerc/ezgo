@@ -80,6 +80,9 @@ func init() {
 
 /// Application part
 
+func DefaultApp() *AppFlow {
+	return appFlow
+}
 
 func InitAppFlow(init, exec, done Executor) *AppFlow {
 	appFlow.Init = init
