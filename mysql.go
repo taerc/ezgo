@@ -21,8 +21,6 @@ func initMySQL(c *conf.Configure) error {
 		c.MySQLUserName, c.MySQLPass, c.MySQLHostname, c.MySQLPort,
 		c.MySQLDBName, c.Charset, c.ParseTime, c.Loc)
 
-	Info(nil, M, dsn)
-
 	// 连接额外配置信息
 	//gormConfig := gorm.Config{
 	//	NamingStrategy: schema.NamingStrategy{
@@ -45,7 +43,6 @@ func initMySQL(c *conf.Configure) error {
 	//}
 	var err error
 	// 建立连接
-	Info(nil, M, "open database begin")
 	myClient, err = gorm.Open(mysql.New(mysql.Config{
 		DSN:                       dsn,   // DSN data source name
 		DefaultStringSize:         256,   // string 类型字段的默认长度
@@ -58,14 +55,12 @@ func initMySQL(c *conf.Configure) error {
 		Error(nil, M, err.Error())
 		return err
 	}
-	Info(nil, M, "open database")
 	// 设置连接池信息
 	db, err2 := myClient.DB()
 	if nil != err2 {
 		Error(nil, M, err2.Error())
 		return err2
 	}
-	Info(nil, M, "open db")
 	//// 设置空闲连接池中连接的最大数量
 	db.SetMaxIdleConns(c.MySQLMaxIdleConnection)
 	//// 设置打开数据库连接的最大数量
@@ -76,7 +71,6 @@ func initMySQL(c *conf.Configure) error {
 		Error(nil, M, err3.Error())
 		return err3
 	}
-	Info(nil, M, "open duration")
 	db.SetConnMaxLifetime(duration)
 	return nil
 }

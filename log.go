@@ -15,14 +15,6 @@ import (
 
 var logger *zap.Logger = nil
 
-var zapConf = zap.Config{
-	Level:            zap.NewAtomicLevelAt(zap.DebugLevel),
-	Development:      true,
-	Encoding:         "console",
-	OutputPaths:      []string{"stdout", "./zap.log"},
-	ErrorOutputPaths: []string{"stderr"},
-}
-
 func init() {
 	c := zap.NewDevelopmentConfig()
 
@@ -74,7 +66,7 @@ func initLogger(cfg *conf.Configure) {
 
 // MyTimeEncoder 自定义时间格式化
 func MyTimeEncoder(t time.Time, e zapcore.PrimitiveArrayEncoder) {
-	e.AppendString(t.Format("2006-01-02 12:13:15"))
+	e.AppendString(t.Format("2006-01-02 15:04:05"))
 }
 
 func getReqId(c *gin.Context) string {
