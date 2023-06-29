@@ -14,44 +14,57 @@ import (
 
 var logger *zap.Logger = nil
 
-func init() {
-	cfg := zap.NewDevelopmentConfig()
+var zapConf = zap.Config{
+	Level:            zap.NewAtomicLevelAt(zap.DebugLevel),
+	Development:      true,
+	Encoding:         "console",
+	OutputPaths:      []string{"stdout", "./zap.log"},
+	ErrorOutputPaths: []string{"stderr"},
+}
 
-	cfg.DisableCaller = true
-	cfg.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
-	cfg.EncoderConfig.EncodeTime = MyTimeEncoder
-	cfg.EncoderConfig.EncodeCaller = zapcore.FullCallerEncoder
-	logger, _ = cfg.Build()
+func init() {
+	c := zap.NewDevelopmentConfig()
+
+	c.DisableCaller = true
+	c.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	c.EncoderConfig.EncodeTime = MyTimeEncoder
+	c.EncoderConfig.EncodeCaller = zapcore.FullCallerEncoder
+	c.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+	c.Development = true
+	c.Encoding = "console"
+	c.ErrorOutputPaths = []string{"stderr"}
+	c.OutputPaths = []string{"stdout", "./log.log"}
+	logger, _ = c.Build()
 
 }
 
-func newLogger(cfg *conf.Configure) *zap.Logger {
-	if len(cfg.LogFileName) == 0 {
+func newLogger(c *conf.Configure) *zap.Logger {
+	if len(c.LogFileName) == 0 {
 		return logger
 	}
 
-	c := zap.NewProductionEncoderConfig()
+	cfg := zap.NewProductionEncoderConfig()
 
-	c.TimeKey = "time"
-	c.EncodeTime = MyTimeEncoder
-	c.EncodeCaller = zapcore.FullCallerEncoder
+	cfg.TimeKey = "time"
+	cfg.EncodeTime = MyTimeEncoder
+	cfg.EncodeCaller = zapcore.FullCallerEncoder
 
 	ws := make([]zapcore.WriteSyncer, 0, 2)
 
 	ws = append(ws, zapcore.AddSync(&lumberjack.Logger{
-		Filename:   cfg.LogFileName,
-		MaxSize:    cfg.LogMaxSize,
-		MaxAge:     cfg.LogMaxAge,
-		MaxBackups: cfg.LogMaxBackups,
-		Compress:   cfg.LogCompress,
+		Filename:   c.LogFileName,
+		MaxSize:    c.LogMaxSize,
+		MaxAge:     c.LogMaxAge,
+		MaxBackups: c.LogMaxBackups,
+		Compress:   c.LogCompress,
 		LocalTime:  true,
 	}))
 
-	if cfg.LogStderr {
+	if c.LogStderr {
 		ws = append(ws, zapcore.Lock(os.Stderr))
 	}
 
-	core := zapcore.NewCore(zapcore.NewJSONEncoder(c), zapcore.NewMultiWriteSyncer(ws...), zap.DebugLevel)
+	core := zapcore.NewCore(zapcore.NewJSONEncoder(cfg), zapcore.NewMultiWriteSyncer(ws...), zap.DebugLevel)
 
 	return zap.New(core)
 }
