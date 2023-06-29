@@ -5,7 +5,6 @@ import (
 	"github.com/taerc/ezgo/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 	"sync"
 	"time"
 )
@@ -25,11 +24,11 @@ func initMySQL(c *conf.Configure) error {
 	Info(nil, M, dsn)
 
 	// 连接额外配置信息
-	gormConfig := gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: true, //使用单数表名，启用该选项时，`User` 的表名应该是 `user`而不是users
-		},
-	}
+	//gormConfig := gorm.Config{
+	//	NamingStrategy: schema.NamingStrategy{
+	//		SingularTable: true, //使用单数表名，启用该选项时，`User` 的表名应该是 `user`而不是users
+	//	},
+	//}
 	// 打印SQL设置
 	//if MysqlConfigInstance.PrintSqlLog {
 	//	slowSqlTime, err := time.ParseDuration(MysqlConfigInstance.SlowSqlTime)
@@ -54,7 +53,7 @@ func initMySQL(c *conf.Configure) error {
 		DontSupportRenameIndex:    true,  // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
 		DontSupportRenameColumn:   true,  // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
 		SkipInitializeWithVersion: false, // 根据当前 MySQL 版本自动配置
-	}), &gormConfig)
+	}))
 	if nil != err {
 		Error(nil, M, err.Error())
 		return err
