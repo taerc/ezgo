@@ -14,3 +14,5 @@
 2023-06-29 06:06:06	[34mINFO[0m	open database begin	{"req": "-", "mod": "EZGO"}
 2023-06-29 06:06:06	[34mINFO[0m	maicro:Maicro@2314@tcp(172.10.50.239:3306)/cloudbusi?charset=utf8mb4&parseTime=true&loc=Loc	{"req": "-", "mod": "EZGO"}
 2023-06-29 06:06:06	[34mINFO[0m	open database begin	{"req": "-", "mod": "EZGO"}
+2023-06-29 06:06:06	[34mINFO[0m	maicro:Maicro@2314@tcp(172.10.50.239:3306)/cloudbusi?charset=utf8mb4&parseTime=true&loc=Loc	{"req": "-", "mod": "EZGO"}
+2023-06-29 06:06:06	[34mINFO[0m	open database begin	{"req": "-", "mod": "EZGO"}

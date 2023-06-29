@@ -16,8 +16,9 @@ func Test_initMySQL(t *testing.T) {
 		MySQLMaxOpenConnection: 256,
 		MySQLMaxIdleConnection: 30,
 		Charset:                "utf8mb4",
-		Loc:                    "Loc",
+		Loc:                    "Local",
 		ParseTime:              "true",
+		MaxLifeTime:            "1h",
 	}
 
 	initMySQL(c)

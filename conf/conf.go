@@ -5,10 +5,11 @@ import "gopkg.in/ini.v1"
 // Configure @description:
 // @note: ini 不支持 embed 模式
 type Configure struct {
+	// [basic]
 	Host string `ini:"host"`
 	Port string `ini:"port"`
 
-	// log
+	// [log]
 	LogDir        string `ini:"log_dir"`
 	LogFileName   string `ini:"log_filename"`
 	LogMaxSize    int    `ini:"log_max_size"`
@@ -17,7 +18,7 @@ type Configure struct {
 	LogCompress   bool   `ini:"log_compress"`
 	LogStderr     bool   `ini:"log_stderr"`
 
-	//  mysql
+	// [mysql]
 	MySQLHostname          string `ini:"mysql_hostname"`
 	MySQLPort              string `ini:"mysql_port"`
 	MySQLUserName          string `ini:"mysql_user"`

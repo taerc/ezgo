@@ -1,7 +1,6 @@
 package ezgo
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/taerc/ezgo/conf"
 	"os"
@@ -64,10 +63,7 @@ func newLogger(c *conf.Configure) *zap.Logger {
 	if c.LogStderr {
 		ws = append(ws, zapcore.Lock(os.Stderr))
 	}
-	fmt.Println("test test test....")
-
 	core := zapcore.NewCore(zapcore.NewConsoleEncoder(cfg), zapcore.NewMultiWriteSyncer(ws...), zap.DebugLevel)
-
 	return zap.New(core)
 }
 
