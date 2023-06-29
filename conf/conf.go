@@ -9,10 +9,13 @@ type Configure struct {
 	Port string `ini:"port"`
 
 	// log
-	LogDir          string `ini:"log_dir"`
-	LogMaxAge       int64  `ini:"log_max_age"`
-	LogRotationTime int64  `ini:"log_rotation_time"` //日志切割时间间隔（小时）
-	LogFileName     string `ini:"log_filename"`
+	LogDir        string `ini:"log_dir"`
+	LogFileName   string `ini:"log_filename"`
+	LogMaxSize    int    `ini:"log_max_size"`
+	LogMaxAge     int    `ini:"log_max_age"`
+	LogMaxBackups int    `ini:"log_max_backups"`
+	LogCompress   bool   `ini:"log_compress"`
+	LogStderr     bool   `ini:"log_stderr"`
 
 	//  mysql
 	MySQLHostname          string `ini:"mysql_hostname"`
@@ -24,7 +27,7 @@ type Configure struct {
 	MySQLMaxOpenConnection int    `ini:"max_open_connection"`
 	Charset                string `ini:"charset"`
 	Loc                    string `ini:"loc"`
-	ParseTime              string `int:"parse_time"`
+	ParseTime              bool   `int:"parse_time"`
 	Timeout                string `ini:"timeout"`
 	MaxLifeTime            string `ini:"max_life_time"`
 	TablePre               string `ini:"table_pre"`
