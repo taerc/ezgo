@@ -6,8 +6,8 @@ MAJOR?="0"
 MINOR?="0"
 PATCH?="1"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="13"
-MESSAGE?="update "
+TYPE_VERSION?="14"
+MESSAGE?="add logger and mysql"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 

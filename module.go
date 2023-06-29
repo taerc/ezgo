@@ -2,10 +2,10 @@ package ezgo
 
 import "sync"
 
-// ComponentLoad @description 应用系统依赖的第三方组件，如数据库等
+// Component @description 应用系统依赖的第三方组件，如数据库等
 type Component func(wg *sync.WaitGroup)
 
-// ModuleRegister @description 应用系统的业务模块
+// Module @description 应用系统的业务模块
 type Module func(wg *sync.WaitGroup)
 
 func LoadComponent(coms ...Component) {

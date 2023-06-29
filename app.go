@@ -78,6 +78,9 @@ func init() {
 	appFlow.Use(PluginRequestId(), PluginCors())
 }
 
+/// Application part
+
+
 func InitAppFlow(init, exec, done Executor) *AppFlow {
 	appFlow.Init = init
 	appFlow.Exec = exec
@@ -108,7 +111,7 @@ func Do(data interface{}) int {
 	return appFlow.Do(data)
 }
 
-//
+/// Default Plugin part
 var headerXRequestID string = "X-Request-ID"
 
 func PluginRequestId() gin.HandlerFunc {
@@ -120,7 +123,7 @@ func PluginRequestId() gin.HandlerFunc {
 			rid = uuid.New().String()
 			c.Request.Header.Add(headerXRequestID, rid)
 		}
-		// Set the id to ensure that the requestid is in the response
+		// Set the id to ensure that the request-id is in the response
 		c.Header(headerXRequestID, rid)
 		c.Next()
 	}

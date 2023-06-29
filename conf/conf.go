@@ -2,14 +2,34 @@ package conf
 
 import "gopkg.in/ini.v1"
 
+// Configure @description:
+// @note: ini 不支持 embed 模式
 type Configure struct {
-	Host            string `ini:"host"`
-	Port            string `ini:"port"`
+	Host string `ini:"host"`
+	Port string `ini:"port"`
+
+	// log
 	LogDir          string `ini:"log_dir"`
 	LogMaxAge       int64  `ini:"log_max_age"`
 	LogRotationTime int64  `ini:"log_rotation_time"` //日志切割时间间隔（小时）
 	LogFileName     string `ini:"log_filename"`
-	MySQLConfigure
+
+	//  mysql
+	MySQLHostname          string `ini:"mysql_hostname"`
+	MySQLPort              string `ini:"mysql_port"`
+	MySQLUserName          string `ini:"mysql_user"`
+	MySQLPass              string `ini:"mysql_pass"`
+	MySQLDBName            string `ini:"mysql_dbname"`
+	MySQLMaxIdleConnection int    `ini:"max_idle_connection"`
+	MySQLMaxOpenConnection int    `ini:"max_open_connection"`
+	Charset                string `ini:"charset"`
+	Loc                    string `ini:"loc"`
+	ParseTime              string `int:"parse_time"`
+	Timeout                string `ini:"timeout"`
+	MaxLifeTime            string `ini:"max_life_time"`
+	TablePre               string `ini:"table_pre"`
+	SlowSqlTime            string `ini:"slow_sql_time"`
+	PrintSqlLog            bool   `ini:"print_sql_log"`
 }
 
 var Config *Configure = nil
@@ -19,18 +39,6 @@ type LogConfigure struct {
 }
 
 type MySQLConfigure struct {
-	MySQLHostname          string `ini:"mysql_hostname"`
-	MySQLPort              string `ini:"mysql_port"`
-	MySQLUserName          string `ini:"mysql_user"`
-	MySQLPass              string `ini:"mysql_pass"`
-	MySQLDBName            string `ini:"mysql_dbname"`
-	MySQLMaxIdleConnection int    `ini:"max_idle_connection"`
-	MySQLMaxOpenConnection int    `ini:"max_open_connection"`
-	Timeout                string `ini:"timeout"`
-	MaxLifeTime            string `ini:"max_life_time"`
-	TablePre               string `ini:"table_pre"`
-	SlowSqlTime            string `ini:"slow_sql_time"`
-	PrintSqlLog            bool   `ini:"print_sql_log"`
 }
 
 func init() {
