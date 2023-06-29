@@ -1,6 +1,7 @@
 package ezgo
 
 import (
+	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -67,9 +68,9 @@ func (af *AppFlow) Do(data interface{}) int {
 var appFlow *AppFlow = nil
 
 func init() {
-	//flag.BoolVar(&ShowVersion, "version", false, "print program build version")
-	//flag.StringVar(&ConfigPath, "c", "conf/config.toml", "path of configure file.")
-	//flag.Parse()
+	flag.BoolVar(&ShowVersion, "version", false, "print program build version")
+	flag.StringVar(&ConfigPath, "c", "conf/config.toml", "path of configure file.")
+	flag.Parse()
 	appFlow = new(AppFlow)
 	appFlow.HTTP = NewGinContext()
 	appFlow.Use(PluginRequestId(), PluginCors())
