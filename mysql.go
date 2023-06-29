@@ -15,7 +15,7 @@ var myClient *gorm.DB = nil
 
 // ConnectMysql
 // @description:连接mysql
-func InitMySQL(c *conf.Configure) error {
+func initMySQL(c *conf.Configure) error {
 
 	// 用户名:密码@tcp(IP:port)/数据库?charset=utf8mb4&parseTime=True&loc=Local
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
@@ -85,7 +85,7 @@ func DB() *gorm.DB {
 func WithComponentMySQL(c *conf.Configure) Component {
 	return func(wg *sync.WaitGroup) {
 		wg.Done()
-		InitMySQL(c)
+		initMySQL(c)
 		Info(nil, M, "Finished Load MySQL !")
 	}
 }
