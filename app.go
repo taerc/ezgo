@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/taerc/ezgo/conf"
 	"net/http"
 	"os"
 )
@@ -17,7 +16,6 @@ var ShowVersion bool
 type Executor func(data interface{}) int
 
 type Application struct {
-	Conf conf.Configure
 	HTTP *GinContext
 }
 

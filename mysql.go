@@ -22,6 +22,8 @@ func InitMySQL(c *conf.Configure) error {
 		c.MySQLUserName, c.MySQLPass, c.MySQLHostname, c.MySQLPort,
 		c.MySQLDBName, c.Charset, c.ParseTime, c.Loc)
 
+	Info(nil, M, dsn)
+
 	// 连接额外配置信息
 	gormConfig := gorm.Config{
 		NamingStrategy: schema.NamingStrategy{

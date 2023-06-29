@@ -4,9 +4,9 @@ export GO111MODULE = on
 # alpha,release,final,auto
 MAJOR?="0"
 MINOR?="0"
-PATCH?="1"
+PATCH?="2"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="18"
+TYPE_VERSION?="0"
 MESSAGE?="add logger and mysql"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
