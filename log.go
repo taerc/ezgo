@@ -1,6 +1,7 @@
 package ezgo
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/taerc/ezgo/conf"
 	"os"
@@ -33,7 +34,7 @@ func init() {
 	c.Development = true
 	c.Encoding = "console"
 	c.ErrorOutputPaths = []string{"stderr"}
-	c.OutputPaths = []string{"stdout", "zap.log"}
+	c.OutputPaths = []string{"stdout"}
 	logger, _ = c.Build()
 
 }
@@ -63,7 +64,7 @@ func newLogger(c *conf.Configure) *zap.Logger {
 	if c.LogStderr {
 		ws = append(ws, zapcore.Lock(os.Stderr))
 	}
-	core := zapcore.NewCore(zapcore.NewConsoleEncoder(cfg), zapcore.NewMultiWriteSyncer(ws...), zap.DebugLevel)
+	core := zapcore.NewCore(zapcore.NewJSONEncoder(cfg), zapcore.NewMultiWriteSyncer(ws...), zap.DebugLevel)
 	return zap.New(core)
 }
 
@@ -73,7 +74,7 @@ func initLogger(cfg *conf.Configure) {
 
 // MyTimeEncoder 自定义时间格式化
 func MyTimeEncoder(t time.Time, e zapcore.PrimitiveArrayEncoder) {
-	e.AppendString(t.Format("2006-01-02 01:01:01"))
+	e.AppendString(t.Format("2006-01-02 12:13:15"))
 }
 
 func getReqId(c *gin.Context) string {
@@ -89,28 +90,20 @@ func getReqId(c *gin.Context) string {
 	}
 }
 
-func Info(c *gin.Context, mod string, msg string) {
-	reqId := zap.String("req", getReqId(c))
-	m := zap.String("mod", mod)
-	logger.Info(msg, reqId, m)
+func Info(c *gin.Context, mod string, msg string, fields ...zap.Field) {
+	logger.Info(fmt.Sprintf("%s %s %s", getReqId(c), mod, msg), fields...)
 }
 
-func Error(c *gin.Context, mod string, msg string) {
-	reqId := zap.String("req", getReqId(c))
-	m := zap.String("mod", mod)
-	logger.Info(msg, reqId, m)
+func Error(c *gin.Context, mod string, msg string, fields ...zap.Field) {
+	logger.Error(fmt.Sprintf("%s %s %s", getReqId(c), mod, msg), fields...)
 }
 
-func Warn(c *gin.Context, mod string, msg string) {
-	reqId := zap.String("req", getReqId(c))
-	m := zap.String("mod", mod)
-	logger.Info(msg, reqId, m)
+func Warn(c *gin.Context, mod string, msg string, fields ...zap.Field) {
+	logger.Warn(fmt.Sprintf("%s %s %s", getReqId(c), mod, msg), fields...)
 }
 
-func Panic(c *gin.Context, mod string, msg string) {
-	reqId := zap.String("req", getReqId(c))
-	m := zap.String("mod", mod)
-	logger.Info(msg, reqId, m)
+func Panic(c *gin.Context, mod string, msg string, fields ...zap.Field) {
+	logger.Panic(fmt.Sprintf("%s %s %s", getReqId(c), mod, msg), fields...)
 }
 
 // WithComponentLogger @description: 注册日志信息
