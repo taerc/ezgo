@@ -90,7 +90,7 @@ func init() {
 	flag.StringVar(&ConfigPath, "c", "conf/config.toml", "path of configure file.")
 	flag.Parse()
 	appFlow = new(AppFlow)
-	appFlow.Engine = new(gin.Engine)
+	appFlow.Engine = gin.Default()
 	appFlow.Use(PluginRequestId(), PluginCors())
 }
 
