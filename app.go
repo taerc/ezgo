@@ -113,7 +113,7 @@ func NewAppFlow(init, exec, done Executor) *AppFlow {
 	af.Exec = exec
 	af.Done = done
 	af.Engine = new(gin.Engine)
-	return appFlow
+	return af
 }
 
 func Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
