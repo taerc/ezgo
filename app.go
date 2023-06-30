@@ -17,7 +17,6 @@ var ShowVersion bool
 type Executor func(data interface{}) int
 
 type Application struct {
-	//HTTP *GinContext
 	Engine    *gin.Engine
 	whiteList map[string]bool
 	urlRole   map[string]int
@@ -53,10 +52,10 @@ func SetGetProc(route *gin.RouterGroup, relativePath string, processor Processor
 	route.GET(relativePath, processor.PreProc, processor.Proc, processor.PostProc)
 }
 
-func PostHandler(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
+func POST(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
 	route.POST(relativePath, handlrs...)
 }
-func GetHandler(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
+func GET(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
 	route.GET(relativePath, handlrs...)
 }
 
@@ -109,9 +108,11 @@ func InitAppFlow(init, exec, done Executor) *AppFlow {
 }
 
 func NewAppFlow(init, exec, done Executor) *AppFlow {
-	appFlow.Init = init
-	appFlow.Exec = exec
-	appFlow.Done = done
+	af := new(AppFlow)
+	af.Init = init
+	af.Exec = exec
+	af.Done = done
+	af.Engine = new(gin.Engine)
 	return appFlow
 }
 
