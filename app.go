@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"net/http"
 	"os"
+	"path"
 )
 
 var ConfigPath string
@@ -16,7 +17,10 @@ var ShowVersion bool
 type Executor func(data interface{}) int
 
 type Application struct {
-	HTTP *GinContext
+	//HTTP *GinContext
+	Engine    *gin.Engine
+	whiteList map[string]bool
+	urlRole   map[string]int
 }
 
 type AppFlow struct {
@@ -27,18 +31,33 @@ type AppFlow struct {
 }
 
 func (af *AppFlow) Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
-	return af.HTTP.Engine.Group(relativePath, handlers...)
+	return af.Engine.Group(relativePath, handlers...)
 }
 
 func (af *AppFlow) Use(middleware ...gin.HandlerFunc) gin.IRoutes {
-	return af.HTTP.Engine.Use(middleware...)
+	return af.Engine.Use(middleware...)
 }
 
 func (af *AppFlow) Run(ipaddress ...string) error {
-	return af.HTTP.Engine.Run(ipaddress...)
+	return af.Engine.Run(ipaddress...)
 }
 func (af *AppFlow) SetWhiteList(basePath, relativePath string) {
-	af.HTTP.SetWhiteList(basePath, relativePath)
+	af.whiteList[path.Join(basePath, relativePath)] = true
+}
+
+func SetPostProc(route *gin.RouterGroup, relativePath string, processor Processor) {
+	route.POST(relativePath, processor.PreProc, processor.Proc, processor.PreProc)
+}
+
+func SetGetProc(route *gin.RouterGroup, relativePath string, processor Processor) {
+	route.GET(relativePath, processor.PreProc, processor.Proc, processor.PostProc)
+}
+
+func PostHandler(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
+	route.POST(relativePath, handlrs...)
+}
+func GetHandler(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
+	route.GET(relativePath, handlrs...)
 }
 
 func (af *AppFlow) Do(data interface{}) int {
@@ -72,7 +91,7 @@ func init() {
 	flag.StringVar(&ConfigPath, "c", "conf/config.toml", "path of configure file.")
 	flag.Parse()
 	appFlow = new(AppFlow)
-	appFlow.HTTP = NewGinContext()
+	appFlow.Engine = new(gin.Engine)
 	appFlow.Use(PluginRequestId(), PluginCors())
 }
 
@@ -97,15 +116,15 @@ func NewAppFlow(init, exec, done Executor) *AppFlow {
 }
 
 func Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
-	return appFlow.HTTP.Engine.Group(relativePath, handlers...)
+	return appFlow.Engine.Group(relativePath, handlers...)
 }
 
 func Use(middleware ...gin.HandlerFunc) gin.IRoutes {
-	return appFlow.HTTP.Engine.Use(middleware...)
+	return appFlow.Engine.Use(middleware...)
 }
 
 func Run(ipaddress ...string) error {
-	return appFlow.HTTP.Engine.Run(ipaddress...)
+	return appFlow.Engine.Run(ipaddress...)
 }
 
 func Do(data interface{}) int {
