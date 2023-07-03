@@ -82,20 +82,34 @@ func getReqId(c *gin.Context) string {
 	}
 }
 
+func InfoReq(reqId, mod, msg string, fields ...zap.Field) {
+	logger.Info(fmt.Sprintf("%s %s %s", reqId, mod, msg), fields...)
+}
+
 func Info(c *gin.Context, mod string, msg string, fields ...zap.Field) {
-	logger.Info(fmt.Sprintf("%s %s %s", getReqId(c), mod, msg), fields...)
+	InfoReq(getReqId(c), mod, msg, fields...)
+}
+
+func ErrorReq(reqId, mod, msg string, fields ...zap.Field) {
+	logger.Error(fmt.Sprintf("%s %s %s", reqId, mod, msg), fields...)
 }
 
 func Error(c *gin.Context, mod string, msg string, fields ...zap.Field) {
-	logger.Error(fmt.Sprintf("%s %s %s", getReqId(c), mod, msg), fields...)
+	ErrorReq(getReqId(c), mod, msg, fields...)
+}
+func WarnReq(reqId, mod, msg string, fields ...zap.Field) {
+	logger.Warn(fmt.Sprintf("%s %s %s", reqId, mod, msg), fields...)
+}
+func Warn(c *gin.Context, mod string, msg string, fields ...zap.Field) {
+	WarnReq(getReqId(c), mod, msg, fields...)
 }
 
-func Warn(c *gin.Context, mod string, msg string, fields ...zap.Field) {
-	logger.Warn(fmt.Sprintf("%s %s %s", getReqId(c), mod, msg), fields...)
+func PanicReq(reqId, mod, msg string, fields ...zap.Field) {
+	logger.Panic(fmt.Sprintf("%s %s %s", reqId, mod, msg), fields...)
 }
 
 func Panic(c *gin.Context, mod string, msg string, fields ...zap.Field) {
-	logger.Panic(fmt.Sprintf("%s %s %s", getReqId(c), mod, msg), fields...)
+	PanicReq(getReqId(c), mod, msg, fields...)
 }
 
 // WithComponentLogger @description: 注册日志信息

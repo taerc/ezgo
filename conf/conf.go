@@ -34,6 +34,9 @@ type Configure struct {
 	TablePre               string `ini:"table_pre"`
 	SlowSqlTime            string `ini:"slow_sql_time"`
 	PrintSqlLog            bool   `ini:"print_sql_log"`
+
+	// [dingding]
+
 }
 
 var Config *Configure = nil

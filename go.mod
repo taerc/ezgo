@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/gin-gonic/gin v1.9.1
+	github.com/google/flatbuffers v23.5.26+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/sirupsen/logrus v1.9.3
 	go.uber.org/zap v1.24.0

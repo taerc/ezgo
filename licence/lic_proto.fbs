@@ -1,0 +1,40 @@
+namespace airia;
+
+enum AuthType: ubyte { TimeAuth=0x01, LocalAuth=0x02, CentreAuth=0x04}
+
+table TimeInfo {
+    magic_value:string;
+    build_y:int = -1;
+    build_m:int = -1;
+    build_d:int = -1;
+    expired:int = -1;
+    last_y:int = -1;
+    last_m:int = -1;
+    last_d:int = -1;
+    last_h:int = 0;
+    magic_signature:string;
+}
+
+table LocalInfo {
+    sn:string;
+    uuid:string;
+}
+
+table CentreInfo {
+    url:string;
+    sign_local:string;
+    sign_centre:string;
+}
+
+table LicenceProto {
+    version:ubyte = 0;
+    magic_value:string;
+    magic_signature:string;
+    auth_type:AuthType=TimeAuth;
+    device_desc:string;
+    time_info:TimeInfo;
+    local_info:LocalInfo;
+    centre_info:CentreInfo;
+}
+
+root_type LicenceProto;
