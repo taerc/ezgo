@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"text/template"
@@ -333,7 +333,7 @@ func SendRequest(webhook string, params []byte) {
 
 		return
 	}
-	respBytes, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Error(err.Error())
 		return

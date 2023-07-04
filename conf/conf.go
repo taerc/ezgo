@@ -36,7 +36,8 @@ type Configure struct {
 	PrintSqlLog            bool   `ini:"print_sql_log"`
 
 	// [dingding]
-
+	Token  string `ini:"dingding_token"`
+	Secret string `ini:"dingding_secret"`
 }
 
 var Config *Configure = nil
@@ -61,6 +62,7 @@ func LoadConfigure(filePath string) (*Configure, error) {
 		fd.Section("basic").MapTo(Config)
 		fd.Section("log").MapTo(Config)
 		fd.Section("mysql").MapTo(Config)
+		fd.Section("dingding").MapTo(Config)
 	}
 
 	return Config, nil

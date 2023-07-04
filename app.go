@@ -1,6 +1,7 @@
 package ezgo
 
 import (
+	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -10,7 +11,6 @@ import (
 )
 
 var ConfigPath string
-var Version string
 var ShowVersion bool
 
 type Executor func(data interface{}) int
@@ -58,12 +58,16 @@ func GET(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc
 	route.GET(relativePath, handlrs...)
 }
 
+func Version() string {
+	return version
+}
+
 func (af *AppFlow) Do(data interface{}) int {
 
 	// show version
 
 	if ShowVersion {
-		fmt.Println("version : ", Version)
+		fmt.Println("version : ", Version())
 		os.Exit(0)
 	}
 
@@ -85,9 +89,9 @@ func (af *AppFlow) Do(data interface{}) int {
 var appFlow *AppFlow = nil
 
 func init() {
-	//flag.BoolVar(&ShowVersion, "version", false, "print program build version")
-	//flag.StringVar(&ConfigPath, "c", "conf/config.toml", "path of configure file.")
-	//flag.Parse()
+	flag.BoolVar(&ShowVersion, "version", false, "print program build version")
+	flag.StringVar(&ConfigPath, "c", "conf/config.toml", "path of configure file.")
+	flag.Parse()
 	appFlow = new(AppFlow)
 	appFlow.Engine = gin.Default()
 	appFlow.Use(PluginRequestId(), PluginCors())

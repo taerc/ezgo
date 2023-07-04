@@ -1,20 +1,28 @@
-phony:ezgo
+phony:init
 
 export GO111MODULE = on
 # alpha,release,final,auto
+MESSAGE?="更新版本号, 增加钉钉默认告警模块"
 MAJOR?="0"
 MINOR?="0"
 PATCH?="2"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="15"
-MESSAGE?="add logger and mysql"
+TYPE_VERSION?="16"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 
 
-ezgo:
-	go test -v *.go
-publish:
+version:
+	@echo "package config" > version.go
+	@echo "var version=\"$(GIT_TAG)\"" >> version.go
+
+init:
+	@rm -f go.mod go.sum
+	@git mod init ezgo
+	@git mod download
+	@git mod tidy
+
+publish:version
 #linux系统 build
 	git add .
 	git commit -m $(MESSAGE)

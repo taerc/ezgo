@@ -1,14 +1,14 @@
 package ezgo
 
-// ResponseTemplate
+// Response
 import (
 	"github.com/gin-gonic/gin"
 	"strings"
 )
 
-type ResponseTemplate struct {
+type Response struct {
 	Code      int         `json:"code"`
-	Data      interface{} `json:"data"`
+	Data      interface{} `json:"data,omitempty"`
 	Message   string      `json:"message"`
 	RequestId string      `json:"request_id"`
 }
@@ -46,7 +46,7 @@ func (gf *GinFlow) BindJson(ctx *gin.Context, data interface{}) int {
 	return Success
 }
 func (gf *GinFlow) ResponseJson(ctx *gin.Context, er int, data interface{}) {
-	ctx.JSON(Success, ResponseTemplate{
+	ctx.JSON(Success, Response{
 		Code:      er,
 		Data:      data,
 		Message:   "",
