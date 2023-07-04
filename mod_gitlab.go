@@ -1,6 +1,7 @@
 package ezgo
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/taerc/ezgo/conf"
 	"sync"
@@ -139,8 +140,8 @@ func (tel *tagEventsLoad) Proc(ctx *gin.Context) {
 		return
 	}
 
+	Info(ctx, M, fmt.Sprintf("ObjectKind [%s]", tel.ObjectKind))
 	if tel.ObjectKind == "tag_push" && conf.Config.Token != "" && conf.Config.Secret != "" {
-
 		sn := &SimpleNotice{}
 		sn.Title = "发布"
 		sn.Project = tel.Project.Name

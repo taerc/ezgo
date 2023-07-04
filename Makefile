@@ -7,7 +7,7 @@ MAJOR?="0"
 MINOR?="0"
 PATCH?="3"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="0"
+TYPE_VERSION?="1"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 
@@ -21,6 +21,7 @@ init:
 	@git mod init ezgo
 	@git mod download
 	@git mod tidy
+
 
 publish:version
 #linux系统 build
