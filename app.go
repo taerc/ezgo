@@ -132,6 +132,7 @@ func Run(ipaddress ...string) error {
 }
 
 func Do(data interface{}) int {
+	Info(nil, M, fmt.Sprintf("version: %s", Version()))
 	return appFlow.Do(data)
 }
 

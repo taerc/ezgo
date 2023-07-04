@@ -2,12 +2,12 @@ phony:init
 
 export GO111MODULE = on
 # alpha,release,final,auto
-MESSAGE?="更新版本号, 增加钉钉默认告警模块"
+MESSAGE?="更新 gitlab 操作"
 MAJOR?="0"
 MINOR?="0"
 PATCH?="3"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="1"
+TYPE_VERSION?="2"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 
