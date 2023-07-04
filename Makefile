@@ -5,9 +5,9 @@ export GO111MODULE = on
 MESSAGE?="更新版本号, 增加钉钉默认告警模块"
 MAJOR?="0"
 MINOR?="0"
-PATCH?="2"
+PATCH?="3"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="18"
+TYPE_VERSION?="0"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 
