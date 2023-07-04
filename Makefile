@@ -7,13 +7,13 @@ MAJOR?="0"
 MINOR?="0"
 PATCH?="2"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="16"
+TYPE_VERSION?="17"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 
 
 version:
-	@echo "package config" > version.go
+	@echo "package ezgo" > version.go
 	@echo "var version=\"$(GIT_TAG)\"" >> version.go
 
 init:
