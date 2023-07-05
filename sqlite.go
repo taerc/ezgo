@@ -1,6 +1,7 @@
 package ezgo
 
 import (
+	"fmt"
 	"github.com/taerc/ezgo/conf"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -8,33 +9,56 @@ import (
 	"sync"
 )
 
-var sqliteDb *gorm.DB = nil
+var defSqliteDb *gorm.DB = nil
+var sqliteMap sync.Map
 
-func initSqlite(conf *conf.Configure) error {
+func initSqlite(name string, conf *conf.Configure) error {
 
 	gormConfig := gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true, //使用单数表名，启用该选项时，`User` 的表名应该是 `user`而不是users
 		},
 	}
-
-	var e error = nil
-	if sqliteDb, e = gorm.Open(sqlite.Open(conf.SQLitePath), &gormConfig); e != nil {
+	if db, e := gorm.Open(sqlite.Open(conf.SQLitePath), &gormConfig); e != nil {
 		return e
+	} else {
+		sqliteMap.Swap(name, db)
 	}
 	return nil
 }
 
-func SQLITE() *gorm.DB {
-	return sqliteDb
+func SQLITE(name ...string) *gorm.DB {
+
+	if len(name) == 0 || name[0] == Default {
+		if defSqliteDb == nil {
+			if e := initSqlite(Default, conf.Config); e != nil {
+				Error(nil, M, fmt.Sprintf("unknown default db.%s (forgotten configure?)", name[0]))
+			}
+			return defSqliteDb
+		}
+		return defSqliteDb
+	}
+
+	v, ok := sqliteMap.Load(name[0])
+
+	if !ok {
+		Error(nil, M, fmt.Sprintf("unknown db.%s (forgotten configure?)", name[0]))
+	}
+
+	return v.(*gorm.DB)
 }
 
-func WithComponentSqlite(c *conf.Configure) Component {
+func SqliteExists(name string) bool {
+	_, ok := sqliteMap.Load(name)
+	return ok
+}
+
+func WithComponentSqlite(name string, c *conf.Configure) Component {
 
 	return func(wg *sync.WaitGroup) {
 		wg.Done()
-		initSqlite(c)
-		Info(nil, M, "Finished Load SQLITE")
+		initSqlite(name, c)
+		Info(nil, M, fmt.Sprintf("Finished Load [%s]-SQLITE", name))
 	}
 
 }

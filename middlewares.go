@@ -76,22 +76,24 @@ func getRequestRecordDb() (string, error) {
 		return path.Join(d, "http_request.db"), nil
 	}
 }
+
+var _pluginRequest = "_pluginRequest"
+
 func PluginRequestSnapShot() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		db, e := getRequestRecordDb()
 		if e == nil {
-			if !PathExists(db) {
+			if !SqliteExists(_pluginRequest) {
 				c := &conf.Configure{SQLitePath: db}
-				initSqlite(c)
-				SQLITE().AutoMigrate(requestRecord{})
-
+				initSqlite(_pluginRequest, c)
+				SQLITE(_pluginRequest).AutoMigrate(requestRecord{})
 			}
 
 			go func() {
 				body, e := io.ReadAll(c.Request.Body)
 				if e == nil {
-					SQLITE().Create(&requestRecord{
+					SQLITE(_pluginRequest).Create(&requestRecord{
 						RequestId: GetRequestId(c),
 						Method:    c.Request.Method,
 						Url:       fmt.Sprintf("%s?%s", c.Request.URL.Path, c.Request.URL.RawQuery),
