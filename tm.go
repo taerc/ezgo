@@ -7,3 +7,7 @@ import "time"
 func GetUnixTimeStamp() int64 {
 	return time.Now().Unix()
 }
+
+func GetLocalDate() string {
+	return time.Time{}.Format(time.DateOnly)
+}

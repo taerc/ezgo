@@ -347,8 +347,6 @@ func HookTextDingGroup(text string) {
 	var receiver Robot
 	receiver.access_token = ""
 	receiver.secret = ""
-	//receiver.access_token = config.Conf.DingHookToken
-	//receiver.secret = config.Conf.DingHookSecret
 	webHookUrl := receiver.Signature()
 	params := receiver.SendText(text, []string{}, []string{}, false)
 	SendRequest(webHookUrl, params)
@@ -358,8 +356,6 @@ func HookTextDingGroupWithConf(text, token, secret string) {
 	var receiver Robot
 	receiver.access_token = token
 	receiver.secret = secret
-	//receiver.access_token = config.Conf.DingHookToken
-	//receiver.secret = config.Conf.DingHookSecret
 	webHookUrl := receiver.Signature()
 	params := receiver.SendText(text, []string{}, []string{}, false)
 	SendRequest(webHookUrl, params)

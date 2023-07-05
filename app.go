@@ -176,3 +176,14 @@ func PluginCors() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+/// --
+/// default save the parmas into sqlite
+func PluginRequestSnapShot() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		Info(c, M, fmt.Sprintf("Method : %s", c.Request.Method))
+		Info(c, M, fmt.Sprintf("URL:%s", c.Request.URL.Path))
+		Info(c, M, fmt.Sprintf("ContectLength %d", c.Request.ContentLength))
+		c.Next()
+	}
+}

@@ -2,12 +2,12 @@ phony:init
 
 export GO111MODULE = on
 # alpha,release,final,auto
-MESSAGE?="更新 gitlab 操作"
+MESSAGE?="增加sqlite插件"
 MAJOR?="0"
 MINOR?="0"
 PATCH?="3"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="2"
+TYPE_VERSION?="3"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 

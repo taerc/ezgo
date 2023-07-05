@@ -8,7 +8,7 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 	log "github.com/sirupsen/logrus"
 	"github.com/taerc/ezgo"
-	"github.com/taerc/ezgo/licence/airia"
+	"github.com/taerc/ezgo/licence/lic"
 	"math/rand"
 	"os"
 )
@@ -20,7 +20,7 @@ func GenerateLicence(dstFile, sn, uuid, DeviceDesc string) error {
 	licenceProtoType.Version = 1                                                      // = 0; //1u
 	licenceProtoType.MagicValue = randomString()                                      //随机字符串
 	licenceProtoType.MagicSignature = randomStringSha256(licenceProtoType.MagicValue) //随机字符串编码sha256编码1
-	licenceProtoType.AuthType = airia.AuthTypeLocalAuth                               //=TimeAuth;//LocalAuth本地文件方式鉴权
+	licenceProtoType.AuthType = lic.AuthTypeLocalAuth                                 //=TimeAuth;//LocalAuth本地文件方式鉴权
 	licenceProtoType.DeviceDesc = DeviceDesc                                          //安卓"android" 盒子"emmc" linux是"dmi"
 	licenceProtoType.DeviceSn = sn
 	licenceProtoType.Uuid = snAndUUIDMerge(licenceProtoType.DeviceSn, uuid)
@@ -75,33 +75,33 @@ func encodeLicence(licenceProtoType *LicenceProtoType) []byte {
 	DeviceDesc := builder.CreateString(licenceProto.DeviceDesc)
 
 	//LocalInfo
-	airia.LocalInfoStart(builder)
-	airia.LocalInfoAddSn(builder, infosn)
-	airia.LocalInfoAddUuid(builder, infouuiid)
-	ninfo := airia.LocalInfoEnd(builder)
+	lic.LocalInfoStart(builder)
+	lic.LocalInfoAddSn(builder, infosn)
+	lic.LocalInfoAddUuid(builder, infouuiid)
+	ninfo := lic.LocalInfoEnd(builder)
 
 	//TimeInfo
-	airia.TimeInfoStart(builder)
-	timeinfo := airia.TimeInfoEnd(builder)
+	lic.TimeInfoStart(builder)
+	timeinfo := lic.TimeInfoEnd(builder)
 
 	//CentreInfo
-	airia.CentreInfoStart(builder)
-	centreinfo := airia.CentreInfoEnd(builder)
+	lic.CentreInfoStart(builder)
+	centreinfo := lic.CentreInfoEnd(builder)
 
 	//LicenceProto
-	airia.LicenceProtoStart(builder)
+	lic.LicenceProtoStart(builder)
 
-	airia.LicenceProtoAddVersion(builder, 1)
-	airia.LicenceProtoAddMagicValue(builder, MagicValue)
-	airia.LicenceProtoAddMagicSignature(builder, MagicSignature)
-	airia.LicenceProtoAddAuthType(builder, airia.AuthTypeLocalAuth)
-	airia.LicenceProtoAddDeviceDesc(builder, DeviceDesc)
+	lic.LicenceProtoAddVersion(builder, 1)
+	lic.LicenceProtoAddMagicValue(builder, MagicValue)
+	lic.LicenceProtoAddMagicSignature(builder, MagicSignature)
+	lic.LicenceProtoAddAuthType(builder, lic.AuthTypeLocalAuth)
+	lic.LicenceProtoAddDeviceDesc(builder, DeviceDesc)
 
-	airia.LicenceProtoAddTimeInfo(builder, timeinfo)
-	airia.LicenceProtoAddLocalInfo(builder, ninfo)
-	airia.LicenceProtoAddCentreInfo(builder, centreinfo)
+	lic.LicenceProtoAddTimeInfo(builder, timeinfo)
+	lic.LicenceProtoAddLocalInfo(builder, ninfo)
+	lic.LicenceProtoAddCentreInfo(builder, centreinfo)
 
-	licenceinfo := airia.LicenceProtoEnd(builder)
+	licenceinfo := lic.LicenceProtoEnd(builder)
 
 	builder.Finish(licenceinfo)
 	buf := builder.FinishedBytes() //返回[]byte
@@ -111,8 +111,8 @@ func encodeLicence(licenceProtoType *LicenceProtoType) []byte {
 //Decode 反序列化
 func decodeLicence(buf []byte) *LicenceProto {
 
-	gral := airia.GetRootAsLicenceProto(buf, 0)
-	local := new(airia.LocalInfo)
+	gral := lic.GetRootAsLicenceProto(buf, 0)
+	local := new(lic.LocalInfo)
 	gral.LocalInfo(local)
 	fmt.Println(string(local.Sn()))
 	fmt.Println(string(local.Uuid()))

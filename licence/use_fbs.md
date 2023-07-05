@@ -16,8 +16,8 @@ $ ls
 lic_proto.fbs
 $ flatc --go lic_proto.fbs
 $ ls
-airia           lic_proto.fbs
-$ cd airia/
+lic           lic_proto.fbs
+$ cd lic/
 $ ls
 AuthType.go     CentreInfo.go   LicenceProto.go LocalInfo.go    TimeInfo.go
 ```

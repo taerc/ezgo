@@ -6,8 +6,9 @@ import "gopkg.in/ini.v1"
 // @note: ini 不支持 embed 模式
 type Configure struct {
 	// [basic]
-	Host string `ini:"host"`
-	Port string `ini:"port"`
+	Host         string `ini:"host"`
+	Port         string `ini:"port"`
+	ResourcePath string `ini:"resource_path"`
 
 	// [log]
 	LogDir        string `ini:"log_dir"`
@@ -34,6 +35,7 @@ type Configure struct {
 	TablePre               string `ini:"table_pre"`
 	SlowSqlTime            string `ini:"slow_sql_time"`
 	PrintSqlLog            bool   `ini:"print_sql_log"`
+	// sqlite
 
 	// [dingding]
 	Token  string `ini:"dingding_token"`
