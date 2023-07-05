@@ -39,6 +39,8 @@ func isValidResourceType(t ResourceType) bool {
 var resourceMountPoint map[ResourceType]string
 
 func init() {
+
+	resourceMountPoint = make(map[ResourceType]string, ResourceTypeUnk+1)
 	resourceMountPoint[ResourceTypeFile] = "file"
 	resourceMountPoint[ResourceTypeAudio] = "audio"
 	resourceMountPoint[ResourceTypeVideo] = "video"
