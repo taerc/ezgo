@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/taerc/ezgo/conf"
 	"path"
+	"sync"
 )
 
 type Resource struct {
@@ -25,6 +26,7 @@ const (
 	ResourceTypeApk
 	ResourceTypeBinary
 	ResourceTypeSqlite
+	ResourceTypeLog
 	ResourceTypeUnk
 )
 
@@ -48,15 +50,9 @@ func init() {
 	resourceMountPoint[ResourceTypeApk] = "apk"
 	resourceMountPoint[ResourceTypeBinary] = "binary"
 	resourceMountPoint[ResourceTypeSqlite] = "sqlite"
+	resourceMountPoint[ResourceTypeLog] = "logs"
 	resourceMountPoint[ResourceTypeUnk] = "unknown"
 
-	var e error = nil
-	var s string = ""
-	for i := ResourceTypeFile; i <= ResourceTypeUnk; i += 1 {
-		if s, e = Mkdirs(path.Join(conf.Config.ResourcePath, resourceMountPoint[i])); e != nil {
-			Info(nil, M, fmt.Sprintf("init resource path [%s] failed, error is [%s]", s, e.Error()))
-		}
-	}
 }
 
 func getResourceTypePath(t ResourceType) (string, error) {
@@ -102,4 +98,19 @@ func (r *Resource) Proc(ctx *gin.Context) ([]Resource, error) {
 	}
 
 	return results, nil
+}
+
+func WithComponentResource(c *conf.Configure) func(wg *sync.WaitGroup) {
+	return func(wg *sync.WaitGroup) {
+		wg.Done()
+		var e error = nil
+		var s string = ""
+		for i := ResourceTypeFile; i <= ResourceTypeUnk; i += 1 {
+			if s, e = Mkdirs(path.Join(conf.Config.ResourcePath, resourceMountPoint[i])); e != nil {
+				Info(nil, M, fmt.Sprintf("init resource path [%s] failed, error is [%s]", s, e.Error()))
+			}
+		}
+		Info(nil, M, "Init Resource Done!")
+	}
+
 }
