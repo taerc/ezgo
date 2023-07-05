@@ -9,5 +9,5 @@ func GetUnixTimeStamp() int64 {
 }
 
 func GetLocalDate() string {
-	return time.Time{}.Format(time.DateOnly)
+	return time.Now().Format(time.DateOnly)
 }

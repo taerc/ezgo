@@ -65,6 +65,10 @@ type requestRecord struct {
 	//TimeStamp uint64
 }
 
+func (r requestRecord) TableName() string {
+	return "request"
+}
+
 func getRequestRecordDb() (string, error) {
 	if d, e := getResourceTypePath(ResourceTypeSqlite); e != nil {
 		return d, e
@@ -80,6 +84,8 @@ func PluginRequestSnapShot() gin.HandlerFunc {
 			if !PathExists(db) {
 				c := &conf.Configure{SQLitePath: db}
 				initSqlite(c)
+				SQLITE().AutoMigrate(requestRecord{})
+
 			}
 
 			go func() {
@@ -93,12 +99,7 @@ func PluginRequestSnapShot() gin.HandlerFunc {
 					})
 				}
 				c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
-
 			}()
-
-			Info(c, M, fmt.Sprintf("Method : %s", c.Request.Method))
-			Info(c, M, fmt.Sprintf("URL:%s?%s", c.Request.URL.Path, c.Request.URL.RawQuery))
-			Info(c, M, fmt.Sprintf("ContectLength %v", c.Request.ContentLength))
 		}
 
 		c.Next()
