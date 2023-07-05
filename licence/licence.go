@@ -8,7 +8,7 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 	log "github.com/sirupsen/logrus"
 	"github.com/taerc/ezgo"
-	"github.com/taerc/ezgo/licence/lic"
+	"github.com/taerc/ezgo/licence/proto"
 	"math/rand"
 	"os"
 )
@@ -20,7 +20,7 @@ func GenerateLicence(dstFile, sn, uuid, DeviceDesc string) error {
 	licenceProtoType.Version = 1                                                      // = 0; //1u
 	licenceProtoType.MagicValue = randomString()                                      //随机字符串
 	licenceProtoType.MagicSignature = randomStringSha256(licenceProtoType.MagicValue) //随机字符串编码sha256编码1
-	licenceProtoType.AuthType = lic.AuthTypeLocalAuth                                 //=TimeAuth;//LocalAuth本地文件方式鉴权
+	licenceProtoType.AuthType = proto.AuthTypeLocalAuth                               //=TimeAuth;//LocalAuth本地文件方式鉴权
 	licenceProtoType.DeviceDesc = DeviceDesc                                          //安卓"android" 盒子"emmc" linux是"dmi"
 	licenceProtoType.DeviceSn = sn
 	licenceProtoType.Uuid = snAndUUIDMerge(licenceProtoType.DeviceSn, uuid)
@@ -75,33 +75,33 @@ func encodeLicence(licenceProtoType *LicenceProtoType) []byte {
 	DeviceDesc := builder.CreateString(licenceProto.DeviceDesc)
 
 	//LocalInfo
-	lic.LocalInfoStart(builder)
-	lic.LocalInfoAddSn(builder, infosn)
-	lic.LocalInfoAddUuid(builder, infouuiid)
-	ninfo := lic.LocalInfoEnd(builder)
+	proto.LocalInfoStart(builder)
+	proto.LocalInfoAddSn(builder, infosn)
+	proto.LocalInfoAddUuid(builder, infouuiid)
+	ninfo := proto.LocalInfoEnd(builder)
 
 	//TimeInfo
-	lic.TimeInfoStart(builder)
-	timeinfo := lic.TimeInfoEnd(builder)
+	proto.TimeInfoStart(builder)
+	timeinfo := proto.TimeInfoEnd(builder)
 
 	//CentreInfo
-	lic.CentreInfoStart(builder)
-	centreinfo := lic.CentreInfoEnd(builder)
+	proto.CentreInfoStart(builder)
+	centreinfo := proto.CentreInfoEnd(builder)
 
 	//LicenceProto
-	lic.LicenceProtoStart(builder)
+	proto.LicenceProtoStart(builder)
 
-	lic.LicenceProtoAddVersion(builder, 1)
-	lic.LicenceProtoAddMagicValue(builder, MagicValue)
-	lic.LicenceProtoAddMagicSignature(builder, MagicSignature)
-	lic.LicenceProtoAddAuthType(builder, lic.AuthTypeLocalAuth)
-	lic.LicenceProtoAddDeviceDesc(builder, DeviceDesc)
+	proto.LicenceProtoAddVersion(builder, 1)
+	proto.LicenceProtoAddMagicValue(builder, MagicValue)
+	proto.LicenceProtoAddMagicSignature(builder, MagicSignature)
+	proto.LicenceProtoAddAuthType(builder, proto.AuthTypeLocalAuth)
+	proto.LicenceProtoAddDeviceDesc(builder, DeviceDesc)
 
-	lic.LicenceProtoAddTimeInfo(builder, timeinfo)
-	lic.LicenceProtoAddLocalInfo(builder, ninfo)
-	lic.LicenceProtoAddCentreInfo(builder, centreinfo)
+	proto.LicenceProtoAddTimeInfo(builder, timeinfo)
+	proto.LicenceProtoAddLocalInfo(builder, ninfo)
+	proto.LicenceProtoAddCentreInfo(builder, centreinfo)
 
-	licenceinfo := lic.LicenceProtoEnd(builder)
+	licenceinfo := proto.LicenceProtoEnd(builder)
 
 	builder.Finish(licenceinfo)
 	buf := builder.FinishedBytes() //返回[]byte
@@ -111,8 +111,8 @@ func encodeLicence(licenceProtoType *LicenceProtoType) []byte {
 //Decode 反序列化
 func decodeLicence(buf []byte) *LicenceProto {
 
-	gral := lic.GetRootAsLicenceProto(buf, 0)
-	local := new(lic.LocalInfo)
+	gral := proto.GetRootAsLicenceProto(buf, 0)
+	local := new(proto.LocalInfo)
 	gral.LocalInfo(local)
 	fmt.Println(string(local.Sn()))
 	fmt.Println(string(local.Uuid()))

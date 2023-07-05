@@ -1,4 +1,4 @@
-namespace lic;
+namespace proto;
 
 enum AuthType: ubyte { TimeAuth=0x01, LocalAuth=0x02, CentreAuth=0x04}
 

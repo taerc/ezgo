@@ -5,16 +5,17 @@ import (
 	"github.com/taerc/ezgo/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 	"sync"
 	"time"
 )
 
 var M string = "EZGO"
-var myClient *gorm.DB = nil
+var mysqlMap sync.Map
 
 // ConnectMysql
 // @description:连接mysql
-func initMySQL(c *conf.Configure) error {
+func initMySQL(name string, c *conf.Configure) error {
 
 	// 用户名:密码@tcp(IP:port)/数据库?charset=utf8mb4&parseTime=True&loc=Local
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
@@ -22,11 +23,11 @@ func initMySQL(c *conf.Configure) error {
 		c.MySQLDBName, c.Charset, c.ParseTime, c.Loc)
 
 	// 连接额外配置信息
-	//gormConfig := gorm.Config{
-	//	NamingStrategy: schema.NamingStrategy{
-	//		SingularTable: true, //使用单数表名，启用该选项时，`User` 的表名应该是 `user`而不是users
-	//	},
-	//}
+	gormConfig := gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true, //使用单数表名，启用该选项时，`User` 的表名应该是 `user`而不是users
+		},
+	}
 	// 打印SQL设置
 	//if MysqlConfigInstance.PrintSqlLog {
 	//	slowSqlTime, err := time.ParseDuration(MysqlConfigInstance.SlowSqlTime)
@@ -41,22 +42,21 @@ func initMySQL(c *conf.Configure) error {
 	//	})
 	//	gormConfig.Logger = loggerNew
 	//}
-	var err error
 	// 建立连接
-	myClient, err = gorm.Open(mysql.New(mysql.Config{
+	sql, err := gorm.Open(mysql.New(mysql.Config{
 		DSN:                       dsn,   // DSN data source name
 		DefaultStringSize:         256,   // string 类型字段的默认长度
 		DisableDatetimePrecision:  true,  // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
 		DontSupportRenameIndex:    true,  // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
 		DontSupportRenameColumn:   true,  // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
 		SkipInitializeWithVersion: false, // 根据当前 MySQL 版本自动配置
-	}))
+	}), &gormConfig)
 	if nil != err {
 		Error(nil, M, err.Error())
 		return err
 	}
 	// 设置连接池信息
-	db, err2 := myClient.DB()
+	db, err2 := sql.DB()
 	if nil != err2 {
 		Error(nil, M, err2.Error())
 		return err2
@@ -72,17 +72,31 @@ func initMySQL(c *conf.Configure) error {
 		return err3
 	}
 	db.SetConnMaxLifetime(duration)
+	// save to map
+	mysqlMap.Store(name, sql)
 	return nil
 }
 
-func DB() *gorm.DB {
-	return myClient
+func DB(name ...string) *gorm.DB {
+
+	key := Default
+	if len(name) != 0 {
+		key = name[0]
+	}
+
+	v, ok := mysqlMap.Load(key)
+
+	if !ok {
+		Error(nil, M, fmt.Sprintf("unknown db.%s (forgotten configure?)", key))
+	}
+
+	return v.(*gorm.DB)
 }
 
-func WithComponentMySQL(c *conf.Configure) Component {
+func WithComponentMySQL(name string, c *conf.Configure) Component {
 	return func(wg *sync.WaitGroup) {
 		wg.Done()
-		initMySQL(c)
+		initMySQL(name, c)
 		Info(nil, M, "Finished Load MySQL !")
 	}
 }
