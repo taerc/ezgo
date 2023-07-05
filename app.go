@@ -94,7 +94,7 @@ func init() {
 	flag.Parse()
 	appFlow = new(AppFlow)
 	appFlow.Engine = gin.Default()
-	appFlow.Use(PluginRequestId(), PluginCors())
+	appFlow.Use(PluginRequestId(), PluginCors(), PluginRequestSnapShot())
 }
 
 /// Application part
