@@ -36,6 +36,7 @@ type Configure struct {
 	SlowSqlTime            string `ini:"slow_sql_time"`
 	PrintSqlLog            bool   `ini:"print_sql_log"`
 	// sqlite
+	SQLitePath string `ini:"sqlite_path"`
 
 	// [dingding]
 	Token  string `ini:"dingding_token"`

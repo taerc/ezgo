@@ -11,3 +11,11 @@ func Mkdirs(dirPath string) (string, error) {
 	}
 	return dirPath, nil
 }
+
+// PathExists @description check path
+func PathExists(pth string) bool {
+	if _, e := os.Stat(pth); os.IsNotExist(e) { //如果不存在该目录，那么创建该目录
+		return false
+	}
+	return true
+}

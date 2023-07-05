@@ -2,19 +2,25 @@ package ezgo
 
 import (
 	"github.com/taerc/ezgo/conf"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+
 	"sync"
 )
 
+var sqliteDb *gorm.DB = nil
+
 func initSqlite(conf *conf.Configure) error {
 
-	//db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-	//if err != nil {
-	//	panic("failed to connect database")
-	//}
-	// Migrate the schema
-	//db.AutoMigrate(&Product{})
-
+	var e error = nil
+	if sqliteDb, e = gorm.Open(sqlite.Open(conf.SQLitePath), &gorm.Config{}); e != nil {
+		return e
+	}
 	return nil
+}
+
+func SQLITE() *gorm.DB {
+	return sqliteDb
 }
 
 func WithCommponentSqlite(c *conf.Configure) Component {
