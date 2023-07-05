@@ -66,7 +66,7 @@ func initLogger(cfg *conf.Configure) {
 
 // MyTimeEncoder 自定义时间格式化
 func MyTimeEncoder(t time.Time, e zapcore.PrimitiveArrayEncoder) {
-	e.AppendString(t.Format(time.DateTime))
+	e.AppendString(t.Format(time.StampMilli))
 }
 
 func getReqId(c *gin.Context) string {
