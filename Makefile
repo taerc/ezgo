@@ -2,12 +2,12 @@ phony:init
 
 export GO111MODULE = on
 # alpha,release,final,auto
-MESSAGE?="增加sqlite插件"
+MESSAGE?="add swagger"
 MAJOR?="0"
 MINOR?="0"
 PATCH?="3"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="12"
+TYPE_VERSION?="13"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 

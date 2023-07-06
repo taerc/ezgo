@@ -8,7 +8,7 @@ import (
 
 func Test_initSqlite(t *testing.T) {
 	c := &conf.Configure{SQLitePath: "test.db"}
-	initSqlite(c)
+	initSqlite("def", c)
 	// create databases
 	db := SQLITE()
 	db.AutoMigrate(requestRecord{})
@@ -17,7 +17,6 @@ func Test_initSqlite(t *testing.T) {
 		Method: "meth",
 		Url:    "......",
 		Body:   []byte{'A', 'B', 'C'}})
-
 
 	var rr requestRecord
 	db.Find(&rr)

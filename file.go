@@ -2,6 +2,7 @@ package ezgo
 
 import "os"
 
+// 文件操作的基础库都在 os 包里面, 根据需要时再补充
 // Mkdirs @description
 
 func Mkdirs(dirPath string) (string, error) {

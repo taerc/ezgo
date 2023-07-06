@@ -21,5 +21,5 @@ func Test_initMySQL(t *testing.T) {
 		MaxLifeTime:            "1h",
 	}
 
-	initMySQL(c)
+	initMySQL("def", c)
 }

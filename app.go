@@ -122,6 +122,9 @@ func (af *AppFlow) Do(data interface{}) int {
 		return n
 	}
 
+	// fixed
+	LoadModule(WithModuleSwagger())
+
 	if n := af.Exec(data); n != Success {
 		return n
 	}
