@@ -75,6 +75,9 @@ type AppFlow struct {
 	Application
 }
 
+func (af *AppFlow) APIGroup(ver, relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
+	return af.Engine.Group(path.Join("/api", ver, relativePath), handlers...)
+}
 func (af *AppFlow) Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
 	return af.Engine.Group(relativePath, handlers...)
 }
@@ -90,12 +93,27 @@ func (af *AppFlow) SetWhiteList(basePath, relativePath string) {
 	af.whiteList[path.Join(basePath, relativePath)] = true
 }
 
-func SetPostProc(route *gin.RouterGroup, relativePath string, processor Processor) {
-	route.POST(relativePath, processor.PreProc, processor.Proc, processor.PreProc)
+func ProcPOST(route *gin.RouterGroup, relativePath string, processor Processor) {
+	POST(route, relativePath, processor.PreProc, processor.Proc, processor.PreProc)
 }
 
-func SetGetProc(route *gin.RouterGroup, relativePath string, processor Processor) {
-	route.GET(relativePath, processor.PreProc, processor.Proc, processor.PostProc)
+func ProcGET(route *gin.RouterGroup, relativePath string, processor Processor) {
+	GET(route, relativePath, processor.PreProc, processor.Proc, processor.PostProc)
+}
+func ProcDELETE(route *gin.RouterGroup, relativePath string, processor Processor) {
+	DELETE(route, relativePath, processor.PreProc, processor.Proc, processor.PostProc)
+}
+func ProcPATCH(route *gin.RouterGroup, relativePath string, processor Processor) {
+	PATCH(route, relativePath, processor.PreProc, processor.Proc, processor.PostProc)
+}
+func ProcPUT(route *gin.RouterGroup, relativePath string, processor Processor) {
+	PUT(route, relativePath, processor.PreProc, processor.Proc, processor.PostProc)
+}
+func ProcOPTIONS(route *gin.RouterGroup, relativePath string, processor Processor) {
+	OPTIONS(route, relativePath, processor.PreProc, processor.Proc, processor.PostProc)
+}
+func ProcHEAD(route *gin.RouterGroup, relativePath string, processor Processor) {
+	HEAD(route, relativePath, processor.PreProc, processor.Proc, processor.PostProc)
 }
 
 func POST(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
@@ -103,6 +121,21 @@ func POST(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFun
 }
 func GET(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
 	route.GET(relativePath, handlrs...)
+}
+func DELETE(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
+	route.DELETE(relativePath, handlrs...)
+}
+func PATCH(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
+	route.PATCH(relativePath, handlrs...)
+}
+func PUT(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
+	route.PUT(relativePath, handlrs...)
+}
+func OPTIONS(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
+	route.OPTIONS(relativePath, handlrs...)
+}
+func HEAD(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFunc) {
+	route.HEAD(relativePath, handlrs...)
 }
 
 func Version() string {

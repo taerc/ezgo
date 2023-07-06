@@ -5,9 +5,9 @@ export GO111MODULE = on
 MESSAGE?="remove swagger"
 MAJOR?="0"
 MINOR?="0"
-PATCH?="3"
+PATCH?="4"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="16"
+TYPE_VERSION?="0"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 

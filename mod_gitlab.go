@@ -157,8 +157,8 @@ func WithModuleGitLab() func(wg *sync.WaitGroup) {
 	return func(wg *sync.WaitGroup) {
 		wg.Done()
 		route := Group("/gitlab/hook/event/")
-		SetPostProc(route, "/push", &pushEventPayload{})
-		SetPostProc(route, "/pushtag", &tagEventsLoad{})
+		ProcPOST(route, "/push", &pushEventPayload{})
+		ProcPOST(route, "/pushtag", &tagEventsLoad{})
 		Info(nil, M, "Load GITLAB finished!")
 	}
 }
