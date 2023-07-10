@@ -2,12 +2,12 @@ phony:init
 
 export GO111MODULE = on
 # alpha,release,final,auto
-MESSAGE?="remove swagger"
+MESSAGE?="增加 archive; 增加licence混淆"
 MAJOR?="0"
 MINOR?="0"
 PATCH?="4"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="0"
+TYPE_VERSION?="1"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 

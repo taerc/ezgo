@@ -7,7 +7,7 @@ import (
 
 func Test_initMySQL(t *testing.T) {
 
-	c := &conf.Configure{
+	c := &conf.ConfMySQL{
 		MySQLHostname:          "172.10.50.239",
 		MySQLPort:              "3306",
 		MySQLUserName:          "maicro",

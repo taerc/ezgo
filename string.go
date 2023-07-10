@@ -8,10 +8,11 @@ import (
 
 var randomStrSource = []byte("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-// RandomString @description: generate string with
-func RandomString(length int) string {
+// StringRandom @description: generate string with
+
+func StringRandom(length int) string {
 	result := make([]byte, length)
-	r := rand.New(rand.NewSource(time.Now().UnixNano() + rand.Int63())) //增大随机性
+	r := rand.New(rand.NewSource(time.Now().UnixNano() + rand.Int63()))
 	for i := 0; i < length; i++ {
 		result[i] = randomStrSource[r.Intn(len(randomStrSource))]
 	}

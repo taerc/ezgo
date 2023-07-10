@@ -1,20 +1,63 @@
-package licence
+package ezgo
 
 //AiriaLicence
-//Airia执照
 
 import (
 	"fmt"
 	flatbuffers "github.com/google/flatbuffers/go"
 	log "github.com/sirupsen/logrus"
-	"github.com/taerc/ezgo"
 	"github.com/taerc/ezgo/licence/proto"
 	"math/rand"
-	"os"
 )
 
-/// GenerateLicenceFile @description:
-///
+type TimeInfo struct {
+	MagicValue     string
+	BuildY         int // = -1;
+	BuildM         int // = -1;
+	BuildD         int // = -1;
+	Expired        int // = -1;
+	LastY          int //= -1;
+	LastM          int //= -1;
+	LastD          int //= -1;
+	LastH          int //= 0;
+	MagicSignature string
+}
+
+type LocalInfo struct {
+	DeviceSn string
+	Uuid     string //hashid(sn+uuid编码sha256编码2）
+}
+
+type CentreInfo struct {
+	Url        string
+	SignLocal  string
+	SignCentre string
+}
+
+type LicenceProto struct {
+	Version        int            // = 0; //1u
+	MagicValue     string         //随机字符串
+	MagicSignature string         //随机字符串编码sha256编码1
+	AuthType       proto.AuthType //=TimeAuth;//LocalAuth本地文件方式鉴权
+	DeviceDesc     string         //安卓"android" 盒子"emmc"
+	TimeInfo       TimeInfo       //空
+	LocalInfo      LocalInfo      //sn和uuid //sn和 hashid(sn+uuid编码sha256编码2）
+	CentreInfo     CentreInfo     //空
+}
+
+type LicenceProtoType struct {
+	Version        int            // = 0; //1u
+	MagicValue     string         //随机字符串
+	MagicSignature string         //随机字符串编码sha256编码1
+	AuthType       proto.AuthType //=TimeAuth;//LocalAuth本地文件方式鉴权
+	DeviceDesc     string         //安卓"android" 盒子"emmc"
+	//LocalInfo      LocalInfo  //sn和uuid
+	DeviceSn string
+	Uuid     string
+}
+
+// GenerateLicenceFile @description:
+
 func GenerateLicence(dstFile, sn, uuid, DeviceDesc string) error {
 	licenceProtoType := new(LicenceProtoType)
 	licenceProtoType.Version = 1                                                      // = 0; //1u
@@ -28,20 +71,7 @@ func GenerateLicence(dstFile, sn, uuid, DeviceDesc string) error {
 	buf := encodeLicence(licenceProtoType)
 	//异或编码加密
 	bufferEncrypt(buf)
-	//写入文件
-	f, err := os.Create(dstFile)
-	if err != nil {
-		log.Errorln("生成文件,os.Create err:", err)
-		return err
-	}
-	defer func() {
-		_ = f.Close()
-	}()
-	_, err = f.Write([]byte(buf))
-	if err != nil {
-		return err
-	}
-	return nil
+	return DirtyFileWrite(dstFile, buf)
 }
 
 func encodeLicence(licenceProtoType *LicenceProtoType) []byte {
@@ -181,7 +211,7 @@ func randomStringSha256(id string) string {
 	//id+（截取前64位）+id+(剩余的)+id
 	str1 := []byte(string(b1))[:64]
 	str2 := []byte(string(b1))[64:]
-	s1 := ezgo.SHA256(id + string(str1) + id + string(str2) + id)
+	s1 := SHA256(id + string(str1) + id + string(str2) + id)
 	return string(s1)
 }
 
@@ -205,11 +235,11 @@ func snAndUUIDMerge(sn, uuid string) string {
 
 	str1 := []byte(string(b2))[:32]
 	str2 := []byte(string(b2))[32:]
-	return ezgo.SHA256(idstr + string(str1) + idstr + string(str2) + idstr)
+	return SHA256(idstr + string(str1) + idstr + string(str2) + idstr)
 }
 
 func DecodeLicence(filepathname string) {
-	data, err := os.ReadFile(filepathname)
+	data, err := DirtyFileRead(filepathname)
 	if err != nil {
 		log.Errorln("ParseLicenceFile ioutil.ReadFile Error:", err)
 		return

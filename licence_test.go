@@ -1,6 +1,8 @@
-package licence
+package ezgo
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestParseLicenceFile(t *testing.T) {
 	//filePath := "/Users/rotaercw/Desktop/0201010123010013.proto"

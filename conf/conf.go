@@ -9,8 +9,20 @@ type Configure struct {
 	Host         string `ini:"host"`
 	Port         string `ini:"port"`
 	ResourcePath string `ini:"resource_path"`
+	// [mysql]
+	SQL ConfMySQL
 
 	// [log]
+	Log ConfLog
+
+	// sqlite
+	SQLite ConfSQLite
+
+	// dingding
+	Ding ConfDing
+}
+
+type ConfLog struct {
 	LogDir        string `ini:"log_dir"`
 	LogFileName   string `ini:"log_filename"`
 	LogMaxSize    int    `ini:"log_max_size"`
@@ -18,8 +30,19 @@ type Configure struct {
 	LogMaxBackups int    `ini:"log_max_backups"`
 	LogCompress   bool   `ini:"log_compress"`
 	LogStderr     bool   `ini:"log_stderr"`
+}
 
-	// [mysql]
+type ConfSQLite struct {
+	SQLitePath string `ini:"sqlite_path"`
+}
+
+type ConfDing struct {
+	// [dingding]
+	Token  string `ini:"dingding_token"`
+	Secret string `ini:"dingding_secret"`
+}
+
+type ConfMySQL struct {
 	MySQLHostname          string `ini:"mysql_hostname"`
 	MySQLPort              string `ini:"mysql_port"`
 	MySQLUserName          string `ini:"mysql_user"`
@@ -35,12 +58,6 @@ type Configure struct {
 	TablePre               string `ini:"table_pre"`
 	SlowSqlTime            string `ini:"slow_sql_time"`
 	PrintSqlLog            bool   `ini:"print_sql_log"`
-	// sqlite
-	SQLitePath string `ini:"sqlite_path"`
-
-	// [dingding]
-	Token  string `ini:"dingding_token"`
-	Secret string `ini:"dingding_secret"`
 }
 
 var Config *Configure = nil
@@ -63,9 +80,9 @@ func LoadConfigure(filePath string) (*Configure, error) {
 		return nil, e
 	} else {
 		fd.Section("basic").MapTo(Config)
-		fd.Section("log").MapTo(Config)
-		fd.Section("mysql").MapTo(Config)
-		fd.Section("dingding").MapTo(Config)
+		fd.Section("log").MapTo(&Config.Log)
+		fd.Section("mysql").MapTo(&Config.SQL)
+		fd.Section("dingding").MapTo(&Config.Ding)
 	}
 
 	return Config, nil

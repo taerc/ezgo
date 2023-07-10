@@ -75,7 +75,7 @@ func (pep *pushEventPayload) Proc(ctx *gin.Context) {
 		return
 	}
 
-	if pep.ObjectKind == "push" && conf.Config.Token != "" && conf.Config.Secret != "" {
+	if pep.ObjectKind == "push" && conf.Config.Ding.Token != "" && conf.Config.Ding.Secret != "" {
 
 		sn := &SimpleNotice{}
 		sn.Title = "更新"
@@ -85,7 +85,7 @@ func (pep *pushEventPayload) Proc(ctx *gin.Context) {
 			sn.Append(msg.Message)
 		}
 
-		HookSendMarkdownDingGroupWithConf(sn, conf.Config.Token, conf.Config.Secret)
+		HookSendMarkdownDingGroupWithConf(sn, conf.Config.Ding.Token, conf.Config.Ding.Secret)
 	}
 	return
 
@@ -141,14 +141,14 @@ func (tel *tagEventsLoad) Proc(ctx *gin.Context) {
 	}
 
 	Info(ctx, M, fmt.Sprintf("ObjectKind [%s]", tel.ObjectKind))
-	if tel.ObjectKind == "push" && conf.Config.Token != "" && conf.Config.Secret != "" {
+	if tel.ObjectKind == "push" && conf.Config.Ding.Token != "" && conf.Config.Ding.Secret != "" {
 		sn := &SimpleNotice{}
 		sn.Title = "发布"
 		sn.Project = tel.Project.Name
 		sn.Author = tel.UserName
 		sn.Tag = tel.Ref
 		sn.Items = StringSplits(tel.Message, []string{",", "，"})
-		HookSendMarkdownDingGroupWithConf(sn, conf.Config.Token, conf.Config.Secret)
+		HookSendMarkdownDingGroupWithConf(sn, conf.Config.Ding.Token, conf.Config.Ding.Secret)
 	}
 	return
 }

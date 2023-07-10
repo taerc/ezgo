@@ -7,7 +7,7 @@ import (
 )
 
 func Test_initSqlite(t *testing.T) {
-	c := &conf.Configure{SQLitePath: "test.db"}
+	c := &conf.ConfSQLite{SQLitePath: "test.db"}
 	initSqlite("def", c)
 	// create databases
 	db := SQLITE()

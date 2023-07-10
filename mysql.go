@@ -15,7 +15,7 @@ var mysqlMap sync.Map
 
 // ConnectMysql
 // @description:连接mysql
-func initMySQL(name string, c *conf.Configure) error {
+func initMySQL(name string, c *conf.ConfMySQL) error {
 
 	// 用户名:密码@tcp(IP:port)/数据库?charset=utf8mb4&parseTime=True&loc=Local
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
@@ -93,7 +93,7 @@ func DB(name ...string) *gorm.DB {
 	return v.(*gorm.DB)
 }
 
-func WithComponentMySQL(name string, c *conf.Configure) Component {
+func WithComponentMySQL(name string, c *conf.ConfMySQL) Component {
 	return func(wg *sync.WaitGroup) {
 		wg.Done()
 		initMySQL(name, c)
