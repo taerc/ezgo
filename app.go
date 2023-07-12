@@ -1,16 +1,11 @@
 package ezgo
 
 import (
-	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"os"
 	"path"
 	"strings"
 )
-
-var ConfigPath string
-var ShowVersion bool
 
 type Executor func(data interface{}) int
 
@@ -144,19 +139,12 @@ func Version() string {
 
 func (af *AppFlow) Do(data interface{}) int {
 
-	// show version
-
-	if ShowVersion {
-		fmt.Println("version : ", Version())
-		os.Exit(0)
-	}
+	Info(nil, M, fmt.Sprintf("Version :%s", Version()))
 
 	if n := af.Init(data); n != Success {
 		return n
 	}
-
 	// fixed
-
 	if n := af.Exec(data); n != Success {
 		return n
 	}
@@ -171,9 +159,6 @@ func (af *AppFlow) Do(data interface{}) int {
 var appFlow *AppFlow = nil
 
 func init() {
-	flag.BoolVar(&ShowVersion, "version", false, "print program build version")
-	flag.StringVar(&ConfigPath, "c", "conf/config.toml", "path of configure file.")
-	flag.Parse()
 	appFlow = new(AppFlow)
 	appFlow.Engine = gin.Default()
 	appFlow.Use(PluginRequestId(), PluginCors(), PluginRequestSnapShot())
