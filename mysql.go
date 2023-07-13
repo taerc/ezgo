@@ -5,7 +5,10 @@ import (
 	"github.com/taerc/ezgo/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	gormlog "gorm.io/gorm/logger"
+	"log"
 	"gorm.io/gorm/schema"
+	"os"
 	"sync"
 	"time"
 )
@@ -27,6 +30,7 @@ func initMySQL(name string, c *conf.ConfMySQL) error {
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true, //使用单数表名，启用该选项时，`User` 的表名应该是 `user`而不是users
 		},
+		Logger: gormlog.New(log.New(os.Stdout, "\r\n", log.LstdFlags), gormlog.Config{Colorful: true}),
 	}
 	// 打印SQL设置
 	//if MysqlConfigInstance.PrintSqlLog {
