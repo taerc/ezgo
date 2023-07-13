@@ -2,14 +2,14 @@ phony:init
 
 export GO111MODULE = on
 # alpha,release,final,auto
-MESSAGE?="增加 archive; 增加licence混淆"
 MAJOR?="0"
 MINOR?="0"
 PATCH?="4"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="4"
+TYPE_VERSION?="5"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
+MESSAGE?="默认开启 gorm 对应 sql 日志, 测试 preload 特性"
 
 
 version:
