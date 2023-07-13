@@ -62,6 +62,14 @@ func (gf *GinFlow) ResponseJson(ctx *gin.Context, er int, data interface{}) {
 		RequestId: GetRequestId(ctx),
 	})
 }
+func (gf *GinFlow) ResponseIndJson(ctx *gin.Context, er int, data interface{}) {
+	ctx.IndentedJSON(Success, Response{
+		Code:      er,
+		Data:      data,
+		Message:   "",
+		RequestId: GetRequestId(ctx),
+	})
+}
 
 type AppFlow struct {
 	Init Executor
