@@ -60,14 +60,17 @@ type ConfMySQL struct {
 	PrintSqlLog            bool   `ini:"print_sql_log"`
 }
 
+// MQTTConf
+
+type MQTTConf struct {
+	MQTTHost     string `ini:"mqtt_host"`
+	MQTTPort     int    `ini:"mqtt_port"`
+	MQTTUser     string `ini:"mqtt_user"`
+	MQTTPwd      string `ini:"mqtt_pwd"`
+	MQTTSubTopic string `ini:"mqtt_sub_topic"`
+}
+
 var Config *Configure = nil
-
-// LogConfigure @description: 日志配置文件
-type LogConfigure struct {
-}
-
-type MySQLConfigure struct {
-}
 
 func init() {
 	Config = new(Configure)

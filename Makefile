@@ -6,10 +6,10 @@ MAJOR?="0"
 MINOR?="0"
 PATCH?="4"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="5"
+TYPE_VERSION?="6"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
-MESSAGE?="默认开启 gorm 对应 sql 日志, 测试 preload 特性"
+MESSAGE?="增加 mqtt 客户端相关代码"
 
 
 version:

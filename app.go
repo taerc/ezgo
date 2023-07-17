@@ -58,7 +58,7 @@ func (gf *GinFlow) ResponseJson(ctx *gin.Context, er int, data interface{}) {
 	ctx.JSON(Success, Response{
 		Code:      er,
 		Data:      data,
-		Message:   "",
+		Message:   GetErrorMessage(er),
 		RequestId: GetRequestId(ctx),
 	})
 }
@@ -66,7 +66,7 @@ func (gf *GinFlow) ResponseIndJson(ctx *gin.Context, er int, data interface{}) {
 	ctx.IndentedJSON(Success, Response{
 		Code:      er,
 		Data:      data,
-		Message:   "",
+		Message:   GetErrorMessage(er),
 		RequestId: GetRequestId(ctx),
 	})
 }
