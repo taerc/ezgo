@@ -144,7 +144,9 @@ func EntDBDriver(name ...string) (*entsql.Driver, error) {
 
 func WithComponentMySQL(name string, c *conf.MySQLConf) Component {
 	return func(wg *sync.WaitGroup) {
-		//initMySQL(name, c)
+		if e := initMySQL(name, c); e != nil {
+			Error(nil, M, e.Error())
+		}
 		if e := initEntDb(name, "mysql", c); e != nil {
 			Error(nil, M, e.Error())
 		}
