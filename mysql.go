@@ -118,6 +118,7 @@ func initEntDb(name string, driver string, c *conf.MySQLConf) error {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
 		c.MySQLUserName, c.MySQLPass, c.MySQLHostname, c.MySQLPort,
 		c.MySQLDBName, c.Charset, c.ParseTime, c.Loc)
+	fmt.Println(dsn)
 	entDriver, e := entsql.Open(driver, dsn)
 
 	if e != nil {
@@ -144,7 +145,7 @@ func EntDBDriver(name ...string) (*entsql.Driver, error) {
 func WithComponentMySQL(name string, c *conf.MySQLConf) Component {
 	return func(wg *sync.WaitGroup) {
 		wg.Done()
-		initMySQL(name, c)
+		//initMySQL(name, c)
 		if e := initEntDb(name, "mysql", c); e != nil {
 			Error(nil, M, e.Error())
 		}

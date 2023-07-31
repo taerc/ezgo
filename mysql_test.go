@@ -1,6 +1,7 @@
 package ezgo
 
 import (
+	"fmt"
 	"github.com/taerc/ezgo/conf"
 	"testing"
 )
@@ -22,4 +23,23 @@ func Test_initMySQL(t *testing.T) {
 	}
 
 	initMySQL("def", c)
+}
+
+func Test_initEntDb(t *testing.T) {
+	c := conf.MySQLConf{
+		MySQLHostname: "127.0.0.1",
+		MySQLPort:     "3306",
+		MySQLUserName: "wp",
+		MySQLPass:     "wORd@2314",
+		MySQLDBName:   "buckets",
+		Charset:       "utf8mb4",
+		ParseTime:     "true",
+		Loc:           "Local",
+	}
+
+	name := "mysql"
+
+	if err := initEntDb(name, name, &c); err != nil {
+		fmt.Println(err)
+	}
 }
