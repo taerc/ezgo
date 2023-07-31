@@ -6,7 +6,7 @@ MAJOR?="0"
 MINOR?="0"
 PATCH?="4"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="9"
+TYPE_VERSION?="10"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 MESSAGE?="增加 mqtt 客户端相关代码"
@@ -18,7 +18,7 @@ version:
 
 init:
 	@rm -f go.mod go.sum
-	@go mod init ezgo
+	@go mod init github.com/taerc/ezgo
 	@go  mod download
 	@go mod tidy
 
