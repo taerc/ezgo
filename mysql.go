@@ -144,12 +144,11 @@ func EntDBDriver(name ...string) (*entsql.Driver, error) {
 
 func WithComponentMySQL(name string, c *conf.MySQLConf) Component {
 	return func(wg *sync.WaitGroup) {
-		wg.Done()
 		//initMySQL(name, c)
 		if e := initEntDb(name, "mysql", c); e != nil {
 			Error(nil, M, e.Error())
 		}
-
+		wg.Done()
 		Info(nil, M, "Finished Load MySQL !")
 	}
 }
