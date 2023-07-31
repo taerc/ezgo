@@ -31,7 +31,7 @@ func init() {
 
 }
 
-func newLogger(c *conf.ConfLog) *zap.Logger {
+func newLogger(c *conf.LogConf) *zap.Logger {
 	if len(c.LogFileName) == 0 {
 		return logger
 	}
@@ -60,7 +60,7 @@ func newLogger(c *conf.ConfLog) *zap.Logger {
 	return zap.New(core)
 }
 
-func initLogger(cfg *conf.ConfLog) {
+func initLogger(cfg *conf.LogConf) {
 	logger = newLogger(cfg)
 }
 
@@ -113,7 +113,7 @@ func Panic(c *gin.Context, mod string, msg string, fields ...zap.Field) {
 }
 
 // WithComponentLogger @description: 注册日志信息
-func WithComponentLogger(c *conf.ConfLog) Component {
+func WithComponentLogger(c *conf.LogConf) Component {
 	return func(wg *sync.WaitGroup) {
 		wg.Done()
 		initLogger(c)

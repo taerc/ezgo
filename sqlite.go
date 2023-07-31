@@ -12,7 +12,7 @@ import (
 var defSqliteDb *gorm.DB = nil
 var sqliteMap sync.Map
 
-func initSqlite(name string, conf *conf.ConfSQLite) error {
+func initSqlite(name string, conf *conf.SQLiteConf) error {
 
 	gormConfig := gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
@@ -22,7 +22,7 @@ func initSqlite(name string, conf *conf.ConfSQLite) error {
 	if db, e := gorm.Open(sqlite.Open(conf.SQLitePath), &gormConfig); e != nil {
 		return e
 	} else {
-		sqliteMap.Swap(name, db)
+		sqliteMap.Store(name, db)
 	}
 	return nil
 }
@@ -53,7 +53,7 @@ func SqliteExists(name string) bool {
 	return ok
 }
 
-func WithComponentSqlite(name string, c *conf.ConfSQLite) Component {
+func WithComponentSqlite(name string, c *conf.SQLiteConf) Component {
 
 	return func(wg *sync.WaitGroup) {
 		wg.Done()

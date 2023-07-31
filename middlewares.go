@@ -85,7 +85,7 @@ func PluginRequestSnapShot() gin.HandlerFunc {
 		db, e := getRequestRecordDb()
 		if e == nil {
 			if !SqliteExists(_pluginRequest) {
-				c := &conf.ConfSQLite{SQLitePath: db}
+				c := &conf.SQLiteConf{SQLitePath: db}
 				initSqlite(_pluginRequest, c)
 				SQLITE(_pluginRequest).AutoMigrate(requestRecord{})
 			}

@@ -5,10 +5,6 @@ const (
 	Failed = -1
 )
 
-const (
-	Success = 200 + iota
-	ErrInvalidJsonFormat
-)
 
 const (
 	Default string = "default"

@@ -5,6 +5,9 @@ import (
 	"github.com/taerc/ezgo/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	entsql "entgo.io/ent/dialect/sql"
+	_ "github.com/go-sql-driver/mysql"
 	gormlog "gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 	"sync"
@@ -13,10 +16,24 @@ import (
 
 var M string = "EZGO"
 var mysqlMap sync.Map
+var mysqlEntMap sync.Map
+
+const (
+	CodeOpenDbFailed = CodeDBBase + iota
+	CodeDbInstanceNotFound
+)
+
+var codeDBMessage = map[int]string{}
+
+func init() {
+	codeDBMessage[CodeOpenDbFailed] = "打开数据库失败"
+	codeDBMessage[CodeDbInstanceNotFound] = "没有找到对应的数据库实例"
+	RegisterCodeMessage(codeDBMessage)
+}
 
 // ConnectMysql
 // @description:连接mysql
-func initMySQL(name string, c *conf.ConfMySQL) error {
+func initMySQL(name string, c *conf.MySQLConf) error {
 
 	// 用户名:密码@tcp(IP:port)/数据库?charset=utf8mb4&parseTime=True&loc=Local
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
@@ -79,7 +96,7 @@ func initMySQL(name string, c *conf.ConfMySQL) error {
 	return nil
 }
 
-func DB(name ...string) *gorm.DB {
+func DB(name ...string) (*gorm.DB, error) {
 
 	key := Default
 	if len(name) != 0 {
@@ -89,16 +106,46 @@ func DB(name ...string) *gorm.DB {
 	v, ok := mysqlMap.Load(key)
 
 	if !ok {
-		Error(nil, M, fmt.Sprintf("unknown db.%s (forgotten configure?)", key))
+		return nil, NewError(CodeDbInstanceNotFound, fmt.Sprintf("unknown db.%s (forgotten configure?)", key))
 	}
 
-	return v.(*gorm.DB)
+	return v.(*gorm.DB), nil
 }
 
-func WithComponentMySQL(name string, c *conf.ConfMySQL) Component {
+func initEntDb(name string, driver string, c *conf.MySQLConf) error {
+
+	// 用户名:密码@tcp(IP:port)/数据库?charset=utf8mb4&parseTime=True&loc=Local
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
+		c.MySQLUserName, c.MySQLPass, c.MySQLHostname, c.MySQLPort,
+		c.MySQLDBName, c.Charset, c.ParseTime, c.Loc)
+	entDriver, e := entsql.Open(driver, dsn)
+
+	if e != nil {
+		return NewEError(CodeOpenDbFailed, e)
+	}
+	mysqlEntMap.Store(name, entDriver)
+	return nil
+}
+
+func EntDB(name ...string) (*entsql.Driver, error) {
+	key := Default
+	if len(name) != 0 {
+		key = name[0]
+	}
+
+	v, ok := mysqlEntMap.Load(key)
+
+	if !ok {
+		return nil, NewError(CodeDbInstanceNotFound, fmt.Sprintf("unknown db.%s (forgotten configure?)", key))
+	}
+	return v.(*entsql.Driver), nil
+}
+
+func WithComponentMySQL(name string, c *conf.MySQLConf) Component {
 	return func(wg *sync.WaitGroup) {
 		wg.Done()
 		initMySQL(name, c)
+		initEntDb(name, "mysql", c)
 		Info(nil, M, "Finished Load MySQL !")
 	}
 }

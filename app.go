@@ -46,8 +46,8 @@ func (gf *GinFlow) BindJson(ctx *gin.Context, data interface{}) int {
 	if err := ctx.BindJSON(data); err != nil {
 
 		if !strings.HasPrefix(err.Error(), "json: invalid use of ,string struct tag,") {
-			gf.ResponseJson(ctx, ErrInvalidJsonFormat, nil)
-			return ErrInvalidJsonFormat
+			gf.ResponseJson(ctx, CodeJsonFormatError, nil)
+			return CodeJsonFormatError
 		} else {
 			return Success
 		}
@@ -58,7 +58,7 @@ func (gf *GinFlow) ResponseJson(ctx *gin.Context, er int, data interface{}) {
 	ctx.JSON(Success, Response{
 		Code:      er,
 		Data:      data,
-		Message:   GetErrorMessage(er),
+		Message:   GetMessageByCode(er),
 		RequestId: GetRequestId(ctx),
 	})
 }
@@ -66,7 +66,25 @@ func (gf *GinFlow) ResponseIndJson(ctx *gin.Context, er int, data interface{}) {
 	ctx.IndentedJSON(Success, Response{
 		Code:      er,
 		Data:      data,
-		Message:   GetErrorMessage(er),
+		Message:   GetMessageByCode(er),
+		RequestId: GetRequestId(ctx),
+	})
+}
+
+func (gf *GinFlow) Response(ctx *gin.Context, data interface{}) {
+	ctx.IndentedJSON(Success, Response{
+		Code:      Success,
+		Data:      data,
+		Message:   GetMessageByCode(Success),
+		RequestId: GetRequestId(ctx),
+	})
+}
+
+func (gf *GinFlow) Error(ctx *gin.Context, e error) {
+	ctx.JSON(Success, Response{
+		Code:      GetErrorCode(e),
+		Data:      nil,
+		Message:   e.Error(),
 		RequestId: GetRequestId(ctx),
 	})
 }

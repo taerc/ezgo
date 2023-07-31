@@ -10,19 +10,19 @@ type Configure struct {
 	Port         string `ini:"port"`
 	ResourcePath string `ini:"resource_path"`
 	// [mysql]
-	SQL ConfMySQL
+	SQL MySQLConf
 
 	// [log]
-	Log ConfLog
+	Log LogConf
 
 	// sqlite
-	SQLite ConfSQLite
+	SQLite SQLiteConf
 
 	// dingding
-	Ding ConfDing
+	Ding DingConf
 }
 
-type ConfLog struct {
+type LogConf struct {
 	LogDir        string `ini:"log_dir"`
 	LogFileName   string `ini:"log_filename"`
 	LogMaxSize    int    `ini:"log_max_size"`
@@ -32,17 +32,17 @@ type ConfLog struct {
 	LogStderr     bool   `ini:"log_stderr"`
 }
 
-type ConfSQLite struct {
+type SQLiteConf struct {
 	SQLitePath string `ini:"sqlite_path"`
 }
 
-type ConfDing struct {
+type DingConf struct {
 	// [dingding]
 	Token  string `ini:"dingding_token"`
 	Secret string `ini:"dingding_secret"`
 }
 
-type ConfMySQL struct {
+type MySQLConf struct {
 	MySQLHostname          string `ini:"mysql_hostname"`
 	MySQLPort              string `ini:"mysql_port"`
 	MySQLUserName          string `ini:"mysql_user"`
@@ -68,6 +68,12 @@ type MQTTConf struct {
 	MQTTUser     string `ini:"mqtt_user"`
 	MQTTPwd      string `ini:"mqtt_pwd"`
 	MQTTSubTopic string `ini:"mqtt_sub_topic"`
+}
+
+// RedisConf
+
+type RedisConf struct {
+	RedisDSN string `ini:"redis_dsn"`
 }
 
 var Config *Configure = nil
