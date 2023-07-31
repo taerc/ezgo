@@ -145,7 +145,10 @@ func WithComponentMySQL(name string, c *conf.MySQLConf) Component {
 	return func(wg *sync.WaitGroup) {
 		wg.Done()
 		initMySQL(name, c)
-		initEntDb(name, "mysql", c)
+		if e := initEntDb(name, "mysql", c); e != nil {
+			Error(nil, M, e.Error())
+		}
+
 		Info(nil, M, "Finished Load MySQL !")
 	}
 }
