@@ -8,7 +8,8 @@ import (
 
 const (
 	Success             = 200
-	CodeJsonFormatError = 400
+	CodeJsonFormatError = 400 + iota
+	CodeInvalidDatetimeFormatString
 )
 
 const (
@@ -86,4 +87,5 @@ func GetMessageByCode(c int) string {
 func init() {
 	codeMessage[Success] = "OK"
 	codeMessage[CodeJsonFormatError] = "参数格式错误"
+	codeMessage[CodeInvalidDatetimeFormatString] = "无效的日期时间格式"
 }
