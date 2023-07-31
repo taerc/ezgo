@@ -1,4 +1,4 @@
-module ezgo
+module github.com/taerc/ezgo
 
 go 1.20
 
@@ -11,7 +11,6 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/redis/go-redis/v9 v9.0.5
 	github.com/sirupsen/logrus v1.9.3
-	github.com/taerc/ezgo v0.0.4-alpha.7
 	go.uber.org/zap v1.24.0
 	golang.org/x/crypto v0.11.0
 	gopkg.in/ini.v1 v1.67.0
