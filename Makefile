@@ -1,4 +1,4 @@
-phony:init
+phony:publish
 
 export GO111MODULE = on
 # alpha,release,final,auto
@@ -18,9 +18,9 @@ version:
 
 init:
 	@rm -f go.mod go.sum
-	@git mod init ezgo
-	@git mod download
-	@git mod tidy
+	@go mod init ezgo
+	@go  mod download
+	@go mod tidy
 
 
 publish:version
