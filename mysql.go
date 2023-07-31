@@ -127,7 +127,7 @@ func initEntDb(name string, driver string, c *conf.MySQLConf) error {
 	return nil
 }
 
-func EntDB(name ...string) (*entsql.Driver, error) {
+func EntDBDriver(name ...string) (*entsql.Driver, error) {
 	key := Default
 	if len(name) != 0 {
 		key = name[0]
