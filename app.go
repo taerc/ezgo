@@ -41,6 +41,12 @@ func (gf *GinFlow) PreProc(ctx *gin.Context) {
 func (gf *GinFlow) PostProc(ctx *gin.Context) {
 
 }
+func (gf *GinFlow) Bind(ctx *gin.Context, data interface{}) error {
+	if err := ctx.BindJSON(data); err != nil {
+		return NewEError(CodeJsonFormatError, err)
+	}
+	return nil
+}
 
 func (gf *GinFlow) BindJson(ctx *gin.Context, data interface{}) int {
 	if err := ctx.BindJSON(data); err != nil {
