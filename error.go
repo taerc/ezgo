@@ -7,7 +7,6 @@ import (
 )
 
 const (
-	OK                  = 0
 	Success             = 200
 	CodeJsonFormatError = 400 + iota
 	CodeInvalidDatetimeFormatString
