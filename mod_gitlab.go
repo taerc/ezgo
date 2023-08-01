@@ -8,8 +8,10 @@ import (
 	"time"
 )
 
+type gitlabService struct {
+}
+
 type pushEventPayload struct {
-	*GinFlow     `json:"-,omitempty"`
 	ObjectKind   string      `json:"object_kind"`
 	EventName    string      `json:"event_name"`
 	Before       string      `json:"before"`
@@ -69,9 +71,11 @@ type pushEventPayload struct {
 	} `json:"repository"`
 }
 
-func (pep *pushEventPayload) Proc(ctx *gin.Context) {
+func (g *gitlabService) Update(ctx *gin.Context) {
 
-	if e := pep.BindJson(ctx, pep); e != Success {
+	pep := pushEventPayload{}
+	if e := JsonBind(ctx, &pep); e != nil {
+		ErrorResponse(ctx, e)
 		return
 	}
 
@@ -92,7 +96,6 @@ func (pep *pushEventPayload) Proc(ctx *gin.Context) {
 }
 
 type tagEventsLoad struct {
-	*GinFlow    `json:"-,omitempty"`
 	ObjectKind  string `json:"object_kind"`
 	EventName   string `json:"event_name"`
 	Before      string `json:"before"`
@@ -134,9 +137,12 @@ type tagEventsLoad struct {
 	TotalCommitsCount int           `json:"total_commits_count"`
 }
 
-func (tel *tagEventsLoad) Proc(ctx *gin.Context) {
+func (g *gitlabService) Publish(ctx *gin.Context) {
 
-	if e := tel.BindJson(ctx, tel); e != Success {
+	tel := tagEventsLoad{}
+
+	if e := JsonBind(ctx, tel); e != nil {
+		ErrorResponse(ctx, e)
 		return
 	}
 
@@ -155,10 +161,11 @@ func (tel *tagEventsLoad) Proc(ctx *gin.Context) {
 
 func WithModuleGitLab() func(wg *sync.WaitGroup) {
 	return func(wg *sync.WaitGroup) {
-		wg.Done()
+		defer wg.Done()
+		s := new(gitlabService)
 		route := Group("/gitlab/hook/event/")
-		ProcPOST(route, "/push", &pushEventPayload{})
-		ProcPOST(route, "/pushtag", &tagEventsLoad{})
+		POST(route, "/push", s.Update)
+		POST(route, "/pushtag", s.Publish)
 		Info(nil, M, "Load GITLAB finished!")
 	}
 }
