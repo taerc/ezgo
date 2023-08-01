@@ -1,2 +1,2 @@
 package ezgo
-var version="v0.0.4-alpha.17"
+var version="v0.0.4-alpha.18"
