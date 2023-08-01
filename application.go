@@ -145,3 +145,12 @@ func NewApplication(init, exec, done Executor) *Application {
 	af.engine = new(gin.Engine)
 	return af
 }
+
+func Run(ipaddress ...string) error {
+	return application.engine.Run(ipaddress...)
+}
+
+func Do(data interface{}) error {
+	Info(nil, M, fmt.Sprintf("version: %s", Version()))
+	return application.Do(data)
+}
