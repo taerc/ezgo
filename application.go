@@ -146,6 +146,10 @@ func NewApplication(init, exec, done Executor) *Application {
 	return af
 }
 
+func Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
+	return application.engine.Group(relativePath, handlers...)
+}
+
 func Run(ipaddress ...string) error {
 	return application.engine.Run(ipaddress...)
 }
