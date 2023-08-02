@@ -118,12 +118,17 @@ func initEntDb(name string, driver string, c *conf.MySQLConf) error {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
 		c.MySQLUserName, c.MySQLPass, c.MySQLHostname, c.MySQLPort,
 		c.MySQLDBName, c.Charset, c.ParseTime, c.Loc)
-	fmt.Println(dsn)
 	entDriver, e := entsql.Open(driver, dsn)
-
 	if e != nil {
 		return NewEError(CodeOpenDbFailed, e)
 	}
+
+	if db := entDriver.DB(); db != nil {
+		db.SetMaxIdleConns(c.MySQLMaxIdleConnection)
+		db.SetMaxOpenConns(c.MySQLMaxOpenConnection)
+		db.SetConnMaxLifetime(time.Hour)
+	}
+
 	mysqlEntMap.Store(name, entDriver)
 	return nil
 }

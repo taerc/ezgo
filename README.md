@@ -45,6 +45,9 @@ golang 代码学习场
 - http://www.ruanyifeng.com/blog/2011/09/restful.html
 
 
+- https://entgo.io/docs/sql-integration/#configure-sqldb
+> ent  数据库连接池的使用方法
+
 ## 代码规范
 
 - https://github.com/uber-go/guide
