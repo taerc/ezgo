@@ -2,16 +2,18 @@ package ezgo
 
 import (
 	"fmt"
+
 	"github.com/taerc/ezgo/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"sync"
+	"time"
 
 	entsql "entgo.io/ent/dialect/sql"
 	_ "github.com/go-sql-driver/mysql"
 	gormlog "gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"sync"
-	"time"
 )
 
 var M string = "EZGO"
@@ -149,13 +151,13 @@ func EntDBDriver(name ...string) (*entsql.Driver, error) {
 
 func WithComponentMySQL(name string, c *conf.MySQLConf) Component {
 	return func(wg *sync.WaitGroup) {
+		defer wg.Done()
 		if e := initMySQL(name, c); e != nil {
 			Error(nil, M, e.Error())
 		}
 		if e := initEntDb(name, "mysql", c); e != nil {
 			Error(nil, M, e.Error())
 		}
-		wg.Done()
 		Info(nil, M, "Finished Load MySQL !")
 	}
 }
