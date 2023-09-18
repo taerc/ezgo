@@ -24,32 +24,32 @@ const (
 	CodeServiceBase
 )
 
-type EM struct {
-	C int
-	M string
+type zerror struct {
+	c int
+	m string
 }
 
-func (e EM) Error() string {
-	return fmt.Sprintf("%d:%s", e.C, e.M)
+func (e zerror) Error() string {
+	return fmt.Sprintf("%d:%s", e.c, e.m)
 }
 
 func NewCode(c int) error {
-	return &EM{
-		C: c,
-		M: GetMessageByCode(c),
+	return &zerror{
+		c: c,
+		m: GetMessageByCode(c),
 	}
 }
 
 func NewError(c int, m string) error {
-	return &EM{
-		C: c,
-		M: fmt.Sprintf("%s|%s", GetMessageByCode(c), m),
+	return &zerror{
+		c: c,
+		m: fmt.Sprintf("%s|%s", GetMessageByCode(c), m),
 	}
 }
 func NewEError(c int, e error) error {
-	return &EM{
-		C: c,
-		M: fmt.Sprintf("%s|%s", GetMessageByCode(c), e.Error()),
+	return &zerror{
+		c: c,
+		m: fmt.Sprintf("%s|%s", GetMessageByCode(c), e.Error()),
 	}
 }
 
