@@ -3,11 +3,11 @@ package simplechat
 import "container/list"
 
 type Message struct {
-	ID   string
-	From string
-	To   string
-	Type string // user group
-	Data string
+	Id   string `json:"id"`
+	From string `json:"from"`
+	To   string `json:"to"`
+	Type string `json:"type"`
+	Data string `json:"data"`
 }
 
 type connection struct {
@@ -44,18 +44,20 @@ type chatGroup struct {
 }
 
 type Client interface {
-	NewClient(id string)
+	NewClient(id string) *chatUser
 	GetId() string
 	Login(id string) error
+	Logout(id string) error
 	SendMessageToUser(m Message) error
 	SendMessageToGroup(m Message) error
 }
 
 type Group interface {
-	NewGroup(id string)
+	NewGroup(id string) *chatGroup
+	GetId() string
 	GetAdmin() error
 	Login(id string) error
-	GetId() string
+	Logout(id string) error
 	AddUserToGroup(usrId string) error
 	RemoveUserFromGroup(usrId string) error
 	GetUserList() *list.Element
