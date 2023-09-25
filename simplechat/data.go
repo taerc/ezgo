@@ -11,11 +11,11 @@ type Message struct {
 }
 
 type connection struct {
-	// Connection
+	connId string
 }
 
 type connectionContext struct {
-	ID   string
+	Id   string
 	Type int
 }
 
@@ -31,12 +31,12 @@ func init() {
 }
 
 type chatUser struct {
-	ID   string
+	Id   string
 	conn connection
 }
 
 type chatGroup struct {
-	ID    string
+	Id    string
 	Admin string
 	conn  connection
 
@@ -45,18 +45,19 @@ type chatGroup struct {
 
 type Client interface {
 	NewClient(id string)
-	ClientID() string
-	Client() error
-	SendToUser() error
-	SendToGroup() error
-	Role() int
+	GetId() string
+	Login(id string) error
+	SendMessageToUser(m Message) error
+	SendMessageToGroup(m Message) error
 }
 
 type Group interface {
 	NewGroup(id string)
-	GroupID() string
-	AddUserToGroup() error
-	DeleteUser() error
-	GetUserList() error
-	SendMessage() error
+	GetAdmin() error
+	Login(id string) error
+	GetId() string
+	AddUserToGroup(usrId string) error
+	RemoveUserFromGroup(usrId string) error
+	GetUserList() *list.Element
+	SendMessage(m Message) error
 }
