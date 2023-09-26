@@ -11,9 +11,6 @@ func NewGroup(id string) *ChatGroup {
 		Id:       id,
 		userList: list.New(),
 		lockList: &sync.Mutex{},
-		conn: connection{
-			connLock: sync.Mutex{},
-		},
 	}
 	trackGroup(group)
 	return group

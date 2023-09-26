@@ -25,6 +25,13 @@ type SendMessage struct {
 	To   string `json:"to"`
 	Data string `json:"data"`
 }
+type SendGroupMessage struct {
+	Type    string `json:"type"`
+	Id      string `json:"id"`
+	From    string `json:"from"`
+	GroupId string `json:"groupId"`
+	Data    string `json:"data"`
+}
 
 type LoginMessage struct {
 	UsrId string
@@ -35,16 +42,18 @@ type LogoutMessage struct {
 }
 
 type JoinGroupMessage struct {
+	UsrIds  []string
+	GroupId string
 }
 
 type LeaveGroupMessage struct {
+	UsrIds  []string
+	GroupId string
 }
 
 type DestoryGroupMessage struct {
+	GroupId string
 }
-
-// type Message struct {
-// }
 
 type ChatUser struct {
 	Id   string
