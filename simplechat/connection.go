@@ -13,7 +13,8 @@ type connection struct {
 }
 
 type connectionContext struct {
-	Id string
+	Id    string
+	UsrId string
 }
 
 func (c *connection) SendMessage(data string) {

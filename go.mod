@@ -9,6 +9,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/google/flatbuffers v23.5.26+incompatible
 	github.com/google/uuid v1.3.0
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/panjf2000/gnet v1.6.7
 	github.com/redis/go-redis/v9 v9.0.5
 	github.com/sirupsen/logrus v1.9.3

@@ -6,8 +6,8 @@ import (
 )
 
 type Command struct {
-	Commd string      `json:"cmd"`
-	Data  interface{} `json:"data"`
+	Cmd  string      `json:"cmd"`
+	Data interface{} `json:"data"`
 }
 
 type Message struct {
@@ -18,20 +18,33 @@ type Message struct {
 	Data string `json:"data"`
 }
 
+type SendMessage struct {
+	Type string `json:"type"`
+	Id   string `json:"id"`
+	From string `json:"from"`
+	To   string `json:"to"`
+	Data string `json:"data"`
+}
+
 type LoginMessage struct {
+	UsrId string
 }
 
 type LogoutMessage struct {
+	UsrId string
 }
 
-type JoinGroup struct {
+type JoinGroupMessage struct {
 }
 
-type LeaveGroup struct {
+type LeaveGroupMessage struct {
 }
 
-type DestoryGroup struct {
+type DestoryGroupMessage struct {
 }
+
+// type Message struct {
+// }
 
 type ChatUser struct {
 	Id   string
@@ -61,4 +74,13 @@ type Group interface {
 	RemoveUserFromGroup(usrId string) error
 	GetUserList() *list.List
 	SendMessage(m Message) error
+}
+
+func NewCommand(cmd string, data interface{}) Command {
+
+	return Command{
+		Cmd:  cmd,
+		Data: data,
+	}
+
 }

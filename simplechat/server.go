@@ -1,9 +1,11 @@
 package simplechat
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
+	"github.com/mitchellh/mapstructure"
 	"github.com/panjf2000/gnet"
 	"github.com/taerc/ezgo"
 )
@@ -43,25 +45,58 @@ func (es *chatServer) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
 }
 
 func (es *chatServer) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Action) {
-	// Echo synchronously.
-	fmt.Println(string(frame))
 	out = frame
+	fmt.Println(len(frame))
+	cmd := &Command{}
+	if e := json.Unmarshal(frame, cmd); e != nil {
+		fmt.Println(e.Error())
+	}
+	go es.handlerMessage(cmd, c)
+	// TODO
+	// frame decoding
+	return
+}
+
+func (es *chatServer) handlerMessage(cmd *Command, c gnet.Conn) error {
+
+	if cmd.Cmd == CommandLogin {
+		return es.commandLogin(cmd, c)
+	} else if cmd.Cmd == CommandSend {
+
+	}
+
+	return nil
+}
+
+func (es *chatServer) commandLogin(cmd *Command, c gnet.Conn) error {
+
+	login := &LoginMessage{}
+	e := mapstructure.Decode(cmd.Data, login)
+	if e != nil {
+		fmt.Println(e.Error())
+	}
+	// TODO
+	// valid Login and userId
 	ctx := c.Context()
 	if ctx != nil {
 		ct := ctx.(connectionContext)
 		fmt.Println(ct.Id)
+		ct.UsrId = login.UsrId
+		c.SetContext(ct)
 	}
-	return
 
-	/*
-		// Echo asynchronously.
-		data := append([]byte{}, frame...)
-		go func() {
-			time.Sleep(time.Second)
-			c.AsyncWrite(data)
-		}()
-		return
-	*/
+	return nil
+}
+
+func (es *chatServer) commandSend(cmd *Command, c gnet.Conn) error {
+
+	send := &SendMessage{}
+	e := mapstructure.Decode(cmd.Data, send)
+	if e != nil {
+		fmt.Println(e.Error())
+	}
+
+	return nil
 }
 
 func StartChatServer(port int) error {
