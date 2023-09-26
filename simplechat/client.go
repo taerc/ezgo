@@ -13,10 +13,12 @@ func (c *ChatUser) GetId() string {
 	return c.Id
 }
 
-func (c *ChatUser) Login(id string) error {
+func (c *ChatUser) SendMessageToUser(m Message) error {
+
 	return nil
 }
 
-func (c *ChatUser) Logout(id string) error {
+func (c *ChatUser) SendMessageToGroup(m Message) error {
+
 	return nil
 }

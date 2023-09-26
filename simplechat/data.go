@@ -40,14 +40,12 @@ type ChatGroup struct {
 	Admin string
 	conn  connection
 
-	userList *list.Element
+	userList *list.List
 }
 
 type Client interface {
 	NewClient(id string) *ChatUser
 	GetId() string
-	Login(id string) error
-	Logout(id string) error
 	SendMessageToUser(m Message) error
 	SendMessageToGroup(m Message) error
 }
@@ -55,12 +53,9 @@ type Client interface {
 type Group interface {
 	NewGroup(id string) *ChatGroup
 	GetId() string
-	GetAdmin() error
-	Login(id string) error
-	Logout(id string) error
 	AddUserToGroup(usrId string) error
 	RemoveUserFromGroup(usrId string) error
-	GetUserList() *list.Element
+	GetUserList() *list.List
 	SendMessage(m Message) error
 }
 
