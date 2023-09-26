@@ -45,12 +45,11 @@ func (es *chatServer) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
 }
 
 func (es *chatServer) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Action) {
-	out = frame
-	fmt.Println(len(frame))
 	cmd := &Command{}
 	if e := json.Unmarshal(frame, cmd); e != nil {
 		fmt.Println(e.Error())
 	}
+	// out = []byte("this is back from client")
 	go es.handlerMessage(cmd, c)
 	// TODO
 	// frame decoding
@@ -101,6 +100,10 @@ func (es *chatServer) commandSend(cmd *Command, c gnet.Conn) error {
 		fmt.Println(ct.Id)
 		fmt.Println(ct.UsrId)
 	}
+
+	c.AsyncWrite([]byte("this is back from server!"))
+
+	// c.SendTo([]byte("this is back from server!"))
 
 	return nil
 }
