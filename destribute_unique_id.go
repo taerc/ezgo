@@ -1,6 +1,7 @@
 package ezgo
 
 // steal from https://github.com/gitstliu/go-id-worker/blob/master/idworker.go
+// base from snowflake
 import (
 	"errors"
 	"fmt"
@@ -8,37 +9,42 @@ import (
 	"time"
 )
 
+// timestamp | dataCenter | worker | seq
+
 type IdWorker struct {
+	// part
+	lastTimestamp int64
+	dataCenterId  int64
+	workerId      int64
+	sequence      int64
+
 	startTime             int64
 	workerIdBits          uint
-	datacenterIdBits      uint
+	dataCenterIdBits      uint
 	maxWorkerId           int64
-	maxDatacenterId       int64
+	maxDataCenterId       int64
 	sequenceBits          uint
 	workerIdLeftShift     uint
-	datacenterIdLeftShift uint
+	dataCenterIdLeftShift uint
 	timestampLeftShift    uint
 	sequenceMask          int64
-	workerId              int64
-	datacenterId          int64
-	sequence              int64
-	lastTimestamp         int64
-	signMask              int64
-	idLock                *sync.Mutex
+
+	signMask int64
+	idLock   *sync.Mutex
 }
 
-func (iw *IdWorker) InitIdWorker(workerId, datacenterId int64) error {
+func (iw *IdWorker) InitIdWorker(workerId, dataCenterId int64) error {
 
 	var baseValue int64 = -1
 	iw.startTime = 1463834116272
 	iw.workerIdBits = 5
-	iw.datacenterIdBits = 5
+	iw.dataCenterIdBits = 5
 	iw.maxWorkerId = baseValue ^ (baseValue << iw.workerIdBits)
-	iw.maxDatacenterId = baseValue ^ (baseValue << iw.datacenterIdBits)
+	iw.maxDataCenterId = baseValue ^ (baseValue << iw.dataCenterIdBits)
 	iw.sequenceBits = 12
 	iw.workerIdLeftShift = iw.sequenceBits
-	iw.datacenterIdLeftShift = iw.workerIdBits + iw.workerIdLeftShift
-	iw.timestampLeftShift = iw.datacenterIdBits + iw.datacenterIdLeftShift
+	iw.dataCenterIdLeftShift = iw.workerIdBits + iw.workerIdLeftShift
+	iw.timestampLeftShift = iw.dataCenterIdBits + iw.dataCenterIdLeftShift
 	iw.sequenceMask = baseValue ^ (baseValue << iw.sequenceBits)
 	iw.sequence = 0
 	iw.lastTimestamp = -1
@@ -47,13 +53,13 @@ func (iw *IdWorker) InitIdWorker(workerId, datacenterId int64) error {
 	iw.idLock = &sync.Mutex{}
 
 	if iw.workerId < 0 || iw.workerId > iw.maxWorkerId {
-		return errors.New(fmt.Sprintf("workerId[%v] is less than 0 or greater than maxWorkerId[%v].", workerId, datacenterId))
+		return errors.New(fmt.Sprintf("workerId[%v] is less than 0 or greater than maxWorkerId[%v].", workerId, dataCenterId))
 	}
-	if iw.datacenterId < 0 || iw.datacenterId > iw.maxDatacenterId {
-		return errors.New(fmt.Sprintf("datacenterId[%d] is less than 0 or greater than maxDatacenterId[%d].", workerId, datacenterId))
+	if iw.dataCenterId < 0 || iw.dataCenterId > iw.maxDataCenterId {
+		return errors.New(fmt.Sprintf("dataCenterId[%d] is less than 0 or greater than maxDataCenterId[%d].", workerId, dataCenterId))
 	}
 	iw.workerId = workerId
-	iw.datacenterId = datacenterId
+	iw.dataCenterId = dataCenterId
 	return nil
 }
 
@@ -79,7 +85,7 @@ func (iw *IdWorker) NextId() (int64, error) {
 	iw.idLock.Unlock()
 
 	id := ((timestamp - iw.startTime) << iw.timestampLeftShift) |
-		(iw.datacenterId << iw.datacenterIdLeftShift) |
+		(iw.dataCenterId << iw.dataCenterIdLeftShift) |
 		(iw.workerId << iw.workerIdLeftShift) |
 		iw.sequence
 

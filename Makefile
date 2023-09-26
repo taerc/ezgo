@@ -10,6 +10,7 @@ TYPE_VERSION?="22"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 MESSAGE?="优化Application代码"
+BUILD?=build
 
 
 version:Makefile
@@ -23,6 +24,7 @@ init:
 	@go mod tidy
 
 
+
 publish:version
 #linux系统 build
 	git add .
@@ -30,3 +32,10 @@ publish:version
 	git push
 	git tag -a $(GIT_TAG) -m $(MESSAGE)
 	git push origin --tags
+
+## testing
+chat:cmd/chat/main.go | $(BUILD)
+	@go build -o $(BUILD)/chat cmd/chat/main.go
+
+$(BUILD): 
+	@mkdir -p $(BUILD)
