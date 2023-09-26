@@ -54,7 +54,6 @@ type ChatUser struct {
 type ChatGroup struct {
 	Id    string
 	Admin string
-	conn  connection
 
 	userList *list.List
 	lockList *sync.Mutex

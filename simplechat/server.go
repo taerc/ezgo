@@ -62,7 +62,7 @@ func (es *chatServer) handlerMessage(cmd *Command, c gnet.Conn) error {
 	if cmd.Cmd == CommandLogin {
 		return es.commandLogin(cmd, c)
 	} else if cmd.Cmd == CommandSend {
-
+		return es.commandSend(cmd, c)
 	}
 
 	return nil
@@ -80,7 +80,6 @@ func (es *chatServer) commandLogin(cmd *Command, c gnet.Conn) error {
 	ctx := c.Context()
 	if ctx != nil {
 		ct := ctx.(connectionContext)
-		fmt.Println(ct.Id)
 		ct.UsrId = login.UsrId
 		c.SetContext(ct)
 	}
@@ -94,6 +93,13 @@ func (es *chatServer) commandSend(cmd *Command, c gnet.Conn) error {
 	e := mapstructure.Decode(cmd.Data, send)
 	if e != nil {
 		fmt.Println(e.Error())
+	}
+	fmt.Println(send.Data)
+	ctx := c.Context()
+	if ctx != nil {
+		ct := ctx.(connectionContext)
+		fmt.Println(ct.Id)
+		fmt.Println(ct.UsrId)
 	}
 
 	return nil

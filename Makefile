@@ -37,7 +37,7 @@ publish:version
 chat:cmd/chat/main.go | $(BUILD)
 	@go build -o $(BUILD)/chat cmd/chat/main.go
 
-chatclient:cmd/tcpclient/main.go | $(BUILD)
+client:cmd/tcpclient/main.go | $(BUILD)
 	@go build -o $(BUILD)/client cmd/tcpclient/main.go
 
 

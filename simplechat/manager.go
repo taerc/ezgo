@@ -63,5 +63,4 @@ func getConnectionById(connId string) (*connection, error) {
 		return c, nil
 	}
 	return nil, errors.New("not found group")
-
 }
