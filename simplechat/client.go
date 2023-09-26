@@ -1,11 +1,18 @@
 package simplechat
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"sync"
+)
 
 func NewClient(id string) *ChatUser {
 
 	usr := &ChatUser{
 		Id: id,
+		conn: connection{
+			connLock: sync.Mutex{},
+		},
 	}
 	trackUser(usr)
 	return usr
@@ -30,15 +37,30 @@ func (c *ChatUser) SendMessageToUser(data string, usrId string) error {
 
 func (c *ChatUser) SendMessageToGroup(data string, groudId string) error {
 
-	m := Message{
-		From: c.Id,
-		To:   groudId,
-		Type: "group",
-		Data: data,
+	group, e1 := getGroupById(groudId)
+
+	if e1 != nil {
+		fmt.Println(e1.Error())
+		return e1
 	}
 
-	msg, _ := json.MarshalIndent(m, " ", " ")
-	c.conn.SendMessage(string(msg))
+	usrList := group.GetUserList()
+
+	for item := usrList.Front(); item != nil; item = item.Next() {
+		m := Message{
+			From: c.Id,
+			To:   groudId,
+			Type: "group",
+			Data: data,
+		}
+		usrId := item.Value.(string)
+		if usrId == c.Id {
+			continue
+		}
+		conn, _ := getUserById(usrId)
+		msg, _ := json.MarshalIndent(m, " ", " ")
+		conn.conn.SendMessage(string(msg))
+	}
 
 	return nil
 }
