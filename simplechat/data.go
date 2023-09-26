@@ -21,21 +21,21 @@ type connectionContext struct {
 
 var (
 	// _conn  map[string]connection
-	_user  map[string]chatUser
-	_group map[string]chatGroup
+	_user  map[string]*ChatUser
+	_group map[string]*ChatGroup
 )
 
 func init() {
-	_user = make(map[string]chatUser)
-	_group = make(map[string]chatGroup)
+	_user = make(map[string]*ChatUser)
+	_group = make(map[string]*ChatGroup)
 }
 
-type chatUser struct {
+type ChatUser struct {
 	Id   string
 	conn connection
 }
 
-type chatGroup struct {
+type ChatGroup struct {
 	Id    string
 	Admin string
 	conn  connection
@@ -44,7 +44,7 @@ type chatGroup struct {
 }
 
 type Client interface {
-	NewClient(id string) *chatUser
+	NewClient(id string) *ChatUser
 	GetId() string
 	Login(id string) error
 	Logout(id string) error
@@ -53,7 +53,7 @@ type Client interface {
 }
 
 type Group interface {
-	NewGroup(id string) *chatGroup
+	NewGroup(id string) *ChatGroup
 	GetId() string
 	GetAdmin() error
 	Login(id string) error
@@ -62,4 +62,12 @@ type Group interface {
 	RemoveUserFromGroup(usrId string) error
 	GetUserList() *list.Element
 	SendMessage(m Message) error
+}
+
+func trackUser(usr *ChatUser) {
+	_user[usr.Id] = usr
+}
+
+func trackGroup(group *ChatGroup) {
+	_group[group.Id] = group
 }
