@@ -54,34 +54,34 @@ func ChatIDSetting() EZIDSetting {
 	}
 }
 
-func (iw *EZID) NewEZID(objectId, groupId int64, setting EZIDSetting) error {
-
+func NewEZID(groupId, objectId int64, setting EZIDSetting) *EZID {
 	var baseValue int64 = -1
-	iw.startTime = 1463834116272
-	iw.setting = setting
-	iw.setting.objectIdWidth = 5
-	iw.setting.groupIdWidth = 5
-	iw.setting.sequenceWidth = 12
-	iw.objectIdLimit = baseValue ^ (baseValue << iw.setting.objectIdWidth)
-	iw.groupIdLimit = baseValue ^ (baseValue << iw.setting.groupIdWidth)
-	iw.objectIdOffset = iw.setting.sequenceWidth
-	iw.groupIdOffset = iw.setting.objectIdWidth + iw.objectIdOffset
-	iw.timestampOffset = iw.setting.groupIdWidth + iw.groupIdOffset
-	iw.sequenceMask = baseValue ^ (baseValue << iw.setting.sequenceWidth)
-	iw.sequence = 0
-	iw.lastTimestamp = -1
-	iw.signMask = ^baseValue + 1
-	iw.idMutex = &sync.Mutex{}
+	ezid := &EZID{
+		startTime:      1463834116272,
+		setting:        setting,
+		objectIdOffset: setting.sequenceWidth,
+		sequence:       0,
+		lastTimestamp:  -1,
+		signMask:       ^baseValue + 1,
+		idMutex:        &sync.Mutex{},
+		objectId:       objectId,
+		groupId:        groupId,
+	}
+	ezid.objectIdLimit = baseValue ^ (baseValue << int64(setting.objectIdWidth))
+	ezid.groupIdLimit = baseValue ^ (baseValue << int64(setting.groupIdWidth))
+	ezid.sequenceMask = baseValue ^ (baseValue << int64(setting.sequenceWidth))
+	ezid.groupIdOffset = setting.objectIdWidth + ezid.objectIdOffset
+	ezid.timestampOffset = setting.groupIdWidth + ezid.groupIdOffset
 
-	if iw.objectId < 0 || iw.objectId > iw.objectIdLimit {
-		return errors.New(fmt.Sprintf("objectId[%v] is less than 0 or greater than objectIdLimit[%v].", objectId, groupId))
+	if ezid.objectId < 0 || ezid.objectId > ezid.objectIdLimit {
+		// return errors.New(fmt.Sprintf("objectId[%v] is less than 0 or greater than objectIdLimit[%v].", objectId, groupId))
+		return nil
 	}
-	if iw.groupId < 0 || iw.groupId > iw.groupIdLimit {
-		return errors.New(fmt.Sprintf("groupId[%d] is less than 0 or greater than groupIdLimit[%d].", objectId, groupId))
+	if ezid.groupId < 0 || ezid.groupId > ezid.groupIdLimit {
+		// return errors.New(fmt.Sprintf("groupId[%d] is less than 0 or greater than groupIdLimit[%d].", objectId, groupId))
+		return nil
 	}
-	iw.objectId = objectId
-	iw.groupId = groupId
-	return nil
+	return ezid
 }
 
 func (iw *EZID) NextId() (int64, error) {

@@ -9,6 +9,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/google/flatbuffers v23.5.26+incompatible
 	github.com/google/uuid v1.3.0
+	github.com/panjf2000/gnet v1.6.7
 	github.com/redis/go-redis/v9 v9.0.5
 	github.com/sirupsen/logrus v1.9.3
 	go.uber.org/zap v1.24.0
@@ -44,8 +45,9 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
-	go.uber.org/atomic v1.7.0 // indirect
-	go.uber.org/multierr v1.6.0 // indirect
+	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	go.uber.org/atomic v1.9.0 // indirect
+	go.uber.org/multierr v1.7.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect

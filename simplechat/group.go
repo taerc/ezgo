@@ -41,7 +41,6 @@ func (g *ChatGroup) RemoveUserFromGroup(usrId string) error {
 			g.userList.Remove(item)
 			break
 		}
-		fmt.Println(u)
 	}
 	return nil
 }
