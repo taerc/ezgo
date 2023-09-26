@@ -46,6 +46,8 @@ func DataCenterSetting() EZIDSetting {
 	}
 }
 
+// ChaitIDSetting
+// 聊天服务器用于生成 connection id
 func ChatIDSetting() EZIDSetting {
 	return EZIDSetting{
 		groupIdWidth:  8,
@@ -55,21 +57,21 @@ func ChatIDSetting() EZIDSetting {
 }
 
 func NewEZID(groupId, objectId int64, setting EZIDSetting) *EZID {
-	var baseValue int64 = -1
+	var maxLimit int64 = -1
 	ezid := &EZID{
-		startTime:      1463834116272,
+		startTime:      time.Now().UnixNano(),
 		setting:        setting,
 		objectIdOffset: setting.sequenceWidth,
 		sequence:       0,
 		lastTimestamp:  -1,
-		signMask:       ^baseValue + 1,
+		signMask:       ^maxLimit + 1,
 		idMutex:        &sync.Mutex{},
 		objectId:       objectId,
 		groupId:        groupId,
 	}
-	ezid.objectIdLimit = baseValue ^ (baseValue << int64(setting.objectIdWidth))
-	ezid.groupIdLimit = baseValue ^ (baseValue << int64(setting.groupIdWidth))
-	ezid.sequenceMask = baseValue ^ (baseValue << int64(setting.sequenceWidth))
+	ezid.objectIdLimit = maxLimit ^ (maxLimit << int64(setting.objectIdWidth))
+	ezid.groupIdLimit = maxLimit ^ (maxLimit << int64(setting.groupIdWidth))
+	ezid.sequenceMask = maxLimit ^ (maxLimit << int64(setting.sequenceWidth))
 	ezid.groupIdOffset = setting.objectIdWidth + ezid.objectIdOffset
 	ezid.timestampOffset = setting.groupIdWidth + ezid.groupIdOffset
 
@@ -84,31 +86,31 @@ func NewEZID(groupId, objectId int64, setting EZIDSetting) *EZID {
 	return ezid
 }
 
-func (iw *EZID) NextId() (int64, error) {
-	iw.idMutex.Lock()
-	defer iw.idMutex.Unlock()
+func (ezid *EZID) NextId() (int64, error) {
+	ezid.idMutex.Lock()
+	defer ezid.idMutex.Unlock()
 
 	timestamp := time.Now().UnixNano()
-	if timestamp < iw.lastTimestamp {
-		return -1, errors.New(fmt.Sprintf("Clock moved backwards.  Refusing to generate id for %d milliseconds", iw.lastTimestamp-timestamp))
+	if timestamp < ezid.lastTimestamp {
+		return -1, errors.New(fmt.Sprintf("Clock moved backwards.  Refusing to generate id for %d milliseconds", ezid.lastTimestamp-timestamp))
 	}
 
-	if timestamp == iw.lastTimestamp {
-		iw.sequence = (iw.sequence + 1) & iw.sequenceMask
-		if iw.sequence == 0 {
-			timestamp = iw.tilNextMillis()
-			iw.sequence = 0
+	if timestamp == ezid.lastTimestamp {
+		ezid.sequence = (ezid.sequence + 1) & ezid.sequenceMask
+		if ezid.sequence == 0 {
+			timestamp = ezid.tilNextMillis()
+			ezid.sequence = 0
 		}
 	} else {
-		iw.sequence = 0
+		ezid.sequence = 0
 	}
 
-	iw.lastTimestamp = timestamp
+	ezid.lastTimestamp = timestamp
 
-	id := ((timestamp - iw.startTime) << iw.timestampOffset) |
-		(iw.groupId << iw.groupIdOffset) |
-		(iw.objectId << iw.objectIdOffset) |
-		iw.sequence
+	id := ((timestamp - ezid.startTime) << ezid.timestampOffset) |
+		(ezid.groupId << ezid.groupIdOffset) |
+		(ezid.objectId << ezid.objectIdOffset) |
+		ezid.sequence
 
 	if id < 0 {
 		id = -id
@@ -117,8 +119,8 @@ func (iw *EZID) NextId() (int64, error) {
 	return id, nil
 }
 
-func (iw *EZID) NextStringID() (string, error) {
-	id, e := iw.NextId()
+func (ezid *EZID) NextStringID() (string, error) {
+	id, e := ezid.NextId()
 	if e != nil {
 		return "", e
 	}
@@ -126,9 +128,9 @@ func (iw *EZID) NextStringID() (string, error) {
 	return sid, nil
 }
 
-func (iw *EZID) tilNextMillis() int64 {
+func (ezid *EZID) tilNextMillis() int64 {
 	timestamp := time.Now().UnixNano()
-	if timestamp <= iw.lastTimestamp {
+	if timestamp <= ezid.lastTimestamp {
 		timestamp = time.Now().UnixNano() / int64(time.Millisecond)
 	}
 	return timestamp

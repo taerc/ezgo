@@ -5,22 +5,32 @@ import (
 	"sync"
 )
 
+type Command struct {
+	Commd string      `json:"cmd"`
+	Data  interface{} `json:"data"`
+}
+
 type Message struct {
+	Type string `json:"type"`
 	Id   string `json:"id"`
 	From string `json:"from"`
 	To   string `json:"to"`
-	Type string `json:"type"`
 	Data string `json:"data"`
 }
 
-type connection struct {
-	connId   string
-	connLock sync.Mutex
+type LoginMessage struct {
 }
 
-type connectionContext struct {
-	Id   string
-	Type int
+type LogoutMessage struct {
+}
+
+type JoinGroup struct {
+}
+
+type LeaveGroup struct {
+}
+
+type DestoryGroup struct {
 }
 
 type ChatUser struct {

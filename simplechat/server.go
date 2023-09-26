@@ -8,6 +8,9 @@ import (
 	"github.com/taerc/ezgo"
 )
 
+// TODO
+// package split case
+
 type chatServer struct {
 	*gnet.EventServer
 	ezid *ezgo.EZID
@@ -21,7 +24,16 @@ func (es *chatServer) OnInitComplete(srv gnet.Server) (action gnet.Action) {
 
 func (es *chatServer) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
 	fmt.Println("open ")
-
+	cid, e := es.ezid.NextStringID()
+	if e != nil {
+		fmt.Println(e.Error())
+	}
+	// c.Context()
+	ctx := connectionContext{
+		Id: cid,
+	}
+	fmt.Println(cid)
+	c.SetContext(ctx)
 	return
 }
 
@@ -29,10 +41,16 @@ func (es *chatServer) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
 	fmt.Println("close ", c.RemoteAddr().String())
 	return
 }
+
 func (es *chatServer) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Action) {
 	// Echo synchronously.
 	fmt.Println(string(frame))
 	out = frame
+	ctx := c.Context()
+	if ctx != nil {
+		ct := ctx.(connectionContext)
+		fmt.Println(ct.Id)
+	}
 	return
 
 	/*
@@ -47,7 +65,9 @@ func (es *chatServer) React(frame []byte, c gnet.Conn) (out []byte, action gnet.
 }
 
 func StartChatServer(port int) error {
-	echo := new(chatServer)
+	echo := &chatServer{
+		ezid: ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
+	}
 	log.Fatal(gnet.Serve(echo, fmt.Sprintf("tcp://:%d", port), gnet.WithMulticore(false)))
 	return nil
 }

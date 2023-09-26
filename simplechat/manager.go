@@ -6,13 +6,17 @@ import (
 )
 
 var (
-	_user      map[string]*ChatUser
-	_lockUser  *sync.Mutex
-	_group     map[string]*ChatGroup
-	_lockGroup *sync.Mutex
+	_connection     map[string]*connection
+	_connectionLock *sync.Mutex
+	_user           map[string]*ChatUser
+	_lockUser       *sync.Mutex
+	_group          map[string]*ChatGroup
+	_lockGroup      *sync.Mutex
 )
 
 func init() {
+	_connection = make(map[string]*connection)
+	_connectionLock = &sync.Mutex{}
 	_user = make(map[string]*ChatUser)
 	_lockUser = &sync.Mutex{}
 	_group = make(map[string]*ChatGroup)
@@ -25,6 +29,11 @@ func trackUser(usr *ChatUser) {
 
 func trackGroup(group *ChatGroup) {
 	_group[group.Id] = group
+}
+
+func trackConnection(conn *connection) {
+	_connection[conn.Id] = conn
+
 }
 
 func getUserById(usrId string) (*ChatUser, error) {
@@ -45,4 +54,14 @@ func getGroupById(groupId string) (*ChatGroup, error) {
 		return g, nil
 	}
 	return nil, errors.New("not found group")
+}
+
+func getConnectionById(connId string) (*connection, error) {
+	_connectionLock.Lock()
+	defer _connectionLock.Unlock()
+	if c, ok := _connection[connId]; ok {
+		return c, nil
+	}
+	return nil, errors.New("not found group")
+
 }
