@@ -3,12 +3,14 @@ package simplechat
 import (
 	"container/list"
 	"fmt"
+	"sync"
 )
 
 func NewGroup(id string) *ChatGroup {
 	group := &ChatGroup{
 		Id:       id,
 		userList: list.New(),
+		lockList: &sync.Mutex{},
 	}
 	trackGroup(group)
 	return group
@@ -19,12 +21,16 @@ func (g *ChatGroup) GetId() string {
 }
 
 func (g *ChatGroup) AddUserToGroup(usrId string) error {
+	g.lockList.Lock()
+	defer g.lockList.Unlock()
 	g.userList.PushBack(usrId)
 	return nil
 
 }
 
 func (g *ChatGroup) RemoveUserFromGroup(usrId string) error {
+	g.lockList.Lock()
+	defer g.lockList.Unlock()
 
 	for item := g.userList.Front(); item != nil; item = item.Next() {
 		u := item.Value.(string)
@@ -38,6 +44,8 @@ func (g *ChatGroup) RemoveUserFromGroup(usrId string) error {
 }
 
 func (g *ChatGroup) ShowGroup() {
+	g.lockList.Lock()
+	defer g.lockList.Unlock()
 	for item := g.userList.Front(); item != nil; item = item.Next() {
 		u := item.Value.(string)
 		fmt.Println(u)

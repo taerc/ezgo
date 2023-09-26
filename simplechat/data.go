@@ -1,6 +1,10 @@
 package simplechat
 
-import "container/list"
+import (
+	"container/list"
+	"errors"
+	"sync"
+)
 
 type Message struct {
 	Id   string `json:"id"`
@@ -11,7 +15,8 @@ type Message struct {
 }
 
 type connection struct {
-	connId string
+	connId   string
+	connLock sync.Mutex
 }
 
 type connectionContext struct {
@@ -21,13 +26,17 @@ type connectionContext struct {
 
 var (
 	// _conn  map[string]connection
-	_user  map[string]*ChatUser
-	_group map[string]*ChatGroup
+	_user      map[string]*ChatUser
+	_lockUser  *sync.Mutex
+	_group     map[string]*ChatGroup
+	_lockGroup *sync.Mutex
 )
 
 func init() {
 	_user = make(map[string]*ChatUser)
+	_lockUser = &sync.Mutex{}
 	_group = make(map[string]*ChatGroup)
+	_lockGroup = &sync.Mutex{}
 }
 
 type ChatUser struct {
@@ -41,6 +50,7 @@ type ChatGroup struct {
 	conn  connection
 
 	userList *list.List
+	lockList *sync.Mutex
 }
 
 type Client interface {
@@ -65,4 +75,24 @@ func trackUser(usr *ChatUser) {
 
 func trackGroup(group *ChatGroup) {
 	_group[group.Id] = group
+}
+
+func getUserById(usrId string) (*ChatUser, error) {
+	_lockUser.Lock()
+	defer _lockUser.Unlock()
+
+	if c, ok := _user[usrId]; ok {
+		return c, nil
+	}
+	return nil, errors.New("not found user")
+}
+
+func getGroupById(groupId string) (*ChatGroup, error) {
+	_lockUser.Lock()
+	defer _lockUser.Unlock()
+
+	if g, ok := _group[groupId]; ok {
+		return g, nil
+	}
+	return nil, errors.New("not found group")
 }
