@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"sync"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/panjf2000/gnet"
@@ -41,6 +42,14 @@ func (es *chatServer) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
 
 func (es *chatServer) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
 	fmt.Println("close ", c.RemoteAddr().String())
+
+	// TODO
+	// valid Login and userId
+	ctx := c.Context()
+	if ctx != nil {
+		ct := ctx.(connectionContext)
+		fmt.Println(fmt.Sprintf("login >>usrId :%s connId %s", ct.UsrId, ct.Id))
+	}
 	return
 }
 
@@ -81,6 +90,18 @@ func (es *chatServer) commandLogin(cmd *Command, c gnet.Conn) error {
 		ct := ctx.(connectionContext)
 		ct.UsrId = login.UsrId
 		c.SetContext(ct)
+
+		usr := &ChatUser{
+			Id: ct.UsrId,
+			conn: connection{
+				Id:       ct.Id,
+				conn:     c,
+				connLock: &sync.Mutex{},
+			},
+		}
+		trackUser(usr)
+
+		fmt.Println(fmt.Sprintf("login >>usrId :%s connId %s", ct.UsrId, ct.Id))
 	}
 
 	return nil
@@ -101,9 +122,14 @@ func (es *chatServer) commandSend(cmd *Command, c gnet.Conn) error {
 		fmt.Println(ct.UsrId)
 	}
 
-	c.AsyncWrite([]byte("this is back from server!"))
+	if usr, e := getUserById(send.To); e != nil {
+		fmt.Println(e.Error())
+	} else {
+		fmt.Println(fmt.Sprintf("send >>usrId :%s connId %s", send.To, usr.conn.Id))
+		usr.conn.conn.AsyncWrite([]byte(send.Data))
+	}
 
-	// c.SendTo([]byte("this is back from server!"))
+	c.SendTo([]byte("OK"))
 
 	return nil
 }

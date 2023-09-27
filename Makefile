@@ -34,8 +34,8 @@ publish:version
 	git push origin --tags
 
 ## testing
-chat:cmd/chat/main.go | $(BUILD)
-	@go build -o $(BUILD)/chat cmd/chat/main.go
+server:cmd/chat/main.go | $(BUILD)
+	@go build -o $(BUILD)/server cmd/chat/main.go
 
 client:cmd/tcpclient/main.go | $(BUILD)
 	@go build -o $(BUILD)/client cmd/tcpclient/main.go

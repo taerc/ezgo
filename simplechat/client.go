@@ -11,7 +11,7 @@ func NewClient(id string) *ChatUser {
 	usr := &ChatUser{
 		Id: id,
 		conn: connection{
-			connLock: sync.Mutex{},
+			connLock: &sync.Mutex{},
 		},
 	}
 	trackUser(usr)

@@ -9,7 +9,7 @@ import (
 type connection struct {
 	Id       string
 	conn     gnet.Conn
-	connLock sync.Mutex
+	connLock *sync.Mutex
 }
 
 type connectionContext struct {
