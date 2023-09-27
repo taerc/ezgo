@@ -15,39 +15,60 @@ const (
 	gsFrameFixedLengthOffset int    = 11
 )
 
-type GSFrame struct {
-	StartTag    uint16
-	SendSeq     uint32 // inc
-	RecvSeq     uint32 // inc
-	SessionFlag byte   // 0x00 request 0x01 response
-	Length      uint32
-	Data        []byte
-	EndTag      uint16
+type GSFrameCodecConfig struct {
+	StartDelimiterOffset int
+	SendSequenceOffset   int
+	RecvSequenceOffset   int
+	FrameTypeOffset      int
+	DataLengthOffset     int
+	DataOffset           int
+	EndDelimiterOffset   int
 }
 
-func (f *GSFrame) debug() {
+func GetGSFrameCodecConfig() GSFrameCodecConfig {
+	return GSFrameCodecConfig{
+		StartDelimiterOffset: 0,
+		SendSequenceOffset:   2,
+		RecvSequenceOffset:   6,
+		FrameTypeOffset:      10,
+		DataLengthOffset:     11,
+	}
+
+}
+
+type GSFrameCodec struct {
+	StartTag uint16
+	SendSeq  uint32 // inc
+	RecvSeq  uint32 // inc
+	Type     byte   // 0x00 request 0x01 response
+	Length   uint32
+	Data     []byte
+	EndTag   uint16
+}
+
+func (f *GSFrameCodec) debug() {
 	fmt.Printf("startTag :%02x\n", f.StartTag)
 	fmt.Printf("sendSeq :%02x\n", f.SendSeq)
 	fmt.Printf("recvSeq :%02x\n", f.RecvSeq)
-	fmt.Printf("session :%x\n", f.SessionFlag)
+	fmt.Printf("session :%x\n", f.Type)
 	fmt.Printf("length :%d\n", f.Length)
 	fmt.Printf("endTag :%02x\n", f.EndTag)
 }
 
-func (f *GSFrame) Encode(c gnet.Conn, buf []byte) ([]byte, error) {
+func (f *GSFrameCodec) Encode(c gnet.Conn, buf []byte) ([]byte, error) {
 
 	buff := make([]byte, 1024)
 	f.StartTag = gsFrameDelimiter
 	f.EndTag = gsFrameDelimiter
 	f.SendSeq = 100
 	f.RecvSeq = 101
-	f.SessionFlag = gsRequestFrame
+	f.Type = gsRequestFrame
 	f.Length = uint32(len(buf))
 
 	buff = binary.LittleEndian.AppendUint16(buff, f.StartTag)
 	buff = binary.LittleEndian.AppendUint32(buff, f.SendSeq)
 	buff = binary.LittleEndian.AppendUint32(buff, f.RecvSeq)
-	buff = append(buff, f.SessionFlag)
+	buff = append(buff, f.Type)
 	buff = binary.LittleEndian.AppendUint32(buff, f.Length)
 	buff = append(buff, buf...)
 	buff = binary.LittleEndian.AppendUint16(buff, f.EndTag)
@@ -55,7 +76,7 @@ func (f *GSFrame) Encode(c gnet.Conn, buf []byte) ([]byte, error) {
 	return buff, nil
 }
 
-func (f *GSFrame) Decode(c gnet.Conn) ([]byte, error) {
+func (f *GSFrameCodec) Decode(c gnet.Conn) ([]byte, error) {
 
 	buf := c.Read()
 
