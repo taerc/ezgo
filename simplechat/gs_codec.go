@@ -2,15 +2,18 @@ package simplechat
 
 import (
 	"encoding/binary"
-	"errors"
+	"fmt"
 
 	"github.com/panjf2000/gnet"
 )
 
-var gsFrameDelimiter uint16 = 0xEB90
-var gsRequestFrame byte = 0x00
-var gsResponseFrame byte = 0x01
-var gsFrameFixedLength = 17
+const (
+	gsFrameDelimiter         uint16 = 0xEB90
+	gsRequestFrame           byte   = 0x00
+	gsResponseFrame          byte   = 0x01
+	gsFrameFixedLength       int    = 15
+	gsFrameFixedLengthOffset int    = 11
+)
 
 type GSFrame struct {
 	StartTag    uint16
@@ -20,6 +23,15 @@ type GSFrame struct {
 	Length      uint32
 	Data        []byte
 	EndTag      uint16
+}
+
+func (f *GSFrame) debug() {
+	fmt.Printf("startTag :%02x\n", f.StartTag)
+	fmt.Printf("sendSeq :%02x\n", f.SendSeq)
+	fmt.Printf("recvSeq :%02x\n", f.RecvSeq)
+	fmt.Printf("session :%x\n", f.SessionFlag)
+	fmt.Printf("length :%d\n", f.Length)
+	fmt.Printf("endTag :%02x\n", f.EndTag)
 }
 
 func (f *GSFrame) Encode(c gnet.Conn, buf []byte) ([]byte, error) {
@@ -47,11 +59,19 @@ func (f *GSFrame) Decode(c gnet.Conn) ([]byte, error) {
 
 	buf := c.Read()
 
-	if len(buf) == 0 {
-		return nil, errors.New("incomplete packet")
+	f.StartTag = binary.LittleEndian.Uint16(buf)
+
+	if f.StartTag != gsFrameDelimiter {
+		fmt.Println("error start ... ")
+		return nil, nil
 	}
 
-	c.ResetBuffer()
-
+	f.Length = binary.LittleEndian.Uint32(buf[gsFrameFixedLengthOffset:])
+	f.EndTag = binary.LittleEndian.Uint16(buf[gsFrameFixedLength+int(f.Length):])
+	if f.EndTag != gsFrameDelimiter {
+		fmt.Println("error end ... ")
+		return nil, nil
+	}
+	// c.ResetBuffer()
 	return buf, nil
 }
