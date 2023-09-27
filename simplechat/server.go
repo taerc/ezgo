@@ -58,7 +58,7 @@ func (es *chatServer) React(frame []byte, c gnet.Conn) (out []byte, action gnet.
 	if e := json.Unmarshal(frame, cmd); e != nil {
 		fmt.Println(e.Error())
 	}
-	// out = []byte("this is back from client")
+	// out = []byte("this is back from client") // sync output
 	go es.handlerMessage(cmd, c)
 	// TODO
 	// frame decoding
