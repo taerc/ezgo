@@ -28,9 +28,9 @@ func GetGSFrameCodecConfig() *GSFrameCodecConfig {
 	return &GSFrameCodecConfig{
 		StartDelimiterOffset: 0,
 		SendSequenceOffset:   2,
-		RecvSequenceOffset:   6,
-		FrameTypeOffset:      10,
-		DataLengthOffset:     11,
+		RecvSequenceOffset:   10,
+		FrameTypeOffset:      18,
+		DataLengthOffset:     19,
 		DataOffset:           15,
 		FrameDelimiter:       0xEB90,
 	}
@@ -44,8 +44,8 @@ func NewGSFrameCodec() *GSFrameCodec {
 
 type GSFrameCodec struct {
 	StartTag uint16
-	SendSeq  uint32 // inc
-	RecvSeq  uint32 // inc
+	SendSeq  uint64 // inc
+	RecvSeq  uint64 // inc
 	Type     byte   // 0x00 request 0x01 response
 	Length   uint32
 	Data     []byte
