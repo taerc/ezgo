@@ -31,7 +31,7 @@ func GetGSFrameCodecConfig() *GSFrameCodecConfig {
 		RecvSequenceOffset:   10,
 		FrameTypeOffset:      18,
 		DataLengthOffset:     19,
-		DataOffset:           15,
+		DataOffset:           23,
 		FrameDelimiter:       0xEB90,
 	}
 }
