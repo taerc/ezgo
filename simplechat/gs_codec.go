@@ -1,10 +1,10 @@
 package simplechat
 
 import (
+	"bytes"
 	"encoding/binary"
+	"errors"
 	"fmt"
-
-	"github.com/panjf2000/gnet/v2"
 )
 
 const (
@@ -24,21 +24,9 @@ type GSFrameCodecConfig struct {
 	FrameDelimiter       uint16
 }
 
-func GetGSFrameCodecConfig() *GSFrameCodecConfig {
-	return &GSFrameCodecConfig{
-		StartDelimiterOffset: 0,
-		SendSequenceOffset:   2,
-		RecvSequenceOffset:   10,
-		FrameTypeOffset:      18,
-		DataLengthOffset:     19,
-		DataOffset:           23,
-		FrameDelimiter:       0xEB90,
-	}
-}
-
 func NewGSFrameCodec() *GSFrameCodec {
 	return &GSFrameCodec{
-		config: GetGSFrameCodecConfig(),
+		StartTag: gsFrameDelimiter,
 	}
 }
 
@@ -48,10 +36,6 @@ type GSFrameCodec struct {
 	RecvSeq  uint64 // inc
 	Type     byte   // 0x00 request 0x01 response
 	Length   uint32
-	Data     []byte
-	EndTag   uint16
-
-	config *GSFrameCodecConfig
 }
 
 func (f *GSFrameCodec) debug() {
@@ -60,47 +44,28 @@ func (f *GSFrameCodec) debug() {
 	fmt.Printf("recvSeq :%02x\n", f.RecvSeq)
 	fmt.Printf("session :%x\n", f.Type)
 	fmt.Printf("length :%d\n", f.Length)
-	fmt.Printf("endTag :%02x\n", f.EndTag)
+	// fmt.Printf("endTag :%02x\n", f.EndTag)
 }
 
-func (f *GSFrameCodec) Encode(c gnet.Conn, buf []byte) ([]byte, error) {
+func (f *GSFrameCodec) Encode(sendSeq uint64, recvSeq uint64, ty byte, data []byte) ([]byte, error) {
 
-	buff := make([]byte, 0)
+	buff := &bytes.Buffer{}
 	f.StartTag = gsFrameDelimiter
-	f.EndTag = gsFrameDelimiter
-	f.SendSeq = 100
-	f.RecvSeq = 101
-	f.Type = gsRequestFrame
-	f.Length = uint32(len(buf))
-
-	buff = binary.LittleEndian.AppendUint16(buff, f.StartTag)
-	buff = binary.LittleEndian.AppendUint32(buff, f.SendSeq)
-	buff = binary.LittleEndian.AppendUint32(buff, f.RecvSeq)
-	buff = append(buff, f.Type)
-	buff = binary.LittleEndian.AppendUint32(buff, f.Length)
-	buff = append(buff, buf...)
-	buff = binary.LittleEndian.AppendUint16(buff, f.EndTag)
-
-	return buff, nil
-}
-
-func (f *GSFrameCodec) Decode(c gnet.Conn) ([]byte, error) {
-
-	buf := c.Read()
-
-	f.StartTag = binary.LittleEndian.Uint16(buf)
-
-	if f.StartTag != gsFrameDelimiter {
-		fmt.Println("error start ... ")
-		return nil, nil
+	f.SendSeq = sendSeq
+	f.RecvSeq = recvSeq
+	f.Type = ty
+	f.Length = uint32(len(data))
+	e := binary.Write(buff, binary.LittleEndian, f)
+	if e != nil {
+		return nil, e
 	}
-
-	f.Length = binary.LittleEndian.Uint32(buf[f.config.DataLengthOffset:])
-	f.EndTag = binary.LittleEndian.Uint16(buf[f.config.DataOffset+int(f.Length):])
-	if f.EndTag != gsFrameDelimiter {
-		fmt.Println("error end ... ")
-		return nil, nil
+	n, e := buff.Write(data)
+	if n != int(f.Length) {
+		return nil, errors.New("not match")
 	}
-	// c.ResetBuffer()
-	return buf, nil
+	e = binary.Write(buff, binary.LittleEndian, f.StartTag)
+	if e != nil {
+		return nil, e
+	}
+	return buff.Bytes(), e
 }
