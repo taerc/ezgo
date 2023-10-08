@@ -19,10 +19,14 @@ type chatServer struct {
 }
 
 func (es *chatServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
-	fmt.Println("data\n")
+	fmt.Println("onBoot\n")
 	// log.Printf("Echo server is listening on %s (multi-cores: %t, loops: %d)\n",
 	// 	srv.Addr.String(), srv.Multicore, srv.NumEventLoop)
 	return
+}
+
+func (cs *chatServer) OnShutdown(eng gnet.Engine) {
+
 }
 
 func (es *chatServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
@@ -53,14 +57,12 @@ func (es *chatServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	return
 }
 
-func (es *chatServer) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Action) {
-	// cmd := &Command{}
-	// if e := json.Unmarshal(frame, cmd); e != nil {
-	// 	fmt.Println(e.Error())
-	// }
+func (cs *chatServer) OnTraffic(conn gnet.Conn) (action gnet.Action) {
+	n, e := conn.Write([]byte("hello traffic"))
+	fmt.Println("write: ", n, e)
+	action = -1
 	return
 }
-
 func (es *chatServer) handlerMessage(cmd *Command, c gnet.Conn) error {
 
 	if cmd.Cmd == CommandLogin {
@@ -90,8 +92,8 @@ func (es *chatServer) commandLogin(cmd *Command, c gnet.Conn) error {
 		usr := &ChatUser{
 			Id: ct.UsrId,
 			conn: connection{
-				Id:       ct.Id,
-				conn:     c,
+				Id: ct.Id,
+				// conn:     c,
 				connLock: &sync.Mutex{},
 			},
 		}
@@ -124,9 +126,6 @@ func (es *chatServer) commandSend(cmd *Command, c gnet.Conn) error {
 		fmt.Println(fmt.Sprintf("send >>usrId :%s connId %s", send.To, usr.conn.Id))
 		usr.conn.conn.AsyncWrite([]byte(send.Data))
 	}
-
-	// c.SendTo([]byte("OK"))
-
 	return nil
 }
 
@@ -134,6 +133,6 @@ func StartChatServer(port int) error {
 	echo := &chatServer{
 		ezid: ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
 	}
-	log.Fatal(gnet.Serve(echo, fmt.Sprintf("tcp://:%d", port), gnet.WithMulticore(false)))
+	log.Fatal(gnet.Run(echo, fmt.Sprintf("tcp://:%d", port), gnet.WithMulticore(false)))
 	return nil
 }
