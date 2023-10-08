@@ -91,6 +91,11 @@ func (es *chatServer) handlerMessage(cmd *Command, c gnet.Conn) error {
 	return nil
 }
 
+func SplitFrame(data []byte, atEOF bool) (advance int, token []byte, err error) {
+
+	return
+}
+
 func (es *chatServer) commandLogin(cmd *Command, c gnet.Conn) error {
 
 	login := &LoginMessage{}

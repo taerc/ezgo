@@ -5,6 +5,9 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"sync"
+
+	"github.com/panjf2000/gnet/v2/pkg/buffer/ring"
 )
 
 const (
@@ -67,4 +70,66 @@ func (f *GSFrameCodec) Encode(sendSeq uint64, recvSeq uint64, ty byte, data []by
 		return nil, e
 	}
 	return buff.Bytes(), e
+}
+
+type GSFrameDecode struct {
+	header     GSFrameCodec
+	data       string
+	ringBuffer *ring.Buffer
+	peekBuff   []byte
+	mutex      *sync.Mutex
+}
+
+func NewGSFrameDecoder() *GSFrameDecode {
+	return &GSFrameDecode{
+		ringBuffer: ring.New(ring.DefaultBufferSize),
+		peekBuff:   make([]byte, 1024),
+		mutex:      &sync.Mutex{},
+	}
+}
+
+func (gs *GSFrameDecode) Write(p []byte) (int, error) {
+	gs.mutex.Lock()
+	defer gs.mutex.Unlock()
+	return gs.ringBuffer.Write(p)
+}
+
+func (gs *GSFrameDecode) Decode() {
+
+}
+
+func (gs *GSFrameDecode) scan() {
+
+	bufSize := len(gs.peekBuff)
+
+	startTag := GSFRAME_DECODE_STATE_INIT
+	index := -1
+	for i := 0; i < bufSize; i++ {
+		if gs.peekBuff[i] == 0x90 {
+			startTag = GSFRAME_DECODE_STATE_90
+			index = i
+			continue
+		}
+		if startTag == GSFRAME_DECODE_STATE_90 && gs.peekBuff[i] == 0xeb && i == index+1 {
+			startTag = GSFRAME_DECODE_STATE_EB
+		} else {
+			startTag = GSFRAME_DECODE_STATE_INIT
+			index = -1
+		}
+
+	}
+
+}
+
+const (
+	GSFRAME_DECODE_STATE_INIT = 0 + iota
+	GSFRAME_DECODE_STATE_PRE
+	GSFRAME_DECODE_STATE_90
+	GSFRAME_DECODE_STATE_EB
+)
+
+func (gs *GSFrameDecode) load() {
+	gs.mutex.Lock()
+	defer gs.mutex.Unlock()
+	gs.peekBuff = gs.ringBuffer.Bytes()
 }
