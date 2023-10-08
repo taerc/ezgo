@@ -19,6 +19,7 @@ type chatServer struct {
 	ezid       *ezgo.EZID
 	readBuff   []byte
 	ringBuffer *ring.Buffer
+	decoder    *GSFrameDecoder
 }
 
 func (es *chatServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
@@ -76,9 +77,6 @@ func (cs *chatServer) OnTraffic(conn gnet.Conn) (action gnet.Action) {
 	action = -1
 	return
 }
-func (cs *chatServer) decode() {
-
-}
 
 func (es *chatServer) handlerMessage(cmd *Command, c gnet.Conn) error {
 
@@ -89,11 +87,6 @@ func (es *chatServer) handlerMessage(cmd *Command, c gnet.Conn) error {
 	}
 
 	return nil
-}
-
-func SplitFrame(data []byte, atEOF bool) (advance int, token []byte, err error) {
-
-	return
 }
 
 func (es *chatServer) commandLogin(cmd *Command, c gnet.Conn) error {

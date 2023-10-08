@@ -27,13 +27,14 @@ type GSFrameCodecConfig struct {
 	FrameDelimiter       uint16
 }
 
-func NewGSFrameCodec() *GSFrameCodec {
-	return &GSFrameCodec{
-		StartTag: gsFrameDelimiter,
-	}
-}
+const (
+	GSFRAME_DECODE_STATE_INIT = 0 + iota
+	GSFRAME_DECODE_STATE_PRE
+	GSFRAME_DECODE_STATE_90
+	GSFRAME_DECODE_STATE_EB
+)
 
-type GSFrameCodec struct {
+type GSFrameHeader struct {
 	StartTag uint16
 	SendSeq  uint64 // inc
 	RecvSeq  uint64 // inc
@@ -41,67 +42,85 @@ type GSFrameCodec struct {
 	Length   uint32
 }
 
-func (f *GSFrameCodec) debug() {
-	fmt.Printf("startTag :%02x\n", f.StartTag)
-	fmt.Printf("sendSeq :%02x\n", f.SendSeq)
-	fmt.Printf("recvSeq :%02x\n", f.RecvSeq)
-	fmt.Printf("session :%x\n", f.Type)
-	fmt.Printf("length :%d\n", f.Length)
-	// fmt.Printf("endTag :%02x\n", f.EndTag)
+func NewGSFrameHeader(sendSeq uint64, recvSeq uint64, ty byte) *GSFrameHeader {
+	return &GSFrameHeader{
+		StartTag: gsFrameDelimiter,
+		SendSeq:  sendSeq,
+		RecvSeq:  recvSeq,
+		Type:     ty,
+		Length:   0,
+	}
+
 }
 
-func (f *GSFrameCodec) Encode(sendSeq uint64, recvSeq uint64, ty byte, data []byte) ([]byte, error) {
+type GSFrameEncoder struct {
+}
+
+func (f *GSFrameEncoder) debug() {
+	// fmt.Printf("startTag :%02x\n", f.StartTag)
+	// fmt.Printf("sendSeq :%02x\n", f.SendSeq)
+	// fmt.Printf("recvSeq :%02x\n", f.RecvSeq)
+	// fmt.Printf("session :%x\n", f.Type)
+	// fmt.Printf("length :%d\n", f.Length)
+	// fmt.Printf("endTag :%02x\n", f.EndTag)
+}
+func NewGSFrameEncoder() *GSFrameEncoder {
+	return &GSFrameEncoder{}
+}
+
+func (f *GSFrameEncoder) Encode(header *GSFrameHeader, data []byte) ([]byte, error) {
 
 	buff := &bytes.Buffer{}
-	f.SendSeq = sendSeq
-	f.RecvSeq = recvSeq
-	f.Type = ty
-	f.Length = uint32(len(data))
-	e := binary.Write(buff, binary.LittleEndian, f)
+
+	header.Length = uint32(len(data))
+	e := binary.Write(buff, binary.LittleEndian, header)
 	if e != nil {
 		return nil, e
 	}
 	n, e := buff.Write(data)
-	if n != int(f.Length) {
+	if n != int(header.Length) {
 		return nil, errors.New("not match")
 	}
-	e = binary.Write(buff, binary.LittleEndian, f.StartTag)
+	e = binary.Write(buff, binary.LittleEndian, header.StartTag)
 	if e != nil {
 		return nil, e
 	}
 	return buff.Bytes(), e
 }
 
-type GSFrameDecode struct {
-	header     GSFrameCodec
+type GSFrameDecoder struct {
+	header     GSFrameHeader
 	data       string
 	ringBuffer *ring.Buffer
 	peekBuff   []byte
 	mutex      *sync.Mutex
 }
 
-func NewGSFrameDecoder() *GSFrameDecode {
-	return &GSFrameDecode{
+func NewGSFrameDecoder() *GSFrameDecoder {
+	return &GSFrameDecoder{
 		ringBuffer: ring.New(ring.DefaultBufferSize),
 		peekBuff:   make([]byte, 1024),
 		mutex:      &sync.Mutex{},
 	}
 }
 
-func (gs *GSFrameDecode) Write(p []byte) (int, error) {
+func (gs *GSFrameDecoder) Write(p []byte) (int, error) {
 	gs.mutex.Lock()
 	defer gs.mutex.Unlock()
 	return gs.ringBuffer.Write(p)
 }
 
-func (gs *GSFrameDecode) Decode() {
+func (gs *GSFrameDecoder) Decode() {
 
+	for {
+		gs.scan()
+		gs.load()
+	}
 }
 
-func (gs *GSFrameDecode) scan() {
+func (gs *GSFrameDecoder) scan() {
 
 	bufSize := len(gs.peekBuff)
-
 	startTag := GSFRAME_DECODE_STATE_INIT
 	index := -1
 	for i := 0; i < bufSize; i++ {
@@ -112,6 +131,10 @@ func (gs *GSFrameDecode) scan() {
 		}
 		if startTag == GSFRAME_DECODE_STATE_90 && gs.peekBuff[i] == 0xeb && i == index+1 {
 			startTag = GSFRAME_DECODE_STATE_EB
+			// try to decode header
+			// size checking
+			e := gs.fillHeader(gs.peekBuff[i:])
+			fmt.Println(e)
 		} else {
 			startTag = GSFRAME_DECODE_STATE_INIT
 			index = -1
@@ -121,15 +144,22 @@ func (gs *GSFrameDecode) scan() {
 
 }
 
-const (
-	GSFRAME_DECODE_STATE_INIT = 0 + iota
-	GSFRAME_DECODE_STATE_PRE
-	GSFRAME_DECODE_STATE_90
-	GSFRAME_DECODE_STATE_EB
-)
-
-func (gs *GSFrameDecode) load() {
+func (gs *GSFrameDecoder) load() {
 	gs.mutex.Lock()
 	defer gs.mutex.Unlock()
 	gs.peekBuff = gs.ringBuffer.Bytes()
+}
+
+func (gs *GSFrameDecoder) fillHeader(data []byte) error {
+	// binary.Read(r, binary.LittleEndian, &gs.header)
+	gs.header.SendSeq = binary.LittleEndian.Uint64(data[:8])
+	gs.header.RecvSeq = binary.LittleEndian.Uint64(data[8:16])
+	gs.header.Type = data[16]
+	gs.header.Length = binary.LittleEndian.Uint32(data[17:21])
+
+	fmt.Println(gs.header.SendSeq)
+	fmt.Println(gs.header.RecvSeq)
+	fmt.Println(gs.header.Type)
+	fmt.Println(gs.header.Length)
+	return nil
 }
