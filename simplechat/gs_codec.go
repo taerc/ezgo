@@ -126,9 +126,9 @@ func (gs *GSFrameDecoder) Decode() {
 }
 
 func (gs *GSFrameDecoder) scan() {
-
 	edgeLimit := len(gs.peekBuff) - gsFrameHeaderSize
 	buffSize := len(gs.peekBuff)
+	fmt.Println(" buffSize .. ", buffSize)
 	index := -1
 	for i := 0; i < edgeLimit; i++ {
 		if gs.state == GSFRAME_DECODE_STATE_INIT && gs.peekBuff[i] == 0x90 {
