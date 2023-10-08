@@ -25,7 +25,7 @@ func (es *chatServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
 	fmt.Println("onBoot")
 	// log.Printf("Echo server is listening on %s (multi-cores: %t, loops: %d)\n",
 	// 	srv.Addr.String(), srv.Multicore, srv.NumEventLoop)
-	go es.decoder.Decode()
+	// go es.decoder.Decode()
 	return
 }
 
@@ -72,6 +72,9 @@ func (cs *chatServer) OnTraffic(conn gnet.Conn) (action gnet.Action) {
 		n, e = cs.decoder.Write(cs.readBuff)
 		fmt.Println("ring write :", n, e)
 	}
+	fmt.Println("decode ...")
+	cs.decoder.Decode()
+	fmt.Println("decode <<<<")
 	n, e := conn.Write([]byte("hello traffic"))
 	fmt.Println("write: ", n, e)
 	action = -1

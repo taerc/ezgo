@@ -6,15 +6,15 @@ import (
 	"errors"
 	"fmt"
 	"sync"
-	"time"
 
 	"github.com/panjf2000/gnet/v2/pkg/buffer/ring"
 )
 
 const (
-	gsFrameDelimiter uint16 = 0xEB90
-	gsRequestFrame   byte   = 0x00
-	gsResponseFrame  byte   = 0x01
+	gsFrameDelimiter  uint16 = 0xEB90
+	gsRequestFrame    byte   = 0x00
+	gsResponseFrame   byte   = 0x01
+	gsFrameHeaderSize        = 23
 )
 
 type GSFrameCodecConfig struct {
@@ -33,8 +33,8 @@ const (
 	GSFRAME_DECODE_STATE_90
 	GSFRAME_DECODE_STATE_EB
 	GSFRAME_DECODE_STATE_START
-	GSFRAME_DECODE_STATE_END
 	GSFRAME_DECODE_STATE_FRAME
+	GSFRAME_DECODE_STATE_END
 	GSFRAME_DECODE_STATE_FRAME_BROKEN
 )
 
@@ -61,7 +61,7 @@ type GSFrameEncoder struct {
 }
 
 func (f *GSFrameEncoder) debug() {
-	// fmt.Printf("startTag :%02x\n", f.StartTag)
+	// fmt.Printf("state :%02x\n", f.StartTag)
 	// fmt.Printf("sendSeq :%02x\n", f.SendSeq)
 	// fmt.Printf("recvSeq :%02x\n", f.RecvSeq)
 	// fmt.Printf("session :%x\n", f.Type)
@@ -97,6 +97,7 @@ type GSFrameDecoder struct {
 	data       string
 	ringBuffer *ring.Buffer
 	peekBuff   []byte
+	state      int
 	mutex      *sync.Mutex
 }
 
@@ -105,6 +106,7 @@ func NewGSFrameDecoder() *GSFrameDecoder {
 		ringBuffer: ring.New(ring.DefaultBufferSize),
 		peekBuff:   make([]byte, 1024),
 		mutex:      &sync.Mutex{},
+		state:      GSFRAME_DECODE_STATE_INIT,
 	}
 }
 
@@ -116,34 +118,48 @@ func (gs *GSFrameDecoder) Write(p []byte) (int, error) {
 
 func (gs *GSFrameDecoder) Decode() {
 
-	for {
-		n, _ := gs.load()
-		if n > 0 {
-			gs.scan()
-		}
-		time.Sleep(1 * time.Second)
+	n, _ := gs.load()
+	for n > gsFrameHeaderSize {
+		gs.scan()
+		n, _ = gs.load()
 	}
 }
 
 func (gs *GSFrameDecoder) scan() {
 
-	bufSize := len(gs.peekBuff)
-	startTag := GSFRAME_DECODE_STATE_INIT
+	edgeLimit := len(gs.peekBuff) - gsFrameHeaderSize
+	buffSize := len(gs.peekBuff)
 	index := -1
-	for i := 0; i < bufSize; i++ {
-		if gs.peekBuff[i] == 0x90 {
-			startTag = GSFRAME_DECODE_STATE_90
+	for i := 0; i < edgeLimit; i++ {
+		if gs.state == GSFRAME_DECODE_STATE_INIT && gs.peekBuff[i] == 0x90 {
+			gs.state = GSFRAME_DECODE_STATE_90
 			index = i
 			continue
 		}
-		if startTag == GSFRAME_DECODE_STATE_90 && gs.peekBuff[i] == 0xeb && i == index+1 {
-			startTag = GSFRAME_DECODE_STATE_EB
+		if gs.state == GSFRAME_DECODE_STATE_90 && gs.peekBuff[i] == 0xeb && i == index+1 {
+			gs.state = GSFRAME_DECODE_STATE_EB
 			// try to decode header
 			// size checking
-			e := gs.fillHeader(gs.peekBuff[i+1:])
+			e := gs.fillHeader(gs.peekBuff[i+1 : gsFrameHeaderSize+i-1])
 			fmt.Println(e)
+			fmt.Println(" data size ", buffSize-gsFrameHeaderSize-i+1)
+			if gs.header.Length > uint32(buffSize-gsFrameHeaderSize-i+1) {
+				// data merge
+				gs.state = GSFRAME_DECODE_STATE_FRAME_BROKEN
+			} else {
+				if gs.peekBuff[i+21+int(gs.header.Length)] == 0x90 && gs.peekBuff[i+22+int(gs.header.Length)] == 0xeb {
+					gs.state = GSFRAME_DECODE_STATE_END
+					//TODO
+					fmt.Println(gs.peekBuff[i+21 : i+21+int(gs.header.Length)])
+					gs.state = GSFRAME_DECODE_STATE_INIT
+					i += 22 + int(gs.header.Length)
+				} else {
+
+				}
+
+			}
 		} else {
-			startTag = GSFRAME_DECODE_STATE_INIT
+			gs.state = GSFRAME_DECODE_STATE_INIT
 			index = -1
 		}
 
@@ -156,7 +172,7 @@ func (gs *GSFrameDecoder) load() (int, error) {
 	defer gs.mutex.Unlock()
 	// gs.peekBuff = gs.ringBuffer.Bytes()
 	n, e := gs.ringBuffer.Read(gs.peekBuff)
-	// fmt.Println("loading ... ", n, e)
+	fmt.Printf("load %02x %02x \n", gs.peekBuff[0], gs.peekBuff[1])
 	return n, e
 }
 
