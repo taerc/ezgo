@@ -1,13 +1,12 @@
 package simplechat
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"sync"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/panjf2000/gnet"
+	"github.com/panjf2000/gnet/v2"
 	"github.com/taerc/ezgo"
 )
 
@@ -15,17 +14,18 @@ import (
 // package split case
 
 type chatServer struct {
-	*gnet.EventServer
+	*gnet.BuiltinEventEngine
 	ezid *ezgo.EZID
 }
 
-func (es *chatServer) OnInitComplete(srv gnet.Server) (action gnet.Action) {
-	log.Printf("Echo server is listening on %s (multi-cores: %t, loops: %d)\n",
-		srv.Addr.String(), srv.Multicore, srv.NumEventLoop)
+func (es *chatServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
+	fmt.Println("data\n")
+	// log.Printf("Echo server is listening on %s (multi-cores: %t, loops: %d)\n",
+	// 	srv.Addr.String(), srv.Multicore, srv.NumEventLoop)
 	return
 }
 
-func (es *chatServer) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
+func (es *chatServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 	fmt.Println("open ")
 	cid, e := es.ezid.NextStringID()
 	if e != nil {
@@ -40,7 +40,7 @@ func (es *chatServer) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
 	return
 }
 
-func (es *chatServer) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
+func (es *chatServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	fmt.Println("close ", c.RemoteAddr().String())
 
 	// TODO
@@ -54,14 +54,10 @@ func (es *chatServer) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
 }
 
 func (es *chatServer) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Action) {
-	cmd := &Command{}
-	if e := json.Unmarshal(frame, cmd); e != nil {
-		fmt.Println(e.Error())
-	}
-	// out = []byte("this is back from client") // sync output
-	go es.handlerMessage(cmd, c)
-	// TODO
-	// frame decoding
+	// cmd := &Command{}
+	// if e := json.Unmarshal(frame, cmd); e != nil {
+	// 	fmt.Println(e.Error())
+	// }
 	return
 }
 
@@ -129,7 +125,7 @@ func (es *chatServer) commandSend(cmd *Command, c gnet.Conn) error {
 		usr.conn.conn.AsyncWrite([]byte(send.Data))
 	}
 
-	c.SendTo([]byte("OK"))
+	// c.SendTo([]byte("OK"))
 
 	return nil
 }

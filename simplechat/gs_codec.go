@@ -50,7 +50,6 @@ func (f *GSFrameCodec) debug() {
 func (f *GSFrameCodec) Encode(sendSeq uint64, recvSeq uint64, ty byte, data []byte) ([]byte, error) {
 
 	buff := &bytes.Buffer{}
-	f.StartTag = gsFrameDelimiter
 	f.SendSeq = sendSeq
 	f.RecvSeq = recvSeq
 	f.Type = ty
