@@ -172,7 +172,7 @@ func (gs *GSFrameDecoder) load() (int, error) {
 	defer gs.mutex.Unlock()
 	// gs.peekBuff = gs.ringBuffer.Bytes()
 	n, e := gs.ringBuffer.Read(gs.peekBuff)
-	fmt.Printf("load %02x %02x \n", gs.peekBuff[0], gs.peekBuff[1])
+	fmt.Printf("load %02x %02x size %d\n", gs.peekBuff[0], gs.peekBuff[1], n)
 	return n, e
 }
 

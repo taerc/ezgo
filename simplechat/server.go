@@ -66,11 +66,11 @@ func (cs *chatServer) OnTraffic(conn gnet.Conn) (action gnet.Action) {
 		n, e := conn.Read(cs.readBuff)
 		fmt.Println("read :", n, e)
 		fmt.Printf("tag:%02x %02x\n", cs.readBuff[0], cs.readBuff[1])
-		if n == 0 {
+		n, e = cs.decoder.Write(cs.readBuff[:n])
+		fmt.Println("ring write :", n, e)
+		if n < 1024 {
 			break
 		}
-		n, e = cs.decoder.Write(cs.readBuff)
-		fmt.Println("ring write :", n, e)
 	}
 	fmt.Println("decode ...")
 	cs.decoder.Decode()
