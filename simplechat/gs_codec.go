@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/panjf2000/gnet/v2/pkg/buffer/ring"
 )
@@ -29,9 +30,12 @@ type GSFrameCodecConfig struct {
 
 const (
 	GSFRAME_DECODE_STATE_INIT = 0 + iota
-	GSFRAME_DECODE_STATE_PRE
 	GSFRAME_DECODE_STATE_90
 	GSFRAME_DECODE_STATE_EB
+	GSFRAME_DECODE_STATE_START
+	GSFRAME_DECODE_STATE_END
+	GSFRAME_DECODE_STATE_FRAME
+	GSFRAME_DECODE_STATE_FRAME_BROKEN
 )
 
 type GSFrameHeader struct {
@@ -113,8 +117,11 @@ func (gs *GSFrameDecoder) Write(p []byte) (int, error) {
 func (gs *GSFrameDecoder) Decode() {
 
 	for {
-		gs.scan()
-		gs.load()
+		n, _ := gs.load()
+		if n > 0 {
+			gs.scan()
+		}
+		time.Sleep(1 * time.Second)
 	}
 }
 
@@ -133,7 +140,7 @@ func (gs *GSFrameDecoder) scan() {
 			startTag = GSFRAME_DECODE_STATE_EB
 			// try to decode header
 			// size checking
-			e := gs.fillHeader(gs.peekBuff[i:])
+			e := gs.fillHeader(gs.peekBuff[i+1:])
 			fmt.Println(e)
 		} else {
 			startTag = GSFRAME_DECODE_STATE_INIT
@@ -144,10 +151,13 @@ func (gs *GSFrameDecoder) scan() {
 
 }
 
-func (gs *GSFrameDecoder) load() {
+func (gs *GSFrameDecoder) load() (int, error) {
 	gs.mutex.Lock()
 	defer gs.mutex.Unlock()
-	gs.peekBuff = gs.ringBuffer.Bytes()
+	// gs.peekBuff = gs.ringBuffer.Bytes()
+	n, e := gs.ringBuffer.Read(gs.peekBuff)
+	// fmt.Println("loading ... ", n, e)
+	return n, e
 }
 
 func (gs *GSFrameDecoder) fillHeader(data []byte) error {

@@ -7,7 +7,6 @@ import (
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/panjf2000/gnet/v2"
-	"github.com/panjf2000/gnet/v2/pkg/buffer/ring"
 	"github.com/taerc/ezgo"
 )
 
@@ -16,16 +15,17 @@ import (
 
 type chatServer struct {
 	*gnet.BuiltinEventEngine
-	ezid       *ezgo.EZID
-	readBuff   []byte
-	ringBuffer *ring.Buffer
-	decoder    *GSFrameDecoder
+	ezid     *ezgo.EZID
+	readBuff []byte
+	// ringBuffer *ring.Buffer
+	decoder *GSFrameDecoder
 }
 
 func (es *chatServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
 	fmt.Println("onBoot")
 	// log.Printf("Echo server is listening on %s (multi-cores: %t, loops: %d)\n",
 	// 	srv.Addr.String(), srv.Multicore, srv.NumEventLoop)
+	go es.decoder.Decode()
 	return
 }
 
@@ -69,7 +69,7 @@ func (cs *chatServer) OnTraffic(conn gnet.Conn) (action gnet.Action) {
 		if n == 0 {
 			break
 		}
-		n, e = cs.ringBuffer.Write(cs.readBuff)
+		n, e = cs.decoder.Write(cs.readBuff)
 		fmt.Println("ring write :", n, e)
 	}
 	n, e := conn.Write([]byte("hello traffic"))
@@ -146,9 +146,10 @@ func (es *chatServer) commandSend(cmd *Command, c gnet.Conn) error {
 
 func StartChatServer(port int) error {
 	echo := &chatServer{
-		ezid:       ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
-		readBuff:   make([]byte, 1024),
-		ringBuffer: ring.New(ring.DefaultBufferSize),
+		ezid:     ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
+		readBuff: make([]byte, 1024),
+		// ringBuffer: ring.New(ring.DefaultBufferSize),
+		decoder: NewGSFrameDecoder(),
 	}
 	log.Fatal(gnet.Run(echo, fmt.Sprintf("tcp://:%d", port), gnet.WithMulticore(false), gnet.WithReusePort(true)))
 	return nil
