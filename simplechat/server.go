@@ -58,22 +58,7 @@ func (es *chatServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 }
 
 func (cs *chatServer) OnTraffic(c gnet.Conn) (action gnet.Action) {
-	for {
-		header, e := c.Next(gsFrameHeaderSize)
-		fmt.Println("read :", n, e)
-		fmt.Printf("tag:%02x %02x\n", cs.readBuff[0], cs.readBuff[1])
-		n, e = cs.decoder.Write(cs.readBuff[:n])
-		fmt.Println("ring write :", n, e)
-		if n < 1024 {
-			break
-		}
-	}
-	fmt.Println("decode ...")
-	cs.decoder.Decode()
-	fmt.Println("decode <<<<")
-	n, e := c.Write([]byte("hello traffic"))
-	fmt.Println("write: ", n, e)
-	action = -1
+	cs.decoder.Decode(c)
 	return
 }
 
@@ -147,8 +132,7 @@ func StartChatServer(port int) error {
 	echo := &chatServer{
 		ezid:     ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
 		readBuff: make([]byte, 1024),
-		// ringBuffer: ring.New(ring.DefaultBufferSize),
-		decoder: NewGSFrameDecoder(),
+		decoder:  NewGSFrameDecoder(),
 	}
 	log.Fatal(gnet.Run(echo, fmt.Sprintf("tcp://:%d", port), gnet.WithMulticore(false), gnet.WithReusePort(true)))
 	return nil
