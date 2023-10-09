@@ -17,15 +17,11 @@ type chatServer struct {
 	*gnet.BuiltinEventEngine
 	ezid     *ezgo.EZID
 	readBuff []byte
-	// ringBuffer *ring.Buffer
-	decoder *GSFrameDecoder
+	decoder  *GSFrameDecoder
 }
 
 func (es *chatServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
 	fmt.Println("onBoot")
-	// log.Printf("Echo server is listening on %s (multi-cores: %t, loops: %d)\n",
-	// 	srv.Addr.String(), srv.Multicore, srv.NumEventLoop)
-	// go es.decoder.Decode()
 	return
 }
 
@@ -61,9 +57,9 @@ func (es *chatServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	return
 }
 
-func (cs *chatServer) OnTraffic(conn gnet.Conn) (action gnet.Action) {
+func (cs *chatServer) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	for {
-		n, e := conn.Read(cs.readBuff)
+		header, e := c.Next(gsFrameHeaderSize)
 		fmt.Println("read :", n, e)
 		fmt.Printf("tag:%02x %02x\n", cs.readBuff[0], cs.readBuff[1])
 		n, e = cs.decoder.Write(cs.readBuff[:n])
@@ -75,7 +71,7 @@ func (cs *chatServer) OnTraffic(conn gnet.Conn) (action gnet.Action) {
 	fmt.Println("decode ...")
 	cs.decoder.Decode()
 	fmt.Println("decode <<<<")
-	n, e := conn.Write([]byte("hello traffic"))
+	n, e := c.Write([]byte("hello traffic"))
 	fmt.Println("write: ", n, e)
 	action = -1
 	return

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/panjf2000/gnet/v2/pkg/buffer/ring"
+	"github.com/panjf2000/gnet/v2"
 )
 
 const (
@@ -93,36 +93,48 @@ func (f *GSFrameEncoder) Encode(header *GSFrameHeader, data []byte) ([]byte, err
 }
 
 type GSFrameDecoder struct {
-	header     GSFrameHeader
-	data       string
-	ringBuffer *ring.Buffer
-	peekBuff   []byte
-	state      int
-	mutex      *sync.Mutex
+	header   GSFrameHeader
+	data     string
+	peekBuff []byte
+	state    int
+	mutex    *sync.Mutex
 }
 
 func NewGSFrameDecoder() *GSFrameDecoder {
 	return &GSFrameDecoder{
-		ringBuffer: ring.New(ring.DefaultBufferSize),
-		peekBuff:   make([]byte, 1024),
-		mutex:      &sync.Mutex{},
-		state:      GSFRAME_DECODE_STATE_INIT,
+		peekBuff: make([]byte, 1024),
+		mutex:    &sync.Mutex{},
+		state:    GSFRAME_DECODE_STATE_INIT,
 	}
 }
 
 func (gs *GSFrameDecoder) Write(p []byte) (int, error) {
 	gs.mutex.Lock()
 	defer gs.mutex.Unlock()
-	return gs.ringBuffer.Write(p)
+	return 0, nil
 }
 
-func (gs *GSFrameDecoder) Decode() {
+func (gs *GSFrameDecoder) Decode(c gnet.Conn) (action gnet.Action) {
 
-	n, _ := gs.load()
-	for n > gsFrameHeaderSize {
-		gs.scan()
-		n, _ = gs.load()
+	headBuff, e := c.Next(gsFrameHeaderSize)
+	if e != nil {
+		fmt.Println("decode %v", e)
 	}
+	headRd := bytes.NewReader(headBuff)
+	binary.Read(headRd, binary.LittleEndian, &gs.header)
+	fmt.Printf("magix %04x\n", gs.header.StartTag)
+	fmt.Printf("length %d\n", gs.header.Length)
+	if gs.header.StartTag == gsFrameDelimiter {
+		c.Discard(gsFrameHeaderSize)
+		data, e := c.Next(int(gs.header.Length))
+		if e != nil {
+			fmt.Println("rd data %v", e)
+		}
+		fmt.Println("data :", data)
+		c.Discard(int(gs.header.Length) + 1)
+	}
+
+	return 0
 }
 
 func (gs *GSFrameDecoder) scan() {
@@ -171,9 +183,9 @@ func (gs *GSFrameDecoder) load() (int, error) {
 	gs.mutex.Lock()
 	defer gs.mutex.Unlock()
 	// gs.peekBuff = gs.ringBuffer.Bytes()
-	n, e := gs.ringBuffer.Read(gs.peekBuff)
-	fmt.Printf("load %02x %02x size %d\n", gs.peekBuff[0], gs.peekBuff[1], n)
-	return n, e
+	// n, e := gs.ringBuffer.Read(gs.peekBuff)
+	// fmt.Printf("load %02x %02x size %d\n", gs.peekBuff[0], gs.peekBuff[1], n)
+	return 0, nil
 }
 
 func (gs *GSFrameDecoder) fillHeader(data []byte) error {
@@ -182,10 +194,5 @@ func (gs *GSFrameDecoder) fillHeader(data []byte) error {
 	gs.header.RecvSeq = binary.LittleEndian.Uint64(data[8:16])
 	gs.header.Type = data[16]
 	gs.header.Length = binary.LittleEndian.Uint32(data[17:21])
-
-	fmt.Println(gs.header.SendSeq)
-	fmt.Println(gs.header.RecvSeq)
-	fmt.Println(gs.header.Type)
-	fmt.Println(gs.header.Length)
 	return nil
 }
