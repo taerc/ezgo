@@ -14,7 +14,7 @@ const (
 	gsFrameDelimiter  uint16 = 0xEB90
 	gsRequestFrame    byte   = 0x00
 	gsResponseFrame   byte   = 0x01
-	gsFrameHeaderSize        = 23
+	gsFrameHeaderSize int    = 23
 )
 
 const (
@@ -49,14 +49,6 @@ func NewGSFrameHeader(sendSeq uint64, recvSeq uint64, ty byte) *GSFrameHeader {
 type GSFrameEncoder struct {
 }
 
-func (f *GSFrameEncoder) debug() {
-	// fmt.Printf("state :%02x\n", f.StartTag)
-	// fmt.Printf("sendSeq :%02x\n", f.SendSeq)
-	// fmt.Printf("recvSeq :%02x\n", f.RecvSeq)
-	// fmt.Printf("session :%x\n", f.Type)
-	// fmt.Printf("length :%d\n", f.Length)
-	// fmt.Printf("endTag :%02x\n", f.EndTag)
-}
 func NewGSFrameEncoder() *GSFrameEncoder {
 	return &GSFrameEncoder{}
 }
@@ -82,10 +74,11 @@ func (f *GSFrameEncoder) Encode(header *GSFrameHeader, data []byte) ([]byte, err
 }
 
 type GSFrameDecoder struct {
-	header GSFrameHeader
-	state  int
-	endTag uint16
-	mutex  *sync.Mutex
+	header      GSFrameHeader
+	headerBytes [23]byte
+	state       int
+	endTag      uint16
+	mutex       *sync.Mutex
 }
 
 func NewGSFrameDecoder() *GSFrameDecoder {
@@ -97,23 +90,38 @@ func NewGSFrameDecoder() *GSFrameDecoder {
 
 func (gs *GSFrameDecoder) Decode(c gnet.Conn) (action gnet.Action) {
 
-	headBuff, e := c.Next(gsFrameHeaderSize)
-	if e != nil {
-		fmt.Println("decode ", e)
-	}
-	headRd := bytes.NewReader(headBuff)
-	binary.Read(headRd, binary.LittleEndian, &gs.header)
-	fmt.Printf("magic %04x\n", gs.header.StartTag)
-	fmt.Printf("length %d\n", gs.header.Length)
-	if gs.header.StartTag == gsFrameDelimiter {
-		data, e := c.Next(int(gs.header.Length + 2))
-		if e != nil {
-			fmt.Println("rd data ", e.Error())
+	inited := true
+	for c.InboundBuffered() > 0 {
+		if inited {
+			headBuff, e := c.Next(gsFrameHeaderSize)
+			if e != nil {
+				fmt.Println("decode ", e)
+			}
+			copy(gs.headerBytes[:], headBuff)
+			inited = false
 		}
-		gs.endTag = binary.LittleEndian.Uint16(data[gs.header.Length : gs.header.Length+2])
-		fmt.Printf("%04x \n", gs.endTag)
-		fmt.Println("limit bytes :", c.InboundBuffered())
-		// bufio.NewReadWriter()
+		headRd := bytes.NewReader(gs.headerBytes[:])
+		binary.Read(headRd, binary.LittleEndian, &gs.header)
+		fmt.Printf("magic %04x\n", gs.header.StartTag)
+		fmt.Printf("length %d\n", gs.header.Length)
+		if gs.header.StartTag == gsFrameDelimiter {
+			data, e := c.Next(int(gs.header.Length + 2))
+			if e != nil {
+				fmt.Println("rd data ", e.Error())
+			}
+			fmt.Println(string(data))
+			gs.endTag = binary.LittleEndian.Uint16(data[gs.header.Length : gs.header.Length+2])
+			inited = true
+		} else {
+			data, e := c.Next(1)
+			if e != nil {
+				fmt.Println("decode ", e)
+			}
+			copy(gs.headerBytes[0:22], gs.headerBytes[1:23])
+			copy(gs.headerBytes[22:23], data)
+			headRd.Reset(gs.headerBytes[:])
+		}
+
 	}
 
 	return 0
