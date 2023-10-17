@@ -13,24 +13,35 @@ import (
 // TODO
 // package split case
 
-type chatServer struct {
-	*gnet.BuiltinEventEngine
-	ezid     *ezgo.EZID
-	readBuff []byte
-	decoder  *GSFrameDecoder
+type HandlerFunc interface {
+	Handler(c *connection, v interface{})
 }
 
-func (es *chatServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
+type Encoder interface {
+	Marshal(v interface{}) ([]byte, error)
+	UnMashal([]byte) (interface{}, error)
+}
+
+type tcpServer struct {
+	*gnet.BuiltinEventEngine
+	ezid            *ezgo.EZID
+	decoder         *GSFrameDecoder
+	connections     map[string]*connection
+	routers         map[string]HandlerFunc
+	packetEncoder   Encoder // tcp packet
+	businessEncoder Encoder // xml
+}
+
+func (es *tcpServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
 	fmt.Println("onBoot")
 	return
 }
 
-func (cs *chatServer) OnShutdown(eng gnet.Engine) {
+func (cs *tcpServer) OnShutdown(eng gnet.Engine) {
 
 }
 
-func (es *chatServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
-	fmt.Println("open ")
+func (es *tcpServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 	cid, e := es.ezid.NextStringID()
 	if e != nil {
 		fmt.Println(e.Error())
@@ -39,12 +50,11 @@ func (es *chatServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 	ctx := connectionContext{
 		Id: cid,
 	}
-	fmt.Println(cid)
 	c.SetContext(ctx)
 	return
 }
 
-func (es *chatServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
+func (es *tcpServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	fmt.Println("close ", c.RemoteAddr().String())
 
 	// TODO
@@ -57,12 +67,12 @@ func (es *chatServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	return
 }
 
-func (cs *chatServer) OnTraffic(c gnet.Conn) (action gnet.Action) {
+func (cs *tcpServer) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	cs.decoder.Decode(c)
 	return
 }
 
-func (es *chatServer) handlerMessage(cmd *Command, c gnet.Conn) error {
+func (es *tcpServer) handlerMessage(cmd *Command, c gnet.Conn) error {
 
 	if cmd.Cmd == CommandLogin {
 		return es.commandLogin(cmd, c)
@@ -73,7 +83,7 @@ func (es *chatServer) handlerMessage(cmd *Command, c gnet.Conn) error {
 	return nil
 }
 
-func (es *chatServer) commandLogin(cmd *Command, c gnet.Conn) error {
+func (es *tcpServer) commandLogin(cmd *Command, c gnet.Conn) error {
 
 	login := &LoginMessage{}
 	e := mapstructure.Decode(cmd.Data, login)
@@ -104,7 +114,7 @@ func (es *chatServer) commandLogin(cmd *Command, c gnet.Conn) error {
 	return nil
 }
 
-func (es *chatServer) commandSend(cmd *Command, c gnet.Conn) error {
+func (es *tcpServer) commandSend(cmd *Command, c gnet.Conn) error {
 
 	send := &SendMessage{}
 	e := mapstructure.Decode(cmd.Data, send)
@@ -129,7 +139,7 @@ func (es *chatServer) commandSend(cmd *Command, c gnet.Conn) error {
 }
 
 func StartChatServer(port int) error {
-	echo := &chatServer{
+	echo := &tcpServer{
 		ezid:     ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
 		readBuff: make([]byte, 1024),
 		decoder:  NewGSFrameDecoder(),
