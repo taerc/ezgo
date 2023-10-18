@@ -3,7 +3,6 @@ package simplechat
 import (
 	"fmt"
 	"log"
-	"sync"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/panjf2000/gnet/v2"
@@ -103,7 +102,6 @@ func (es *tcpServer) commandLogin(cmd *Command, c gnet.Conn) error {
 			conn: connection{
 				Id: ct.Id,
 				// conn:     c,
-				connLock: &sync.Mutex{},
 			},
 		}
 		trackUser(usr)
@@ -140,9 +138,8 @@ func (es *tcpServer) commandSend(cmd *Command, c gnet.Conn) error {
 
 func StartChatServer(port int) error {
 	echo := &tcpServer{
-		ezid:     ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
-		readBuff: make([]byte, 1024),
-		decoder:  NewGSFrameDecoder(),
+		ezid:    ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
+		decoder: NewGSFrameDecoder(),
 	}
 	log.Fatal(gnet.Run(echo, fmt.Sprintf("tcp://:%d", port), gnet.WithMulticore(false), gnet.WithReusePort(true)))
 	return nil
