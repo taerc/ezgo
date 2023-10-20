@@ -7,13 +7,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"net/http"
 	"strconv"
 	"text/template"
 	"time"
 	"unsafe"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type SimpleNotice struct {
@@ -79,10 +80,6 @@ type Robot struct {
 }
 
 func (receiver Robot) Signature() string {
-	/*
-		加签
-	*/
-
 	webhookurl := "https://oapi.dingtalk.com/robot/send?access_token=" + string(receiver.access_token)
 	// 获取当前秒级时间戳
 	timestamp := time.Now()

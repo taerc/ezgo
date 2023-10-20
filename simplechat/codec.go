@@ -40,6 +40,17 @@ type PacketHead struct {
 	Length   uint32
 }
 
+func defaultPacketHead() PacketHead {
+	return PacketHead{
+		StartTag: ppFrameDelimiter,
+		SendSeq:  0,
+		RecvSeq:  0,
+		Type:     0,
+		Length:   0,
+	}
+
+}
+
 type PacketHandler interface {
 	HandlerPacket(conn *connection, header PacketHead, packet []byte) error
 }
@@ -128,6 +139,7 @@ func (pp *PacketParser) Parse(conn *connection) error {
 			pp.endTag = binary.LittleEndian.Uint16(data[pp.header.Length : pp.header.Length+2])
 			inited = true
 			// @TODO
+			// routuine
 			packetData := make([]byte, pp.header.Length)
 			copy(packetData, data[:pp.header.Length])
 			go pp.handler.HandlerPacket(conn, pp.header, packetData)

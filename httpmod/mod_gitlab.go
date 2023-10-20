@@ -1,11 +1,12 @@
-package ezgo
+package httpmod
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/taerc/ezgo/conf"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/taerc/ezgo/conf"
 )
 
 type gitlabService struct {

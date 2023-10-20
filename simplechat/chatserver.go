@@ -8,17 +8,17 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-type chatServer struct {
+type ChatServer struct {
 	commands map[string]HandlerFunc
 }
 
-func newChatServer() *chatServer {
-	return &chatServer{
+func NewChatServer() *ChatServer {
+	return &ChatServer{
 		commands: make(map[string]func(c *connection, hd PacketHead, data interface{})),
 	}
 }
 
-func (cs *chatServer) HandlerPacket(conn *connection, hd PacketHead, packet []byte) error {
+func (cs *ChatServer) HandlerPacket(conn *connection, hd PacketHead, packet []byte) error {
 
 	cmd := &Command{}
 	if e := json.Unmarshal(packet, &cmd); e != nil {
@@ -31,7 +31,7 @@ func (cs *chatServer) HandlerPacket(conn *connection, hd PacketHead, packet []by
 	return nil
 }
 
-func (cs *chatServer) RegisterCommand(cmd string, handler HandlerFunc) {
+func (cs *ChatServer) RegisterCommand(cmd string, handler HandlerFunc) {
 	cs.commands[cmd] = handler
 }
 

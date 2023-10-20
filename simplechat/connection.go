@@ -49,3 +49,15 @@ func (c *connection) SendMessage(head PacketHead, v interface{}) error {
 	c.conn.Write(data)
 	return nil
 }
+
+func (c *connection) Send(v interface{}) error {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	data, e := encodePacket(defaultPacketHead()).Marshal(v)
+	if e != nil {
+		fmt.Println(e)
+		return e
+	}
+	c.conn.Write(data)
+	return nil
+}

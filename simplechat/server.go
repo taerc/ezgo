@@ -9,8 +9,6 @@ import (
 )
 
 // TODO
-// package split case
-
 type HandlerFunc = func(c *connection, hd PacketHead, data interface{})
 
 type tcpServer struct {
@@ -19,9 +17,7 @@ type tcpServer struct {
 	connections   map[string]*connection
 	connectionNum int
 	paser         *PacketParser
-	chat          *chatServer
-	// packetEncoder   Encoder // tcp packet
-	// businessEncoder Encoder // xml
+	chat          *ChatServer
 }
 
 func (ts *tcpServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
@@ -75,16 +71,12 @@ func (ts *tcpServer) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	return
 }
 
-func (ts *tcpServer) RegisterCommand(cmd string, handler HandlerFunc) {
-	ts.chat.RegisterCommand(cmd, handler)
-}
-
-func StartChatServer(port int) error {
+func StartChatServer(port int, chatserver *ChatServer) error {
 	echo := &tcpServer{
 		ezid:        ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
 		paser:       NewPacketParser(),
 		connections: make(map[string]*connection),
-		chat:        newChatServer(),
+		chat:        chatserver,
 	}
 	log.Fatal(gnet.Run(echo, fmt.Sprintf("tcp://:%d", port), gnet.WithMulticore(false), gnet.WithReusePort(true)))
 	return nil

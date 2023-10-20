@@ -1,9 +1,10 @@
-package ezgo
+package httpmod
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"path"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Executor func(data interface{}) error

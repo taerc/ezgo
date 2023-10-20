@@ -47,17 +47,17 @@ func (c *ChatUser) SendMessageToGroup(data string, groudId string) error {
 	usrList := group.GetUserList()
 
 	for item := usrList.Front(); item != nil; item = item.Next() {
-		m := Message{
-			From: c.Id,
-			To:   groudId,
-			Type: "group",
-			Data: data,
-		}
-		usrId := item.Value.(string)
-		if usrId == c.Id {
-			continue
-		}
-		conn, _ := getUserById(usrId)
+		// m := Message{
+		// 	From: c.Id,
+		// 	To:   groudId,
+		// 	Type: "group",
+		// 	Data: data,
+		// }
+		// usrId := item.Value.(string)
+		// if usrId == c.Id {
+		// 	continue
+		// }
+		// conn, _ := getUserById(usrId)
 		// conn.conn.SendMessage()
 		// msg, _ := json.MarshalIndent(m, " ", " ")
 		// conn.conn.SendMessage(string(msg))
