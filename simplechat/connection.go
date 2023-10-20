@@ -31,12 +31,10 @@ func newConnection(id string, conn gnet.Conn) *connection {
 		conn:       conn,
 		lock:       &sync.Mutex{},
 	}
-
 }
 
 type connectionContext struct {
-	Id    string
-	UsrId string
+	Id string
 }
 
 func (c *connection) SendMessage(data string) {

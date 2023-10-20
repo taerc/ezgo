@@ -57,7 +57,7 @@ type DestoryGroupMessage struct {
 
 type ChatUser struct {
 	Id   string
-	conn connection
+	conn *connection
 }
 
 type ChatGroup struct {

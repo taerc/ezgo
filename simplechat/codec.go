@@ -3,10 +3,9 @@ package simplechat
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"fmt"
-
-	"github.com/panjf2000/gnet/v2"
 )
 
 type Encoder interface {
@@ -42,7 +41,7 @@ type PacketHead struct {
 }
 
 type PacketHandler interface {
-	HandlerPacket(conn string, header PacketHead, body []byte) error
+	HandlerPacket(conn *connection, header PacketHead, packet []byte) error
 }
 
 func NewPacketHead(sendSeq uint64, recvSeq uint64, ty byte) *PacketHead {
@@ -55,27 +54,32 @@ func NewPacketHead(sendSeq uint64, recvSeq uint64, ty byte) *PacketHead {
 	}
 }
 
-type ppFrameEncoder struct {
+type packetEncoder struct {
+	head PacketHead
 }
 
-func NewppFrameEncoder() *ppFrameEncoder {
-	return &ppFrameEncoder{}
+func encodePacket(head PacketHead) *packetEncoder {
+	return &packetEncoder{head: head}
 }
 
-func (f *ppFrameEncoder) Encode(header *PacketHead, data []byte) ([]byte, error) {
+func (pe *packetEncoder) Marshal(v interface{}) ([]byte, error) {
 
 	buff := &bytes.Buffer{}
+	data, e := json.Marshal(v)
+	if e != nil {
+		return nil, e
+	}
 
-	header.Length = uint32(len(data))
-	e := binary.Write(buff, binary.LittleEndian, header)
+	pe.head.Length = uint32(len(data))
+	e = binary.Write(buff, binary.LittleEndian, pe.head)
 	if e != nil {
 		return nil, e
 	}
 	n, e := buff.Write(data)
-	if n != int(header.Length) {
+	if n != int(pe.head.Length) {
 		return nil, errors.New("not match")
 	}
-	e = binary.Write(buff, binary.LittleEndian, header.StartTag)
+	e = binary.Write(buff, binary.LittleEndian, pe.head.StartTag)
 	if e != nil {
 		return nil, e
 	}
@@ -96,8 +100,9 @@ func NewPacketParser() *PacketParser {
 	}
 }
 
-func (pp *PacketParser) Parse(c gnet.Conn) error {
-
+func (pp *PacketParser) Parse(conn *connection) error {
+	// @TODO lock
+	c := conn.conn
 	inited := true
 	for c.InboundBuffered() > 0 {
 		if inited {
@@ -125,7 +130,7 @@ func (pp *PacketParser) Parse(c gnet.Conn) error {
 			// @TODO
 			packetData := make([]byte, pp.header.Length)
 			copy(packetData, data[:pp.header.Length])
-			go pp.handler.HandlerPacket("", pp.header, packetData)
+			go pp.handler.HandlerPacket(conn, pp.header, packetData)
 		} else {
 			data, e := c.Next(1)
 			if e != nil {

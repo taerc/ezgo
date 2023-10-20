@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mitchellh/mapstructure"
 	"github.com/panjf2000/gnet/v2"
 	"github.com/taerc/ezgo"
 )
@@ -12,17 +11,15 @@ import (
 // TODO
 // package split case
 
-type HandlerFunc interface {
-	Handler(c *connection, v interface{})
-}
+type HandlerFunc = func(c *connection, hd PacketHead, data interface{})
 
 type tcpServer struct {
 	*gnet.BuiltinEventEngine
 	ezid          *ezgo.EZID
 	connections   map[string]*connection
 	connectionNum int
-	routers       map[string]HandlerFunc
 	paser         *PacketParser
+	chat          *chatServer
 	// packetEncoder   Encoder // tcp packet
 	// businessEncoder Encoder // xml
 }
@@ -41,12 +38,12 @@ func (ts *tcpServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 	if e != nil {
 		fmt.Println(e.Error())
 	}
-	// c.Context()
 	ctx := connectionContext{
 		Id: cid,
 	}
 	c.SetContext(ctx)
 	ts.connections[cid] = newConnection(cid, c)
+	ts.connectionNum++
 	return
 }
 
@@ -58,78 +55,28 @@ func (ts *tcpServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	ctx := c.Context()
 	if ctx != nil {
 		ct := ctx.(connectionContext)
-		fmt.Println(fmt.Sprintf("login >>usrId :%s connId %s", ct.UsrId, ct.Id))
+		fmt.Println(fmt.Sprintf("connId %s", ct.Id))
 	}
+	// close socket
+	// close lock
+	ts.connectionNum--
 	return
 }
 
 func (ts *tcpServer) OnTraffic(c gnet.Conn) (action gnet.Action) {
-	ts.paser.Parse(c)
+
+	ctx := c.Context()
+	if ctx != nil {
+		ct := ctx.(connectionContext)
+		conn := ts.connections[ct.Id]
+		conn.conn = c
+		ts.paser.Parse(conn)
+	}
 	return
 }
 
-func (es *tcpServer) handlerMessage(cmd *Command, c gnet.Conn) error {
-
-	if cmd.Cmd == CommandLogin {
-		return es.commandLogin(cmd, c)
-	} else if cmd.Cmd == CommandSend {
-		return es.commandSend(cmd, c)
-	}
-	return nil
-}
-
-func (es *tcpServer) commandLogin(cmd *Command, c gnet.Conn) error {
-
-	login := &LoginMessage{}
-	e := mapstructure.Decode(cmd.Data, login)
-	if e != nil {
-		fmt.Println(e.Error())
-	}
-	// TODO
-	// valid Login and userId
-	ctx := c.Context()
-	if ctx != nil {
-		ct := ctx.(connectionContext)
-		ct.UsrId = login.UsrId
-		c.SetContext(ct)
-
-		usr := &ChatUser{
-			Id: ct.UsrId,
-			conn: connection{
-				Id: ct.Id,
-				// conn:     c,
-			},
-		}
-		trackUser(usr)
-
-		fmt.Println(fmt.Sprintf("login >>usrId :%s connId %s", ct.UsrId, ct.Id))
-	}
-
-	return nil
-}
-
-func (es *tcpServer) commandSend(cmd *Command, c gnet.Conn) error {
-
-	send := &SendMessage{}
-	e := mapstructure.Decode(cmd.Data, send)
-	if e != nil {
-		fmt.Println(e.Error())
-	}
-	fmt.Println(send.Data)
-	ctx := c.Context()
-	if ctx != nil {
-		ct := ctx.(connectionContext)
-		fmt.Println(ct.Id)
-		fmt.Println(ct.UsrId)
-	}
-
-	if usr, e := getUserById(send.To); e != nil {
-		fmt.Println(e.Error())
-	} else {
-		fmt.Println(fmt.Sprintf("send >>usrId :%s connId %s", send.To, usr.conn.Id))
-		usr.conn.conn.AsyncWrite([]byte(send.Data))
-	}
-	return nil
+func (ts *tcpServer) RegisterCommand(cmd string, handler HandlerFunc) {
+	ts.chat.RegisterCommand(cmd, handler)
 }
 
 func StartChatServer(port int) error {
@@ -137,6 +84,7 @@ func StartChatServer(port int) error {
 		ezid:        ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
 		paser:       NewPacketParser(),
 		connections: make(map[string]*connection),
+		chat:        newChatServer(),
 	}
 	log.Fatal(gnet.Run(echo, fmt.Sprintf("tcp://:%d", port), gnet.WithMulticore(false), gnet.WithReusePort(true)))
 	return nil
