@@ -1,20 +1,16 @@
-package ezgo
+package httpmod
 
 // Response
 import (
-	"bytes"
-	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/taerc/ezgo/conf"
-	"io"
-	"net/http"
-	"path"
 )
 
 // 通用插件相关内容
 
-/// Default Plugin part
+// / Default Plugin part
 var headerXRequestID string = "X-Request-ID"
 
 func PluginRequestId() gin.HandlerFunc {
@@ -55,8 +51,8 @@ func PluginCors() gin.HandlerFunc {
 	}
 }
 
-/// --
-/// default save the parmas into sqlite
+// / --
+// / default save the parmas into sqlite
 type requestRecord struct {
 	RequestId string `gorm:"column:request;size:64"`
 	Method    string `gorm:"column:method;size:64"`
@@ -69,41 +65,41 @@ func (r requestRecord) TableName() string {
 	return "request"
 }
 
-func getRequestRecordDb() (string, error) {
-	if d, e := getResourceTypePath(ResourceTypeSqlite); e != nil {
-		return d, e
-	} else {
-		return path.Join(d, "http_request.db"), nil
-	}
-}
+// func getRequestRecordDb() (string, error) {
+// 	if d, e := getResourceTypePath(ResourceTypeSqlite); e != nil {
+// 		return d, e
+// 	} else {
+// 		return path.Join(d, "http_request.db"), nil
+// 	}
+// }
 
-var _pluginRequest = "_pluginRequest"
+// var _pluginRequest = "_pluginRequest"
 
-func PluginRequestSnapShot() gin.HandlerFunc {
-	return func(c *gin.Context) {
+// func PluginRequestSnapShot() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
 
-		db, e := getRequestRecordDb()
-		if e == nil {
-			if !SqliteExists(_pluginRequest) {
-				c := &conf.SQLiteConf{SQLitePath: db}
-				initSqlite(_pluginRequest, c)
-				SQLITE(_pluginRequest).AutoMigrate(requestRecord{})
-			}
+// 		db, e := getRequestRecordDb()
+// 		if e == nil {
+// 			if !SqliteExists(_pluginRequest) {
+// 				c := &conf.SQLiteConf{SQLitePath: db}
+// 				initSqlite(_pluginRequest, c)
+// 				SQLITE(_pluginRequest).AutoMigrate(requestRecord{})
+// 			}
 
-			go func() {
-				body, e := io.ReadAll(c.Request.Body)
-				if e == nil {
-					SQLITE(_pluginRequest).Create(&requestRecord{
-						RequestId: GetRequestId(c),
-						Method:    c.Request.Method,
-						Url:       fmt.Sprintf("%s?%s", c.Request.URL.Path, c.Request.URL.RawQuery),
-						Body:      body,
-					})
-				}
-				c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
-			}()
-		}
+// 			go func() {
+// 				body, e := io.ReadAll(c.Request.Body)
+// 				if e == nil {
+// 					SQLITE(_pluginRequest).Create(&requestRecord{
+// 						RequestId: GetRequestId(c),
+// 						Method:    c.Request.Method,
+// 						Url:       fmt.Sprintf("%s?%s", c.Request.URL.Path, c.Request.URL.RawQuery),
+// 						Body:      body,
+// 					})
+// 				}
+// 				c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+// 			}()
+// 		}
 
-		c.Next()
-	}
-}
+// 		c.Next()
+// 	}
+// }

@@ -2,9 +2,10 @@ package ezgo
 
 import (
 	"fmt"
-	"github.com/taerc/ezgo/conf"
 	"path"
 	"sync"
+
+	"github.com/taerc/ezgo/conf"
 )
 
 type Resource struct {
@@ -40,7 +41,7 @@ var resourceMountPoint map[ResourceType]string
 
 func init() {
 
-	resourceMountPoint = make(map[ResourceType]string, ResourceTypeUnk+1)
+	resourceMountPoint = make(map[ResourceType]string)
 	resourceMountPoint[ResourceTypeFile] = "file"
 	resourceMountPoint[ResourceTypeAudio] = "audio"
 	resourceMountPoint[ResourceTypeVideo] = "video"
@@ -49,8 +50,7 @@ func init() {
 	resourceMountPoint[ResourceTypeBinary] = "binary"
 	resourceMountPoint[ResourceTypeSqlite] = "sqlite"
 	resourceMountPoint[ResourceTypeLog] = "logs"
-	resourceMountPoint[ResourceTypeUnk] = "unknown"
-
+	resourceMountPoint[ResourceTypeUnk] = "default"
 }
 
 func WithComponentResource(c *conf.Configure) func(wg *sync.WaitGroup) {

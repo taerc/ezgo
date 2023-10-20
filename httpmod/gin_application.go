@@ -1,10 +1,10 @@
 package httpmod
 
 import (
-	"fmt"
 	"path"
 
 	"github.com/gin-gonic/gin"
+	"github.com/taerc/ezgo"
 )
 
 type Executor func(data interface{}) error
@@ -18,57 +18,57 @@ type Message struct {
 
 func JsonBind(ctx *gin.Context, data interface{}) error {
 	if err := ctx.BindJSON(data); err != nil {
-		return NewEError(CodeJsonFormatError, err)
+		return ezgo.NewEError(ezgo.CodeJsonFormatError, err)
 	}
 	return nil
 }
 
 func IndJsonResponse(ctx *gin.Context, er int, data interface{}) {
-	ctx.IndentedJSON(Success, Message{
+	ctx.IndentedJSON(ezgo.Success, Message{
 		Code:      er,
 		Data:      data,
-		Message:   GetMessageByCode(er),
-		RequestId: GetRequestId(ctx),
+		Message:   ezgo.GetMessageByCode(er),
+		RequestId: ezgo.GetRequestId(ctx),
 	})
 }
 
 func OKResponse(ctx *gin.Context, data interface{}) {
-	ctx.IndentedJSON(Success, Message{
-		Code:      Success,
+	ctx.IndentedJSON(ezgo.Success, Message{
+		Code:      ezgo.Success,
 		Data:      data,
-		Message:   GetMessageByCode(Success),
-		RequestId: GetRequestId(ctx),
+		Message:   ezgo.GetMessageByCode(ezgo.Success),
+		RequestId: ezgo.GetRequestId(ctx),
 	})
 }
 
 func ErrorResponse(ctx *gin.Context, e error) {
-	ctx.JSON(Success, Message{
-		Code:      GetErrorCode(e),
+	ctx.JSON(ezgo.Success, Message{
+		Code:      ezgo.GetErrorCode(e),
 		Data:      nil,
 		Message:   e.Error(),
-		RequestId: GetRequestId(ctx),
+		RequestId: ezgo.GetRequestId(ctx),
 	})
 }
 
-type Application struct {
+type GinApplication struct {
 	Init   Executor
 	Exec   Executor
 	Done   Executor
 	engine *gin.Engine
 }
 
-func (af *Application) APIGroup(ver, relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
+func (af *GinApplication) APIGroup(ver, relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
 	return af.engine.Group(path.Join("/api", ver, relativePath), handlers...)
 }
-func (af *Application) Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
+func (af *GinApplication) Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
 	return af.engine.Group(relativePath, handlers...)
 }
 
-func (af *Application) Use(middleware ...gin.HandlerFunc) gin.IRoutes {
+func (af *GinApplication) Use(middleware ...gin.HandlerFunc) gin.IRoutes {
 	return af.engine.Use(middleware...)
 }
 
-func (af *Application) Run(ipaddress ...string) error {
+func (af *GinApplication) Run(ipaddress ...string) error {
 	return af.engine.Run(ipaddress...)
 }
 
@@ -95,12 +95,12 @@ func HEAD(route *gin.RouterGroup, relativePath string, handlrs ...gin.HandlerFun
 }
 
 func Version() string {
-	return version
+	return ""
+	// return ezgo.version
 }
 
-func (af *Application) Do(data interface{}) error {
-
-	Info(nil, M, fmt.Sprintf("Version :%s", Version()))
+func (af *GinApplication) Do(data interface{}) error {
+	// ezgo.Info(nil, M, fmt.Sprintf("Version :%s", Version()))
 
 	if n := af.Init(data); n != nil {
 		return n
@@ -117,29 +117,29 @@ func (af *Application) Do(data interface{}) error {
 	return nil
 }
 
-var application *Application = nil
+var application *GinApplication = nil
 
 func init() {
-	application = new(Application)
+	application = new(GinApplication)
 	application.engine = gin.Default()
-	application.Use(PluginRequestId(), PluginCors(), PluginRequestSnapShot())
+	application.Use(PluginRequestId(), PluginCors())
 }
 
-/// Application part
+/// GinApplication part
 
-func DefaultApp() *Application {
+func DefaultApp() *GinApplication {
 	return application
 }
 
-func InitApplication(init, exec, done Executor) *Application {
+func InitGinApplication(init, exec, done Executor) *GinApplication {
 	application.Init = init
 	application.Exec = exec
 	application.Done = done
 	return application
 }
 
-func NewApplication(init, exec, done Executor) *Application {
-	af := new(Application)
+func NewGinApplication(init, exec, done Executor) *GinApplication {
+	af := new(GinApplication)
 	af.Init = init
 	af.Exec = exec
 	af.Done = done
@@ -156,6 +156,6 @@ func Run(ipaddress ...string) error {
 }
 
 func Do(data interface{}) error {
-	Info(nil, M, fmt.Sprintf("version: %s", Version()))
+	// Info(nil, M, fmt.Sprintf("version: %s", Version()))
 	return application.Do(data)
 }
