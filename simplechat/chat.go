@@ -61,10 +61,6 @@ func cmdSendMsg(c *connection, hd PacketHead, data interface{}) {
 		fmt.Println(e.Error())
 	} else {
 		fmt.Println(fmt.Sprintf("send >>usrId :%s connId %s", send.To, usr.conn.Id))
-		// usr.conn.conn.AsyncWrite([]byte(send.Data))
-		packet, e := encodePacket(hd).Marshal(send)
-		if e != nil {
-			usr.conn.conn.Write(packet)
-		}
+		usr.conn.SendMessage(hd, send)
 	}
 }

@@ -1,6 +1,7 @@
 package simplechat
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/panjf2000/gnet/v2"
@@ -37,7 +38,14 @@ type connectionContext struct {
 	Id string
 }
 
-func (c *connection) SendMessage(data string) {
-	// c.connLock.Lock()
-	// defer c.connLock.Unlock()
+func (c *connection) SendMessage(head PacketHead, v interface{}) error {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	data, e := encodePacket(head).Marshal(v)
+	if e != nil {
+		fmt.Println(e)
+		return e
+	}
+	c.conn.Write(data)
+	return nil
 }

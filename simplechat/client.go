@@ -58,8 +58,9 @@ func (c *ChatUser) SendMessageToGroup(data string, groudId string) error {
 			continue
 		}
 		conn, _ := getUserById(usrId)
-		msg, _ := json.MarshalIndent(m, " ", " ")
-		conn.conn.SendMessage(string(msg))
+		// conn.conn.SendMessage()
+		// msg, _ := json.MarshalIndent(m, " ", " ")
+		// conn.conn.SendMessage(string(msg))
 	}
 
 	return nil
