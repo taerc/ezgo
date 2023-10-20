@@ -5,29 +5,35 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"sync"
 
 	"github.com/panjf2000/gnet/v2"
 )
 
+type Encoder interface {
+	Marshal(v interface{}) ([]byte, error)
+}
+type Decoder interface {
+	UnMashal([]byte) (interface{}, error)
+}
+
 const (
-	gsFrameDelimiter  uint16 = 0xEB90
-	gsRequestFrame    byte   = 0x00
-	gsResponseFrame   byte   = 0x01
-	gsFrameHeaderSize int    = 23
+	ppFrameDelimiter  uint16 = 0xEB90
+	ppRequestFrame    byte   = 0x00
+	ppResponseFrame   byte   = 0x01
+	ppFrameHeaderSize int    = 23
 )
 
 const (
-	GSFRAME_DECODE_STATE_INIT = 0 + iota
-	GSFRAME_DECODE_STATE_90
-	GSFRAME_DECODE_STATE_EB
-	GSFRAME_DECODE_STATE_START
-	GSFRAME_DECODE_STATE_FRAME
-	GSFRAME_DECODE_STATE_END
-	GSFRAME_DECODE_STATE_FRAME_BROKEN
+	ppFRAME_DECODE_STATE_INIT = 0 + iota
+	ppFRAME_DECODE_STATE_90
+	ppFRAME_DECODE_STATE_EB
+	ppFRAME_DECODE_STATE_START
+	ppFRAME_DECODE_STATE_FRAME
+	ppFRAME_DECODE_STATE_END
+	ppFRAME_DECODE_STATE_FRAME_BROKEN
 )
 
-type GSFrameHeader struct {
+type PacketHead struct {
 	StartTag uint16
 	SendSeq  uint64 // inc
 	RecvSeq  uint64 // inc
@@ -35,25 +41,28 @@ type GSFrameHeader struct {
 	Length   uint32
 }
 
-func NewGSFrameHeader(sendSeq uint64, recvSeq uint64, ty byte) *GSFrameHeader {
-	return &GSFrameHeader{
-		StartTag: gsFrameDelimiter,
+type PacketHandler interface {
+	HandlerPacket(conn string, header PacketHead, body []byte) error
+}
+
+func NewPacketHead(sendSeq uint64, recvSeq uint64, ty byte) *PacketHead {
+	return &PacketHead{
+		StartTag: ppFrameDelimiter,
 		SendSeq:  sendSeq,
 		RecvSeq:  recvSeq,
 		Type:     ty,
 		Length:   0,
 	}
-
 }
 
-type GSFrameEncoder struct {
+type ppFrameEncoder struct {
 }
 
-func NewGSFrameEncoder() *GSFrameEncoder {
-	return &GSFrameEncoder{}
+func NewppFrameEncoder() *ppFrameEncoder {
+	return &ppFrameEncoder{}
 }
 
-func (f *GSFrameEncoder) Encode(header *GSFrameHeader, data []byte) ([]byte, error) {
+func (f *ppFrameEncoder) Encode(header *PacketHead, data []byte) ([]byte, error) {
 
 	buff := &bytes.Buffer{}
 
@@ -73,56 +82,60 @@ func (f *GSFrameEncoder) Encode(header *GSFrameHeader, data []byte) ([]byte, err
 	return buff.Bytes(), e
 }
 
-type GSFrameDecoder struct {
-	header      GSFrameHeader
+type PacketParser struct {
+	header      PacketHead
 	headerBytes [23]byte
 	state       int
 	endTag      uint16
-	mutex       *sync.Mutex
+	handler     PacketHandler
 }
 
-func NewGSFrameDecoder() *GSFrameDecoder {
-	return &GSFrameDecoder{
-		mutex: &sync.Mutex{},
-		state: GSFRAME_DECODE_STATE_INIT,
+func NewPacketParser() *PacketParser {
+	return &PacketParser{
+		state: ppFRAME_DECODE_STATE_INIT,
 	}
 }
 
-func (gs *GSFrameDecoder) Decode(c gnet.Conn) (action gnet.Action) {
+func (pp *PacketParser) Parse(c gnet.Conn) error {
 
 	inited := true
 	for c.InboundBuffered() > 0 {
 		if inited {
-			headBuff, e := c.Next(gsFrameHeaderSize)
+			headBuff, e := c.Next(ppFrameHeaderSize)
 			if e != nil {
 				fmt.Println("decode ", e)
+				return errors.New("invalid header length")
 			}
-			copy(gs.headerBytes[:], headBuff)
+			copy(pp.headerBytes[:], headBuff)
 			inited = false
 		}
-		headRd := bytes.NewReader(gs.headerBytes[:])
-		binary.Read(headRd, binary.LittleEndian, &gs.header)
-		fmt.Printf("magic %04x\n", gs.header.StartTag)
-		fmt.Printf("length %d\n", gs.header.Length)
-		if gs.header.StartTag == gsFrameDelimiter {
-			data, e := c.Next(int(gs.header.Length + 2))
+		headRd := bytes.NewReader(pp.headerBytes[:])
+		binary.Read(headRd, binary.LittleEndian, &pp.header)
+		fmt.Printf("magic %04x\n", pp.header.StartTag)
+		fmt.Printf("length %d\n", pp.header.Length)
+		if pp.header.StartTag == ppFrameDelimiter {
+			data, e := c.Next(int(pp.header.Length + 2))
 			if e != nil {
 				fmt.Println("rd data ", e.Error())
+				return errors.New("invalid data length")
 			}
 			fmt.Println(string(data))
-			gs.endTag = binary.LittleEndian.Uint16(data[gs.header.Length : gs.header.Length+2])
+			pp.endTag = binary.LittleEndian.Uint16(data[pp.header.Length : pp.header.Length+2])
 			inited = true
+			// @TODO
+			packetData := make([]byte, pp.header.Length)
+			copy(packetData, data[:pp.header.Length])
+			go pp.handler.HandlerPacket("", pp.header, packetData)
 		} else {
 			data, e := c.Next(1)
 			if e != nil {
-				fmt.Println("decode ", e)
+				return errors.New("invalid data")
 			}
-			copy(gs.headerBytes[0:22], gs.headerBytes[1:23])
-			copy(gs.headerBytes[22:23], data)
-			headRd.Reset(gs.headerBytes[:])
+			copy(pp.headerBytes[0:22], pp.headerBytes[1:23])
+			copy(pp.headerBytes[22:23], data)
+			headRd.Reset(pp.headerBytes[:])
 		}
-
 	}
 
-	return 0
+	return nil
 }

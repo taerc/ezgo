@@ -3,13 +3,8 @@ package simplechat
 import (
 	"sync"
 
-	"github.com/panjf2000/gnet"
+	"github.com/panjf2000/gnet/v2"
 )
-
-// type Request struct {
-// 	ProtocolHeader
-// 	body []byte
-// }
 
 type Request interface {
 	Head() ([]byte, error)
@@ -18,17 +13,19 @@ type Request interface {
 
 type connection struct {
 	Id         string
+	UsrId      string // for demo chatting
+	conn       gnet.Conn
 	lastSendId uint64
 	lastRecvId uint64
-	conn       gnet.Conn
-	lock       *sync.Mutex
 	request    Request
+	lock       *sync.Mutex
 }
 
 func newConnection(id string, conn gnet.Conn) *connection {
 
 	return &connection{
 		Id:         id,
+		UsrId:      "",
 		lastSendId: 0,
 		lastRecvId: 0,
 		conn:       conn,

@@ -16,32 +16,28 @@ type HandlerFunc interface {
 	Handler(c *connection, v interface{})
 }
 
-type Encoder interface {
-	Marshal(v interface{}) ([]byte, error)
-	UnMashal([]byte) (interface{}, error)
-}
-
 type tcpServer struct {
 	*gnet.BuiltinEventEngine
-	ezid            *ezgo.EZID
-	decoder         *GSFrameDecoder
-	connections     map[string]*connection
-	routers         map[string]HandlerFunc
-	packetEncoder   Encoder // tcp packet
-	businessEncoder Encoder // xml
+	ezid          *ezgo.EZID
+	connections   map[string]*connection
+	connectionNum int
+	routers       map[string]HandlerFunc
+	paser         *PacketParser
+	// packetEncoder   Encoder // tcp packet
+	// businessEncoder Encoder // xml
 }
 
-func (es *tcpServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
+func (ts *tcpServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
 	fmt.Println("onBoot")
 	return
 }
 
-func (cs *tcpServer) OnShutdown(eng gnet.Engine) {
-
+func (ts *tcpServer) OnShutdown(eng gnet.Engine) {
+	fmt.Println("shutdown")
 }
 
-func (es *tcpServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
-	cid, e := es.ezid.NextStringID()
+func (ts *tcpServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
+	cid, e := ts.ezid.NextStringID()
 	if e != nil {
 		fmt.Println(e.Error())
 	}
@@ -50,10 +46,11 @@ func (es *tcpServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 		Id: cid,
 	}
 	c.SetContext(ctx)
+	ts.connections[cid] = newConnection(cid, c)
 	return
 }
 
-func (es *tcpServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
+func (ts *tcpServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	fmt.Println("close ", c.RemoteAddr().String())
 
 	// TODO
@@ -66,8 +63,8 @@ func (es *tcpServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	return
 }
 
-func (cs *tcpServer) OnTraffic(c gnet.Conn) (action gnet.Action) {
-	cs.decoder.Decode(c)
+func (ts *tcpServer) OnTraffic(c gnet.Conn) (action gnet.Action) {
+	ts.paser.Parse(c)
 	return
 }
 
@@ -78,7 +75,6 @@ func (es *tcpServer) handlerMessage(cmd *Command, c gnet.Conn) error {
 	} else if cmd.Cmd == CommandSend {
 		return es.commandSend(cmd, c)
 	}
-
 	return nil
 }
 
@@ -138,8 +134,9 @@ func (es *tcpServer) commandSend(cmd *Command, c gnet.Conn) error {
 
 func StartChatServer(port int) error {
 	echo := &tcpServer{
-		ezid:    ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
-		decoder: NewGSFrameDecoder(),
+		ezid:        ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
+		paser:       NewPacketParser(),
+		connections: make(map[string]*connection),
 	}
 	log.Fatal(gnet.Run(echo, fmt.Sprintf("tcp://:%d", port), gnet.WithMulticore(false), gnet.WithReusePort(true)))
 	return nil
