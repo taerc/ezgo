@@ -7,59 +7,63 @@ import (
 
 	flatbuffers "github.com/google/flatbuffers/go"
 	log "github.com/sirupsen/logrus"
-	"github.com/taerc/ezgo"
 	"github.com/taerc/ezgo/licence/proto"
+	ezgo "github.com/taerc/ezgo/pkg"
 )
 
-type TimeInfo struct {
-	MagicValue     string
-	BuildY         int // = -1;
-	BuildM         int // = -1;
-	BuildD         int // = -1;
-	Expired        int // = -1;
-	LastY          int //= -1;
-	LastM          int //= -1;
-	LastD          int //= -1;
-	LastH          int //= 0;
-	MagicSignature string
-}
+// type TimeInfo struct {
+// 	MagicValue     string
+// 	BuildY         int // = -1;
+// 	BuildM         int // = -1;
+// 	BuildD         int // = -1;
+// 	Expired        int // = -1;
+// 	LastY          int //= -1;
+// 	LastM          int //= -1;
+// 	LastD          int //= -1;
+// 	LastH          int //= 0;
+// 	MagicSignature string
+// }
 
-type LocalInfo struct {
-	DeviceSn string
-	Uuid     string //hashid(sn+uuid编码sha256编码2）
-}
+// type LocalInfo struct {
+// 	DeviceSn string
+// 	Uuid     string //hashid(sn+uuid编码sha256编码2）
+// }
 
-type CentreInfo struct {
-	Url        string
-	SignLocal  string
-	SignCentre string
-}
+// type CentreInfo struct {
+// 	Url        string
+// 	SignLocal  string
+// 	SignCentre string
+// }
 
-type LicenceProto struct {
-	Version        int            // = 0; //1u
-	MagicValue     string         //随机字符串
-	MagicSignature string         //随机字符串编码sha256编码1
-	AuthType       proto.AuthType //=TimeAuth;//LocalAuth本地文件方式鉴权
-	DeviceDesc     string         //安卓"android" 盒子"emmc"
-	TimeInfo       TimeInfo       //空
-	LocalInfo      LocalInfo      //sn和uuid //sn和 hashid(sn+uuid编码sha256编码2）
-	CentreInfo     CentreInfo     //空
-}
+// type LicenceProto struct {
+// 	Version        int            // = 0; //1u
+// 	MagicValue     string         //随机字符串
+// 	MagicSignature string         //随机字符串编码sha256编码1
+// 	AuthType       proto.AuthType //=TimeAuth;//LocalAuth本地文件方式鉴权
+// 	DeviceDesc     string         //安卓"android" 盒子"emmc"
+// 	TimeInfo       TimeInfo       //空
+// 	LocalInfo      LocalInfo      //sn和uuid //sn和 hashid(sn+uuid编码sha256编码2）
+// 	CentreInfo     CentreInfo     //空
+// }
 
-type LicenceProtoType struct {
-	Version        int            // = 0; //1u
-	MagicValue     string         //随机字符串
-	MagicSignature string         //随机字符串编码sha256编码1
-	AuthType       proto.AuthType //=TimeAuth;//LocalAuth本地文件方式鉴权
-	DeviceDesc     string         //安卓"android" 盒子"emmc"
-	//LocalInfo      LocalInfo  //sn和uuid
-	DeviceSn string
-	Uuid     string
-}
+// type LicenceProtoType struct {
+// 	Version        int            // = 0; //1u
+// 	MagicValue     string         //随机字符串
+// 	MagicSignature string         //随机字符串编码sha256编码1
+// 	AuthType       proto.AuthType //=TimeAuth;//LocalAuth本地文件方式鉴权
+// 	DeviceDesc     string         //安卓"android" 盒子"emmc"
+// 	//LocalInfo      LocalInfo  //sn和uuid
+// 	DeviceSn string
+// 	Uuid     string
+// }
 
 // GenerateLicence
 func GenerateLicence(dstFile, sn, uuid, DeviceDesc string) error {
-	licenceProtoType := new(LicenceProtoType)
+	//初始化buffer，大小为0，会自动扩容
+	builder := flatbuffers.NewBuilder(0)
+	//builder.CreateString()
+	lic := new(proto.LicenceProto)
+	// licenceProtoType := new(LicenceProtoType)
 	licenceProtoType.Version = 1                                                      // = 0; //1u
 	licenceProtoType.MagicValue = randomString()                                      //随机字符串
 	licenceProtoType.MagicSignature = randomStringSha256(licenceProtoType.MagicValue) //随机字符串编码sha256编码1
@@ -68,26 +72,8 @@ func GenerateLicence(dstFile, sn, uuid, DeviceDesc string) error {
 	licenceProtoType.DeviceSn = sn
 	licenceProtoType.Uuid = snAndUUIDMerge(licenceProtoType.DeviceSn, uuid)
 	//序列化
-	buf := encodeLicence(licenceProtoType)
-	//异或编码加密
-	bufferEncrypt(buf)
-	return mixupFileWrite(dstFile, buf)
-}
-
-// DecodeLicence
-func DecodeLicence(filepathname string) {
-	data, err := mixupFileRead(filepathname)
-	if err != nil {
-		log.Errorln("ParseLicenceFile ioutil.ReadFile Error:", err)
-		return
-	}
-	bufferEncrypt(data)
-	decodeLicence(data)
-}
-
-func encodeLicence(licenceProtoType *LicenceProtoType) []byte {
-
-	localInfo := LocalInfo{DeviceSn: licenceProtoType.DeviceSn, Uuid: licenceProtoType.Uuid}
+	// buf := encodeLicence(licenceProtoType)
+	// localInfo := LocalInfo{DeviceSn: licenceProtoType.DeviceSn, Uuid: licenceProtoType.Uuid}
 
 	timeInfo := TimeInfo{}
 	centreInfo := CentreInfo{}
@@ -103,10 +89,6 @@ func encodeLicence(licenceProtoType *LicenceProtoType) []byte {
 	licenceProto.CentreInfo = centreInfo //空
 
 	licenceProto.LocalInfo = localInfo //sn和uuid //sn和 hashid(sn+uuid编码sha256编码2）
-
-	//初始化buffer，大小为0，会自动扩容
-	builder := flatbuffers.NewBuilder(0)
-	//builder.CreateString()
 
 	infosn := builder.CreateString(localInfo.DeviceSn) //先处理非标量string,得到偏移量
 	infouuiid := builder.CreateString(localInfo.Uuid)
@@ -147,17 +129,31 @@ func encodeLicence(licenceProtoType *LicenceProtoType) []byte {
 	builder.Finish(licenceinfo)
 	buf := builder.FinishedBytes() //返回[]byte
 	return buf
+	//异或编码加密
+	bufferEncrypt(buf)
+	return mixupFileWrite(dstFile, buf)
+}
+
+// DecodeLicence
+func DecodeLicence(filepathname string) (*proto.LicenceProto, error) {
+	data, err := mixupFileRead(filepathname)
+	if err != nil {
+		log.Errorln("ParseLicenceFile ioutil.ReadFile Error:", err)
+		return nil, err
+	}
+	bufferEncrypt(data)
+	return decodeLicence(data), nil
 }
 
 // Decode 反序列化
-func decodeLicence(buf []byte) *LicenceProto {
+func decodeLicence(buf []byte) *proto.LicenceProto {
 
 	gral := proto.GetRootAsLicenceProto(buf, 0)
 	local := new(proto.LocalInfo)
 	gral.LocalInfo(local)
 	fmt.Println(string(local.Sn()))
 	fmt.Println(string(local.Uuid()))
-	return nil
+	return gral
 }
 
 var _mask = [8]byte{0xe6, 0x78, 0x4e, 0xfb, 0xe6, 0x78, 0x4e, 0xfb}

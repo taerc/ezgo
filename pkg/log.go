@@ -2,11 +2,12 @@ package ezgo
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/taerc/ezgo/conf"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/taerc/ezgo/conf"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -74,12 +75,12 @@ func getReqId(c *gin.Context) string {
 	if c == nil {
 		return "-"
 	}
-
-	if s := GetRequestId(c); s == "" {
-		return "-"
-	} else {
-		return s
-	}
+	// if s := GetRequestId(c); s == "" {
+	// 	return "-"
+	// } else {
+	// 	return s
+	// }
+	return ""
 }
 
 func InfoReq(reqId, mod, msg string, fields ...zap.Field) {
