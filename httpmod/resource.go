@@ -1,4 +1,4 @@
-package ezgo
+package httpmod
 
 import (
 	"fmt"

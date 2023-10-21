@@ -1,15 +1,17 @@
-package ezgo
+package httpmod
 
 import (
 	"errors"
+	"path"
+
 	"github.com/gin-gonic/gin"
 	"github.com/taerc/ezgo/conf"
-	"path"
+	ezgo "github.com/taerc/ezgo/pkg"
 )
 
 func getResourceTypePath(t ResourceType) (string, error) {
-	dt := GetLocalDate()
-	return Mkdirs(path.Join(conf.Config.ResourcePath, resourceMountPoint[t], dt))
+	dt := ezgo.GetLocalDate()
+	return ezgo.Mkdirs(path.Join(conf.Config.ResourcePath, resourceMountPoint[t], dt))
 }
 
 func (r *Resource) Proc(ctx *gin.Context) ([]Resource, error) {
@@ -51,4 +53,3 @@ func (r *Resource) Proc(ctx *gin.Context) ([]Resource, error) {
 
 	return results, nil
 }
-
