@@ -53,3 +53,15 @@ func (sn *SimpleNotice) ToString() string {
 	}
 	return buf.String()
 }
+
+func HookSendMarkdownDingGroupWithConf(notice *SimpleNotice, token string, secret string) {
+
+	if text := notice.ToString(); len(text) > 0 {
+		var receiver Robot
+		receiver.access_token = token
+		receiver.secret = secret
+		webHookUrl := receiver.Signature()
+		params := receiver.SendMarkdown(notice.Title, text, []string{}, []string{}, false)
+		SendRequest(webHookUrl, params)
+	}
+}

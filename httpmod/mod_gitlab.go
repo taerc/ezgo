@@ -1,12 +1,13 @@
 package httpmod
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/taerc/ezgo"
 	"github.com/taerc/ezgo/conf"
+	"github.com/taerc/ezgo/dd"
 )
 
 type gitlabService struct {
@@ -82,7 +83,7 @@ func (g *gitlabService) Update(ctx *gin.Context) {
 
 	if pep.ObjectKind == "push" && conf.Config.Ding.Token != "" && conf.Config.Ding.Secret != "" {
 
-		sn := &SimpleNotice{}
+		sn := &dd.SimpleNotice{}
 		sn.Title = "更新"
 		sn.Project = pep.Project.Name
 		sn.Author = pep.UserName
@@ -90,7 +91,7 @@ func (g *gitlabService) Update(ctx *gin.Context) {
 			sn.Append(msg.Message)
 		}
 
-		HookSendMarkdownDingGroupWithConf(sn, conf.Config.Ding.Token, conf.Config.Ding.Secret)
+		dd.HookSendMarkdownDingGroupWithConf(sn, conf.Config.Ding.Token, conf.Config.Ding.Secret)
 	}
 	return
 
@@ -147,15 +148,15 @@ func (g *gitlabService) Publish(ctx *gin.Context) {
 		return
 	}
 
-	Info(ctx, M, fmt.Sprintf("ObjectKind [%s]", tel.ObjectKind))
+	// Info(ctx, M, fmt.Sprintf("ObjectKind [%s]", tel.ObjectKind))
 	if tel.ObjectKind == "push" && conf.Config.Ding.Token != "" && conf.Config.Ding.Secret != "" {
-		sn := &SimpleNotice{}
+		sn := &dd.SimpleNotice{}
 		sn.Title = "发布"
 		sn.Project = tel.Project.Name
 		sn.Author = tel.UserName
 		sn.Tag = tel.Ref
-		sn.Items = StringSplits(tel.Message, []string{",", "，"})
-		HookSendMarkdownDingGroupWithConf(sn, conf.Config.Ding.Token, conf.Config.Ding.Secret)
+		sn.Items = ezgo.StringSplits(tel.Message, []string{",", "，"})
+		dd.HookSendMarkdownDingGroupWithConf(sn, conf.Config.Ding.Token, conf.Config.Ding.Secret)
 	}
 	return
 }
@@ -167,6 +168,6 @@ func WithModuleGitLab() func(wg *sync.WaitGroup) {
 		route := Group("/gitlab/hook/event/")
 		POST(route, "/push", s.Update)
 		POST(route, "/pushtag", s.Publish)
-		Info(nil, M, "Load GITLAB finished!")
+		// Info(nil, M, "Load GITLAB finished!")
 	}
 }

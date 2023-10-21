@@ -1,6 +1,7 @@
 package httpmod
 
 import (
+	"fmt"
 	"path"
 
 	"github.com/gin-gonic/gin"
@@ -51,10 +52,10 @@ func ErrorResponse(ctx *gin.Context, e error) {
 }
 
 type GinApplication struct {
+	engine *gin.Engine
 	Init   Executor
 	Exec   Executor
 	Done   Executor
-	engine *gin.Engine
 }
 
 func (af *GinApplication) APIGroup(ver, relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
@@ -122,6 +123,18 @@ var application *GinApplication = nil
 func init() {
 	application = new(GinApplication)
 	application.engine = gin.Default()
+	application.Init = func(data interface{}) error {
+		fmt.Println("weclome ginapplication")
+		return nil
+	}
+	application.Exec = func(data interface{}) error {
+		fmt.Println("exec ginapplication")
+		return nil
+	}
+	application.Done = func(data interface{}) error {
+		fmt.Println("done ginapplication")
+		return nil
+	}
 	application.Use(PluginRequestId(), PluginCors())
 }
 
@@ -138,15 +151,7 @@ func InitGinApplication(init, exec, done Executor) *GinApplication {
 	return application
 }
 
-func NewGinApplication(init, exec, done Executor) *GinApplication {
-	af := new(GinApplication)
-	af.Init = init
-	af.Exec = exec
-	af.Done = done
-	af.engine = new(gin.Engine)
-	return af
-}
-
+// default GinApplication method
 func Group(relativePath string, handlers ...gin.HandlerFunc) *gin.RouterGroup {
 	return application.engine.Group(relativePath, handlers...)
 }
@@ -158,4 +163,13 @@ func Run(ipaddress ...string) error {
 func Do(data interface{}) error {
 	// Info(nil, M, fmt.Sprintf("version: %s", Version()))
 	return application.Do(data)
+}
+
+func NewGinApplication(init, exec, done Executor) *GinApplication {
+	af := new(GinApplication)
+	af.Init = init
+	af.Exec = exec
+	af.Done = done
+	af.engine = new(gin.Engine)
+	return af
 }

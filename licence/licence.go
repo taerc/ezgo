@@ -1,13 +1,14 @@
-package ezgo
-
-//AiriaLicence
+package licence
 
 import (
 	"fmt"
+	"math/rand"
+	"os"
+
 	flatbuffers "github.com/google/flatbuffers/go"
 	log "github.com/sirupsen/logrus"
+	"github.com/taerc/ezgo"
 	"github.com/taerc/ezgo/licence/proto"
-	"math/rand"
 )
 
 type TimeInfo struct {
@@ -56,8 +57,7 @@ type LicenceProtoType struct {
 	Uuid     string
 }
 
-// GenerateLicenceFile @description:
-
+// GenerateLicence
 func GenerateLicence(dstFile, sn, uuid, DeviceDesc string) error {
 	licenceProtoType := new(LicenceProtoType)
 	licenceProtoType.Version = 1                                                      // = 0; //1u
@@ -71,7 +71,18 @@ func GenerateLicence(dstFile, sn, uuid, DeviceDesc string) error {
 	buf := encodeLicence(licenceProtoType)
 	//异或编码加密
 	bufferEncrypt(buf)
-	return DirtyFileWrite(dstFile, buf)
+	return mixupFileWrite(dstFile, buf)
+}
+
+// DecodeLicence
+func DecodeLicence(filepathname string) {
+	data, err := mixupFileRead(filepathname)
+	if err != nil {
+		log.Errorln("ParseLicenceFile ioutil.ReadFile Error:", err)
+		return
+	}
+	bufferEncrypt(data)
+	decodeLicence(data)
 }
 
 func encodeLicence(licenceProtoType *LicenceProtoType) []byte {
@@ -138,7 +149,7 @@ func encodeLicence(licenceProtoType *LicenceProtoType) []byte {
 	return buf
 }
 
-//Decode 反序列化
+// Decode 反序列化
 func decodeLicence(buf []byte) *LicenceProto {
 
 	gral := proto.GetRootAsLicenceProto(buf, 0)
@@ -170,7 +181,7 @@ func bufferEncrypt(msg []byte) {
 
 }
 
-//可变长度的随机字符串
+// 可变长度的随机字符串
 func randomString() string {
 	//len(b)==90
 	b := []byte{
@@ -191,7 +202,7 @@ func randomString() string {
 	return string(bytes)
 }
 
-//随机字符串编码sha256编码1
+// 随机字符串编码sha256编码1
 func randomStringSha256(id string) string {
 	//len(b1): 128
 	b1 := []byte{
@@ -211,11 +222,11 @@ func randomStringSha256(id string) string {
 	//id+（截取前64位）+id+(剩余的)+id
 	str1 := []byte(string(b1))[:64]
 	str2 := []byte(string(b1))[64:]
-	s1 := SHA256(id + string(str1) + id + string(str2) + id)
+	s1 := ezgo.SHA256(id + string(str1) + id + string(str2) + id)
 	return string(s1)
 }
 
-//sn+uuid编码sha256编码2
+// sn+uuid编码sha256编码2
 func snAndUUIDMerge(sn, uuid string) string {
 	//len(b2): 128
 	b2 := []byte{
@@ -235,15 +246,36 @@ func snAndUUIDMerge(sn, uuid string) string {
 
 	str1 := []byte(string(b2))[:32]
 	str2 := []byte(string(b2))[32:]
-	return SHA256(idstr + string(str1) + idstr + string(str2) + idstr)
+	return ezgo.SHA256(idstr + string(str1) + idstr + string(str2) + idstr)
 }
 
-func DecodeLicence(filepathname string) {
-	data, err := DirtyFileRead(filepathname)
-	if err != nil {
-		log.Errorln("ParseLicenceFile ioutil.ReadFile Error:", err)
-		return
+// mixupFileWrite
+// [xxx-pading][data][datalen-32:datalen-16][datalen-16:]
+func mixupFileWrite(filename string, data []byte) error {
+
+	var bufLen int = 1024
+	if len(data) > 960 {
+		bufLen = (len(data) + 127) / 64 * 64
 	}
-	bufferEncrypt(data)
-	decodeLicence(data)
+	randData := ezgo.BytesRandom(bufLen)
+	idx := int(ezgo.HashBytesCRC32(randData[bufLen-16:]) & 0x1f)
+	copy(randData[idx:], data)
+	bL := ezgo.UInt32Bytes(uint32(len(data)))
+
+	for i := 0; i < 4; i += 1 {
+		randData[bufLen-32+i] = bL[i]
+	}
+	return os.WriteFile(filename, randData, os.ModePerm)
+}
+
+// mixupFileRead
+func mixupFileRead(filePath string) ([]byte, error) {
+
+	if data, e := os.ReadFile(filePath); e == nil {
+		idx := int(ezgo.HashBytesCRC32(data[len(data)-16:]) & 0x1f)
+		n := int(ezgo.BytesUInt32(data[len(data)-32:]))
+		return data[idx : idx+n], nil
+	} else {
+		return nil, e
+	}
 }
