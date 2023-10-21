@@ -58,77 +58,51 @@ import (
 // }
 
 // GenerateLicence
-func GenerateLicence(dstFile, sn, uuid, DeviceDesc string) error {
-	//初始化buffer，大小为0，会自动扩容
+func GenerateLicence(dstFile, sn, uuid, deviceDesc string) error {
 	builder := flatbuffers.NewBuilder(0)
-	//builder.CreateString()
-	lic := new(proto.LicenceProto)
-	// licenceProtoType := new(LicenceProtoType)
-	licenceProtoType.Version = 1                                                      // = 0; //1u
-	licenceProtoType.MagicValue = randomString()                                      //随机字符串
-	licenceProtoType.MagicSignature = randomStringSha256(licenceProtoType.MagicValue) //随机字符串编码sha256编码1
-	licenceProtoType.AuthType = proto.AuthTypeLocalAuth                               //=TimeAuth;//LocalAuth本地文件方式鉴权
-	licenceProtoType.DeviceDesc = DeviceDesc                                          //安卓"android" 盒子"emmc" linux是"dmi"
-	licenceProtoType.DeviceSn = sn
-	licenceProtoType.Uuid = snAndUUIDMerge(licenceProtoType.DeviceSn, uuid)
-	//序列化
-	// buf := encodeLicence(licenceProtoType)
-	// localInfo := LocalInfo{DeviceSn: licenceProtoType.DeviceSn, Uuid: licenceProtoType.Uuid}
-
-	timeInfo := TimeInfo{}
-	centreInfo := CentreInfo{}
-
-	licenceProto := new(LicenceProto)
-	licenceProto.Version = licenceProtoType.Version               // = 0; //1u 类型
-	licenceProto.MagicValue = licenceProtoType.MagicValue         //随机字符串
-	licenceProto.MagicSignature = licenceProtoType.MagicSignature //随机字符串编码sha256编码1
-	licenceProto.AuthType = licenceProtoType.AuthType             //=TimeAuth;
-	licenceProto.DeviceDesc = licenceProtoType.DeviceDesc         //安卓"android" 盒子"emmc"
-	licenceProto.TimeInfo = timeInfo                              //空
-
-	licenceProto.CentreInfo = centreInfo //空
-
-	licenceProto.LocalInfo = localInfo //sn和uuid //sn和 hashid(sn+uuid编码sha256编码2）
-
-	infosn := builder.CreateString(localInfo.DeviceSn) //先处理非标量string,得到偏移量
-	infouuiid := builder.CreateString(localInfo.Uuid)
-	MagicValue := builder.CreateString(licenceProto.MagicValue)
-
-	MagicSignature := builder.CreateString(licenceProto.MagicSignature)
-	DeviceDesc := builder.CreateString(licenceProto.DeviceDesc)
-
-	//LocalInfo
-	proto.LocalInfoStart(builder)
-	proto.LocalInfoAddSn(builder, infosn)
-	proto.LocalInfoAddUuid(builder, infouuiid)
-	ninfo := proto.LocalInfoEnd(builder)
-
-	//TimeInfo
+	// time
 	proto.TimeInfoStart(builder)
 	timeinfo := proto.TimeInfoEnd(builder)
+	// local
+	protoSn := builder.CreateString(sn)
+	protoUUID := builder.CreateString(snAndUUIDMerge(sn, uuid))
+	proto.LocalInfoStart(builder)
+	// sn
+	proto.LocalInfoAddSn(builder, protoSn)
+	// uuid
+	proto.LocalInfoAddUuid(builder, protoUUID)
+	localinfo := proto.LocalInfoEnd(builder)
 
-	//CentreInfo
+	// centre
 	proto.CentreInfoStart(builder)
 	centreinfo := proto.CentreInfoEnd(builder)
-
 	//LicenceProto
+	magicValue := randomString()
+	protoMagicSign := builder.CreateString(randomStringSha256(magicValue))
+	protoMagicValue := builder.CreateString(magicValue)
+	protoDesc := builder.CreateString(deviceDesc)
+
 	proto.LicenceProtoStart(builder)
-
+	//version
 	proto.LicenceProtoAddVersion(builder, 1)
-	proto.LicenceProtoAddMagicValue(builder, MagicValue)
-	proto.LicenceProtoAddMagicSignature(builder, MagicSignature)
+	// magic
+	proto.LicenceProtoAddMagicValue(builder, protoMagicValue)
+	// magic sign
+	proto.LicenceProtoAddMagicSignature(builder, protoMagicSign)
 	proto.LicenceProtoAddAuthType(builder, proto.AuthTypeLocalAuth)
-	proto.LicenceProtoAddDeviceDesc(builder, DeviceDesc)
-
+	// desc
+	proto.LicenceProtoAddDeviceDesc(builder, protoDesc)
+	// timeinfo
 	proto.LicenceProtoAddTimeInfo(builder, timeinfo)
-	proto.LicenceProtoAddLocalInfo(builder, ninfo)
+	// localinfo
+	proto.LicenceProtoAddLocalInfo(builder, localinfo)
+	// centre info
 	proto.LicenceProtoAddCentreInfo(builder, centreinfo)
-
 	licenceinfo := proto.LicenceProtoEnd(builder)
 
 	builder.Finish(licenceinfo)
 	buf := builder.FinishedBytes() //返回[]byte
-	return buf
+	// return buf
 	//异或编码加密
 	bufferEncrypt(buf)
 	return mixupFileWrite(dstFile, buf)

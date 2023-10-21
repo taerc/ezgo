@@ -41,7 +41,7 @@ client:cmd/tcpclient/main.go | $(BUILD)
 	@go build -o $(BUILD)/client cmd/tcpclient/main.go
 
 test:
-	@/usr/local/go/bin/go test -all -timeout 1h -run ^TestGenerateLicence$ github.com/taerc/ezgo/licence -count=1 -v
+	@/usr/local/go/bin/go test -all -timeout 1h -run ^TestGenerateLicence$ github.com/taerc/ezgo/licence github.com/taerc/ezgo -count=1 -v
 
 $(BUILD): 
 	@mkdir -p $(BUILD)
