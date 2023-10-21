@@ -6,7 +6,7 @@ require (
 	entgo.io/ent v0.12.3
 	github.com/eclipse/paho.mqtt.golang v1.4.3
 	github.com/gin-gonic/gin v1.9.1
-	github.com/go-playground/assert/v2 v2.2.0
+	github.com/go-playground/assert v1.2.1
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/google/flatbuffers v23.5.26+incompatible
 	github.com/google/uuid v1.3.0

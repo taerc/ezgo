@@ -1,11 +1,11 @@
 package httpmod
 
 import (
-	"fmt"
 	"path"
 	"sync"
 
 	"github.com/taerc/ezgo/conf"
+	ezgo "github.com/taerc/ezgo/pkg"
 )
 
 type Resource struct {
@@ -55,15 +55,15 @@ func init() {
 
 func WithComponentResource(c *conf.Configure) func(wg *sync.WaitGroup) {
 	return func(wg *sync.WaitGroup) {
-		wg.Done()
+		defer wg.Done()
 		var e error = nil
-		var s string = ""
+		// var s string = ""
 		for i := ResourceTypeFile; i <= ResourceTypeUnk; i += 1 {
-			if s, e = Mkdirs(path.Join(conf.Config.ResourcePath, resourceMountPoint[i])); e != nil {
-				Info(nil, M, fmt.Sprintf("init resource path [%s] failed, error is [%s]", s, e.Error()))
+			if _, e = ezgo.Mkdirs(path.Join(conf.Config.ResourcePath, resourceMountPoint[i])); e != nil {
+				// Info(nil, M, fmt.Sprintf("init resource path [%s] failed, error is [%s]", s, e.Error()))
 			}
 		}
-		Info(nil, M, "Init Resource Done!")
+		// Info(nil, M, "Init Resource Done!")
 	}
 
 }

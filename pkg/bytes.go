@@ -5,11 +5,12 @@ import (
 	"time"
 )
 
+// BytesRandom 生成随机的字节流, 0-255范围
 func BytesRandom(length int) []byte {
 	result := make([]byte, length)
 	r := rand.New(rand.NewSource(time.Now().UnixNano() + rand.Int63()))
 	for i := 0; i < length; i++ {
-		result[i] = randomStrSource[r.Intn(len(randomStrSource))]
+		result[i] = byte(r.Intn(255))
 	}
 	return result
 }
