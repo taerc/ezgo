@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/panjf2000/gnet/v2"
-	"github.com/taerc/ezgo"
+	ezgo "github.com/taerc/ezgo/pkg"
 )
 
 // TODO
@@ -53,8 +53,6 @@ func (ts *tcpServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 		ct := ctx.(connectionContext)
 		fmt.Println(fmt.Sprintf("connId %s", ct.Id))
 	}
-	// close socket
-	// close lock
 	ts.connectionNum--
 	return
 }

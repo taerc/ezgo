@@ -31,7 +31,7 @@ func (c *ChatUser) SendMessageToUser(data string, usrId string) error {
 	}
 
 	msg, _ := json.MarshalIndent(m, " ", " ")
-	c.conn.SendMessage(string(msg))
+	c.conn.Send(string(msg))
 	return nil
 }
 
