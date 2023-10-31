@@ -87,16 +87,19 @@ func login(usrId string) (net.Conn, error) {
 		fmt.Printf("connect failed, err : %v\n", err.Error())
 		return nil, err
 	}
+	header := simplechat.NewPacketHead(1, 2, 1)
+	frame := simplechat.EncodePacket(*header)
+
 	login := simplechat.LoginMessage{
 		UsrId: usrId,
 	}
 	cmd := simplechat.NewCommand(simplechat.CommandLogin, login)
-	// defer conn.Close()
-	byteData, e := json.Marshal(cmd)
+	byteData, e := frame.Marshal(cmd)
+	// byteData, e := json.Marshal(cmd)
 	if e != nil {
 		fmt.Println(e.Error())
 	}
-	fmt.Println(len(byteData))
+	// fmt.Println(len(byteData))
 
 	n, e := conn.Write(byteData)
 	fmt.Println("bytes ", n)
@@ -115,7 +118,8 @@ func pureTCPConnection() {
 	flag.StringVar(&usrId, "user", "wangfangming", "path of configure file.")
 	flag.Parse()
 
-	conn, e := connect()
+	// conn, e := connect()
+	conn, e := login(usrId)
 	if e != nil {
 		fmt.Println(e.Error())
 		return
@@ -126,8 +130,8 @@ func pureTCPConnection() {
 	cmd := &commandProto{}
 	time.Sleep(2 * time.Second)
 
-	header := simplechat.NewGSFrameHeader(1, 2, 1)
-	frame := simplechat.NewGSFrameEncoder()
+	header := simplechat.NewPacketHead(1, 2, 1)
+	frame := simplechat.EncodePacket(*header)
 
 	for {
 		input, err := inputReader.ReadString('\n')
@@ -171,7 +175,7 @@ func pureTCPConnection() {
 			fmt.Println(e.Error())
 		}
 		fmt.Println(len(byteMessage))
-		packet, e := frame.Encode(header, byteMessage)
+		packet, e := frame.Marshal(message)
 		dirtyData := append(packet, packet...)
 		n, e := conn.Write(dirtyData)
 		if e != nil {

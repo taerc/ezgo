@@ -41,7 +41,7 @@ type connectionContext struct {
 func (c *connection) SendMessage(head PacketHead, v interface{}) error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
-	data, e := encodePacket(head).Marshal(v)
+	data, e := EncodePacket(head).Marshal(v)
 	if e != nil {
 		fmt.Println(e)
 		return e
@@ -53,7 +53,7 @@ func (c *connection) SendMessage(head PacketHead, v interface{}) error {
 func (c *connection) Send(v interface{}) error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
-	data, e := encodePacket(defaultPacketHead()).Marshal(v)
+	data, e := EncodePacket(defaultPacketHead()).Marshal(v)
 	if e != nil {
 		fmt.Println(e)
 		return e

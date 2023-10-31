@@ -65,15 +65,15 @@ func NewPacketHead(sendSeq uint64, recvSeq uint64, ty byte) *PacketHead {
 	}
 }
 
-type packetEncoder struct {
+type PacketEncoder struct {
 	head PacketHead
 }
 
-func encodePacket(head PacketHead) *packetEncoder {
-	return &packetEncoder{head: head}
+func EncodePacket(head PacketHead) *PacketEncoder {
+	return &PacketEncoder{head: head}
 }
 
-func (pe *packetEncoder) Marshal(v interface{}) ([]byte, error) {
+func (pe *PacketEncoder) Marshal(v interface{}) ([]byte, error) {
 
 	buff := &bytes.Buffer{}
 	data, e := json.Marshal(v)
