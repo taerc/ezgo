@@ -2,10 +2,13 @@ package simplechat
 
 import (
 	"fmt"
+	"log"
 
 	"encoding/json"
 
 	"github.com/mitchellh/mapstructure"
+	"github.com/panjf2000/gnet/v2"
+	ezgo "github.com/taerc/ezgo/pkg"
 )
 
 type ChatServer struct {
@@ -16,6 +19,23 @@ func NewChatServer() *ChatServer {
 	return &ChatServer{
 		commands: make(map[string]func(c *connection, hd PacketHead, data interface{})),
 	}
+}
+
+func StartChatServer(port int) error {
+
+	chatServer := NewChatServer()
+
+	chatServer.RegisterCommand(CommandLogin, cmdLogin)
+	chatServer.RegisterCommand(CommandLogout, cmdLogout)
+	chatServer.RegisterCommand(CommandSend, cmdSendMsg)
+
+	echo := &tcpServer{
+		ezid:        ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
+		connections: make(map[string]*connection),
+		parser:      NewPacketParser(chatServer),
+	}
+	log.Fatal(gnet.Run(echo, fmt.Sprintf("tcp://:%d", port), gnet.WithMulticore(false), gnet.WithReusePort(true)))
+	return nil
 }
 
 func (cs *ChatServer) HandlerPacket(conn *connection, hd PacketHead, packet []byte) error {

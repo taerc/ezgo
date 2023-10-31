@@ -51,7 +51,7 @@ func defaultPacketHead() PacketHead {
 
 }
 
-type PacketHandler interface {
+type PacketReactor interface {
 	HandlerPacket(conn *connection, header PacketHead, packet []byte) error
 }
 
@@ -102,12 +102,13 @@ type PacketParser struct {
 	headerBytes [23]byte
 	state       int
 	endTag      uint16
-	handler     PacketHandler
+	handler     PacketReactor
 }
 
-func NewPacketParser() *PacketParser {
+func NewPacketParser(hdlr PacketReactor) *PacketParser {
 	return &PacketParser{
-		state: ppFRAME_DECODE_STATE_INIT,
+		state:   ppFRAME_DECODE_STATE_INIT,
+		handler: hdlr,
 	}
 }
 

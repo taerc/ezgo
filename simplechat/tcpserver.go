@@ -2,7 +2,6 @@ package simplechat
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/panjf2000/gnet/v2"
 	ezgo "github.com/taerc/ezgo/pkg"
@@ -16,8 +15,7 @@ type tcpServer struct {
 	ezid          *ezgo.EZID
 	connections   map[string]*connection
 	connectionNum int
-	paser         *PacketParser
-	chat          *ChatServer
+	parser        *PacketParser
 }
 
 func (ts *tcpServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
@@ -64,18 +62,7 @@ func (ts *tcpServer) OnTraffic(c gnet.Conn) (action gnet.Action) {
 		ct := ctx.(connectionContext)
 		conn := ts.connections[ct.Id]
 		conn.conn = c
-		ts.paser.Parse(conn)
+		ts.parser.Parse(conn)
 	}
 	return
-}
-
-func StartChatServer(port int, chatserver *ChatServer) error {
-	echo := &tcpServer{
-		ezid:        ezgo.NewEZID(0, 0, ezgo.ChatIDSetting()),
-		paser:       NewPacketParser(),
-		connections: make(map[string]*connection),
-		chat:        chatserver,
-	}
-	log.Fatal(gnet.Run(echo, fmt.Sprintf("tcp://:%d", port), gnet.WithMulticore(false), gnet.WithReusePort(true)))
-	return nil
 }
