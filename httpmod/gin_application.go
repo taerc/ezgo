@@ -5,7 +5,7 @@ import (
 	"path"
 
 	"github.com/gin-gonic/gin"
-	"github.com/taerc/ezgo"
+	ezgo "github.com/taerc/ezgo/pkg"
 )
 
 type Executor func(data interface{}) error
