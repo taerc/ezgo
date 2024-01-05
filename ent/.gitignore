@@ -1,0 +1,9 @@
+# ignore everything
+*
+
+# except for follows
+!.gitignore
+!util.go
+!generate.go
+!schema/
+!schema/*.go 
