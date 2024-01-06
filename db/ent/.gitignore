@@ -2,8 +2,3 @@
 *
 
 # except for follows
-!.gitignore
-!db.go
-!generate.go
-!schema/
-!schema/*.go 

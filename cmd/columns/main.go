@@ -9,7 +9,7 @@ import (
 	"github.com/taerc/ezgo/db/ent/columns"
 	ezgo "github.com/taerc/ezgo/pkg"
 
-	"github.com/taerc/ezgo/ent"
+	"github.com/taerc/ezgo/db/ent"
 )
 
 var ConfigPath string
@@ -41,6 +41,8 @@ func test() {
 		fmt.Println(err)
 		return
 	}
+
+	fmt.Println(len(total))
 
 	for _, v := range total {
 		fmt.Println(v.COLUMNNAME, v.COLUMNCOMMENT, v.TABLENAME)
