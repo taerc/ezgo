@@ -20,6 +20,7 @@ version:Makefile
 init:
 	@rm -f go.mod go.sum
 	@go mod init github.com/taerc/ezgo
+	@go generate ./ent
 	@go  mod download
 	@go mod tidy
 
@@ -42,6 +43,10 @@ client:cmd/tcpclient/main.go | $(BUILD)
 
 test:
 	@/usr/local/go/bin/go test -all -timeout 1h -run ^TestGenerateLicence$ github.com/taerc/ezgo/licence github.com/taerc/ezgo -count=1 -v
+
+## columns
+columns:cmd/columns/main.go
+	@go build -o $(BUILD)/columns cmd/columns/main.go
 
 $(BUILD): 
 	@mkdir -p $(BUILD)
