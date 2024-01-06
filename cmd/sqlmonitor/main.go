@@ -1,13 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"flag"
 	"fmt"
+	"text/template"
 
 	"github.com/taerc/ezgo/conf"
 	"github.com/taerc/ezgo/database/sqlmonitor/ent"
+	"github.com/taerc/ezgo/dd"
 	ezgo "github.com/taerc/ezgo/pkg"
 )
 
@@ -34,68 +37,126 @@ type columns struct {
 }
 
 type columsMonitor struct {
-	newTable   []tables
-	delTable   []tables
-	newColumns []columns
-	delColumns []columns
+	TableSchema string
+	NewTable    []tables
+	DelTable    []tables
+	NewColumns  []columns
+	DelColumns  []columns
 }
 
 func (c *columsMonitor) AddNewTable(table string) {
 	v := tables{
 		TableName: table,
 	}
-	c.newTable = append(c.newTable, v)
+	c.NewTable = append(c.NewTable, v)
 }
 
 func (c *columsMonitor) AddDelTable(table string) {
 	v := tables{
 		TableName: table,
 	}
-	c.delTable = append(c.delTable, v)
+	c.DelTable = append(c.DelTable, v)
 }
 func (c *columsMonitor) AddNewColumn(table, column string) {
 	v := columns{
 		TableName:  table,
 		ColumnName: column,
 	}
-	c.newColumns = append(c.newColumns, v)
+	c.NewColumns = append(c.NewColumns, v)
 }
 func (c *columsMonitor) AddDelColumn(table, column string) {
 	v := columns{
 		TableName:  table,
 		ColumnName: column,
 	}
-	c.delColumns = append(c.delColumns, v)
+	c.DelColumns = append(c.DelColumns, v)
 }
 
 func (c *columsMonitor) Report() {
 	fmt.Println("新增表:")
-	for _, t := range c.newTable {
+	for _, t := range c.NewTable {
 		fmt.Println(t.TableName)
 	}
 	fmt.Println("删除表:")
-	for _, t := range c.delTable {
+	for _, t := range c.DelTable {
 		fmt.Println(t.TableName)
 	}
 
 	fmt.Println("新增列:")
-	for _, t := range c.newColumns {
+	for _, t := range c.NewColumns {
 		fmt.Println(t.TableName, t.ColumnName)
 	}
 	fmt.Println("删除列:")
-	for _, t := range c.delColumns {
+	for _, t := range c.DelColumns {
 		fmt.Println(t.TableName, t.ColumnName)
 	}
+}
+
+func (c *columsMonitor) DingMessage() string {
+	tplText := `
+**数据库** : {{.TableSchema}} 结构变化
+
+请及时同步数据到 DDL 文档
+
+**新增表**:
+
+{{- range $i, $e := .NewTable}}
+* 新表 {{$e.TableName}}
+{{- end }}
+
+**删除表**:
+
+{{- range $i, $e := .DelTable}}
+* 删表 {{$e.TableName}}
+{{- end }}
+
+**新增字段**:
+
+{{- range $i, $e := .NewColumns}}
+* 表 {{$e.TableName}} 增 {{$e.ColumnName}}
+{{- end }}
+
+**删除字段**:
+
+{{- range $i, $e := .DelColumns}}
+* 表 {{$e.TableName}} 删 {{$e.ColumnName}}
+{{- end }}
+`
+	tpl, err := template.New("note").Parse(tplText)
+	if err != nil {
+		fmt.Printf("failed parse tpltext,err:%s\n", err.Error())
+		return ""
+	}
+	var buf bytes.Buffer
+	err = tpl.Execute(&buf, c)
+	if err != nil {
+		fmt.Printf("failed execute tpltext,err:%s\n", err.Error())
+		return ""
+	}
+
+	text := buf.String()
+
+	if len(c.DelColumns) > 0 || len(c.NewColumns) > 0 || len(c.NewTable) > 0 || len(c.DelTable) > 0 {
+		var receiver dd.Robot
+		receiver.AccessToken = conf.Config.Ding.Token
+		receiver.Secret = conf.Config.Ding.Secret
+		webHookUrl := receiver.Signature()
+		params := receiver.SendMarkdown("数据结更新", text, []string{}, []string{}, false)
+		dd.SendRequest(webHookUrl, params)
+
+	}
+
+	return text
 
 }
 
 func newColumnMonitor() *columsMonitor {
 
 	return &columsMonitor{
-		newTable:   make([]tables, 0),
-		delTable:   make([]tables, 0),
-		newColumns: make([]columns, 0),
-		delColumns: make([]columns, 0),
+		NewTable:   make([]tables, 0),
+		DelTable:   make([]tables, 0),
+		NewColumns: make([]columns, 0),
+		DelColumns: make([]columns, 0),
 	}
 
 }
@@ -108,9 +169,9 @@ func main() {
 	)
 	ent.InitDB()
 
-	tablePath := "tables.json"
-	columnPath := "columns.json"
-	tableSchema := "pd_jibei"
+	tablePath := conf.Config.SQLMonitor.HistoryTablePath
+	columnPath := conf.Config.SQLMonitor.HistoryColumnPath
+	tableSchema := conf.Config.SQLMonitor.TableSchema
 
 	ctx := context.Background()
 	tbls, e := queryTables(ctx, tableSchema)
@@ -168,6 +229,9 @@ func main() {
 	}
 
 	cm.Report()
+	s := cm.DingMessage()
+
+	fmt.Println(s)
 
 }
 

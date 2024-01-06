@@ -20,6 +20,8 @@ type Configure struct {
 
 	// dingding
 	Ding DingConf
+	// [sqlmonitor]
+	SQLMonitor SqlMonitorConf
 }
 
 type LogConf struct {
@@ -76,6 +78,12 @@ type RedisConf struct {
 	RedisDSN string `ini:"redis_dsn"`
 }
 
+type SqlMonitorConf struct {
+	TableSchema       string `ini:"table_schema"`
+	HistoryTablePath  string `ini:"history_table_path"`
+	HistoryColumnPath string `ini:"history_column_path"`
+}
+
 var Config *Configure = nil
 
 func init() {
@@ -92,6 +100,7 @@ func LoadConfigure(filePath string) (*Configure, error) {
 		fd.Section("log").MapTo(&Config.Log)
 		fd.Section("mysql").MapTo(&Config.SQL)
 		fd.Section("dingding").MapTo(&Config.Ding)
+		fd.Section("sqlmonitor").MapTo(&Config.SQLMonitor)
 	}
 
 	return Config, nil

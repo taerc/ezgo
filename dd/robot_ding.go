@@ -26,17 +26,17 @@ type Dingtalker interface {
 }
 
 type Robot struct {
-	access_token string
-	secret       string
+	AccessToken string
+	Secret      string
 }
 
 func (receiver Robot) Signature() string {
-	webhookurl := "https://oapi.dingtalk.com/robot/send?access_token=" + string(receiver.access_token)
+	webhookurl := "https://oapi.dingtalk.com/robot/send?access_token=" + string(receiver.AccessToken)
 	// 获取当前秒级时间戳
 	timestamp := time.Now()
 	milliTimestamp := timestamp.UnixNano() / 1e6
-	stringToSign := fmt.Sprintf("%s\n%s", strconv.Itoa(int(milliTimestamp)), receiver.secret)
-	mac := hmac.New(sha256.New, []byte(receiver.secret))
+	stringToSign := fmt.Sprintf("%s\n%s", strconv.Itoa(int(milliTimestamp)), receiver.Secret)
+	mac := hmac.New(sha256.New, []byte(receiver.Secret))
 	mac.Write([]byte(stringToSign))
 	sign := base64.StdEncoding.EncodeToString(mac.Sum(nil))
 	hookurl := fmt.Sprintf("%s&timestamp=%s&sign=%s", webhookurl, strconv.Itoa(int(milliTimestamp)), sign)
