@@ -3,7 +3,7 @@
 
 # except for follows
 !.gitignore
-!util.go
+!db.go
 !generate.go
 !schema/
 !schema/*.go 
