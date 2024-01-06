@@ -20,7 +20,7 @@ version:Makefile
 init:
 	@rm -f go.mod go.sum
 	@go mod init github.com/taerc/ezgo
-	@go generate ./ent
+	@go generate ./db/ent
 	@go  mod download
 	@go mod tidy
 

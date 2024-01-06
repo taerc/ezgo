@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/taerc/ezgo/conf"
-	"github.com/taerc/ezgo/ent/columns"
+	"github.com/taerc/ezgo/db/ent/columns"
 	ezgo "github.com/taerc/ezgo/pkg"
 
 	"github.com/taerc/ezgo/ent"
@@ -27,6 +27,7 @@ func main() {
 	ezgo.LoadComponent(
 		ezgo.WithComponentMySQL(ezgo.Default, &conf.Config.SQL),
 	)
+	ent.InitDB()
 
 	test()
 
@@ -35,10 +36,14 @@ func main() {
 func test() {
 	ctx := context.Background()
 
-	total, err := ent.DB().Columns().Query().Select(columns.FieldTABLESCHEMA, columns.FieldCOLUMNNAME, columns.FieldCOLUMNDEFAULT, columns.FieldCOLUMNCOMMENT).All(ctx)
+	total, err := ent.DB.Columns.Query().Select(columns.FieldCOLUMNNAME, columns.FieldCOLUMNCOMMENT).All(ctx)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	for _, v := range total {
-		fmt.Println(v.COLUMN_NAME, v.COLUMN_DEFAULT, v.TABLE_NAME)
+		fmt.Println(v.COLUMNNAME, v.COLUMNCOMMENT, v.TABLENAME)
 		// fmt.Println(v.FieldTABLESCHEMA, v.FieldTABLENAME)
 
 	}
