@@ -10,7 +10,7 @@ import (
 
 var DB *Client = nil
 
-func init() {
+func InitDB() {
 	drv, e := ezgo.EntDBDriver(ezgo.Default)
 	if e != nil {
 		fmt.Println(e)
