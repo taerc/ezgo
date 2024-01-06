@@ -1,0 +1,90 @@
+[
+    {
+      "table_name": "adapter",
+      "create_time": 0,
+      "update_time": {
+        "Time": "0001-01-01T00:00:00Z",
+        "Valid": false
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "create_time": 0,
+      "update_time": {
+        "Time": "0001-01-01T00:00:00Z",
+        "Valid": false
+      }
+    },
+    {
+      "table_name": "group",
+      "create_time": 0,
+      "update_time": {
+        "Time": "0001-01-01T00:00:00Z",
+        "Valid": false
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "create_time": 0,
+      "update_time": {
+        "Time": "0001-01-01T00:00:00Z",
+        "Valid": false
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "create_time": 0,
+      "update_time": {
+        "Time": "0001-01-01T00:00:00Z",
+        "Valid": false
+      }
+    },
+    {
+      "table_name": "line",
+      "create_time": 0,
+      "update_time": {
+        "Time": "0001-01-01T00:00:00Z",
+        "Valid": false
+      }
+    },
+    {
+      "table_name": "pms",
+      "create_time": 0,
+      "update_time": {
+        "Time": "0001-01-01T00:00:00Z",
+        "Valid": false
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "create_time": 0,
+      "update_time": {
+        "Time": "0001-01-01T00:00:00Z",
+        "Valid": false
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "create_time": 0,
+      "update_time": {
+        "Time": "0001-01-01T00:00:00Z",
+        "Valid": false
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "create_time": 0,
+      "update_time": {
+        "Time": "0001-01-01T00:00:00Z",
+        "Valid": false
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "create_time": 0,
+      "update_time": {
+        "Time": "0001-01-01T00:00:00Z",
+        "Valid": false
+      }
+    }
+  ]

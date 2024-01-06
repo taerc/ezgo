@@ -1,0 +1,3842 @@
+[
+    {
+      "table_name": "adapter",
+      "column_name": "astId",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "branchFeeder",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "city",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "feeder",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "feederSegment",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "id",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "installedCapacity",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "joinEc",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "lastUpdateTime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "line",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "maintOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "name",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "pole",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "psrId",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "psrState",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "pubPrivFlag",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "reliableSegment",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "switchSegment",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "useNature",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "adapter",
+      "column_name": "voltageLevel",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "astId",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "cableLength",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "city",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "ctime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "dispatchLevel",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "dispatchOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "equipmentOwner",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "erectionMethod",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "feederRateCapacity",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "id",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "importance",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "isCentralizedelechtg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "isDistributedelechtg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "isRural",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "lastUpdateTime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "length",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "maintGroup",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "maintOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "name",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "overheadLength",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "psrId",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "psrState",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "pubPrivFlag",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "referenceLength",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "regionalism",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "startBay",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "startStation",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "startStationType",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "startSwitch",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "startSwitchType",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "startTime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "supplyArea",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "supplyRadius",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "dakuixian",
+      "column_name": "voltageLevel",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "BMBM",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "BMJC",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "BMMC",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "BMXZ",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "CJSJ",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "Column1",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "CWBM",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "CXSJ",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "DWJB",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "ERPORGID",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "FBID",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "GLJB",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "ISC_ID",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "PATH",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "PATHID",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "SFYX",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "SJBMID",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "SJBMMC",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "SSDSID",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "SSDSMC",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "SSGDID",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "SSGDMC",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "SSWSID",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "SSWSMC",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "SSYWDWID",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "SSYWDWMC",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "TBSJ",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "XSSX",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "YLID1",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "YLID2",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "YLID4",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "ZBXZ",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "ZTXZ",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "group",
+      "column_name": "ZZJGQC",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "astId",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "branchFeeder",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "city",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "ctime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "equipmentOwner",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "feeder",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "id",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "isRural",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "isStandardized",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "lastUpdateTime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "line",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "maintOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "name",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "physicalpoleType",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "poleNature",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "poleNum",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "psrId",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "psrState",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "pubPrivFlag",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "startTime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "voltageLevel",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_gt",
+      "column_name": "wire",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "astId",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "cableLength",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "cableMethod",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "city",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "colorCode",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "constructionOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "ctime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "dispatchLevel",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "dispatchOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "equipmentOwner",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "erectionMethod",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "feeder",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "id",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "importance",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "isCommission",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "isRural",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "lastUpdateTime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "length",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "lineNature",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "maintGroup",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "maintOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "name",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "overheadLength",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "overheadMethod",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "psrId",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "psrState",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "pubPrivFlag",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "regionalism",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "runDevName",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "startPosition",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "startStation",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "startSwitch",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "startTime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "startType",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "supervisionOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "supplyArea",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "transferMark",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "kaip_line",
+      "column_name": "voltageLevel",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "astId",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "cableLength",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "cableMethod",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "city",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "colorCode",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "constructionOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "ctime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "dispatchLevel",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "dispatchOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "equipmentOwner",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "erectionMethod",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "feeder",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "id",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "importance",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "isCommission",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "isRural",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "lastUpdateTime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "length",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "lineNature",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "maintGroup",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "maintOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "name",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "overheadLength",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "overheadMethod",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "psrId",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "psrState",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "pubPrivFlag",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "regionalism",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "runDevName",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "startPosition",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "startStation",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "startSwitch",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "startTime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "startType",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "supervisionOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "supplyArea",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "transferMark",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "line",
+      "column_name": "voltageLevel",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "dlxlcd",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "dydj",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "dydjdm",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "dydjmc",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "jkxlcd",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "jsfs",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "obj_id",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "sbbm",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "sblxbm",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "sbzt",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "ssdkx",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "ssdkxmc",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "ssds",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "ssdsmc",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "sssjxl",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "tyrq",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "whbz",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "whbzmc",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "xlmc",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "xlxz",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "xlzzd",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "ywdw",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "ywdwmc",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms",
+      "column_name": "yxbh",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "cxkg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "cxkglx",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "dlxlcd",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "dwxlcd",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "dydj",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "dydjdm",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "dydjmc",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "gdqy",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "jkxlcd",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "jsfs",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "obj_id",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "qddzlx",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "qsdz",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "sbbm",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "sblxbm",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "sbzt",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "ssds",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "ssdsmc",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "tyrq",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "whbz",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "whbzmc",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "xlmc",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "xlzzd",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "ywdw",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "ywdwmc",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "pms_dkx",
+      "column_name": "yxbh",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "astId",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "branchFeeder",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "city",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "ctime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "equipmentOwner",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "feeder",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "id",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "isRural",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "isStandardized",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "lastUpdateTime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "line",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "maintOrg",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "name",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "physicalpoleType",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "poleNature",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "poleNum",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "psrId",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "psrState",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "pubPrivFlag",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "startTime",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "voltageLevel",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "t_dn_yxgt",
+      "column_name": "wire",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "ARCHIVESSOURCE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "ASTID",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "ASTNATURE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "ASTORG",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "ASTORGNAME",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "BASICFORM",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "CROSSARMMATERIAL",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "CTIME",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "EQUIPCODE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "GEOPOSITON",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "GROUNDRESISTANCE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "ISCOMMISSION",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "ISDETENTIONBASIN",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "ISEASYSCOUR",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "ISLOWLYING",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "ISSAMEPOLE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "LASTUPDATETIME",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "LOOPQUANTITY",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "MANUFACTUREDATE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "MANUFACTURENUM",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "MANUFACTURER",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "MODEL",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "OPERATEDATE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "POLEHIGH",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "POLEMATERIAL",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "PROJECTNAME",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "PROJECTNUM",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "REMARK",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "SYNC_TIME",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "wlgt",
+      "column_name": "UTCNUM",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "ASTID",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "BRANCHFEEDER",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "CITY",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "CTIME",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "EQUIPMENTOWNER",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "FEEDER",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "FEEDERSEGMENT",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "GRIDCODE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "ISRURAL",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "ISSTANDARDIZED",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "ISTERMINAL",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "LASTUPDATETIME",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "LINE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "LINEPOSITION",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "MAINTGROUP",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "MAINTORG",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "NAME",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "PHYSICALPOLETYPE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "POLENATURE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "POLENUM",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "PSRID",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "PSRSTATE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "PUBPRIVFLAG",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "REGIONALISM",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "SPAN",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "STARTTIME",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "STOPTIME",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "SWITCHSEGMENT",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "UTCNUM",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "VOLTAGELEVEL",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "WIRE",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    },
+    {
+      "table_name": "yxgt",
+      "column_name": "WIREARRANGEMENT",
+      "column_default": {
+        "String": "",
+        "Valid": false
+      },
+      "column_comment": {
+        "String": "",
+        "Valid": true
+      }
+    }
+  ]
