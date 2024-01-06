@@ -18,10 +18,8 @@ version:Makefile
 	@echo "var version=\"$(GIT_TAG)\"" >> version.go
 
 init:
-	@rm -f go.mod go.sum
-	@go mod init github.com/taerc/ezgo
-	@go generate ./db/ent
 	@go  mod download
+	@go generate ./database/sqlmonitor/ent
 	@go mod tidy
 
 
@@ -45,8 +43,8 @@ test:
 	@/usr/local/go/bin/go test -all -timeout 1h -run ^TestGenerateLicence$ github.com/taerc/ezgo/licence github.com/taerc/ezgo -count=1 -v
 
 ## columns
-columns:cmd/columns/main.go
-	@go build -o $(BUILD)/columns cmd/columns/main.go
+sqlmonitor:cmd/sqlmonitor/main.go
+	@go build -o $(BUILD)/sqlmonitor cmd/sqlmonitor/main.go
 
 $(BUILD): 
 	@mkdir -p $(BUILD)
