@@ -33,19 +33,35 @@ func main() {
 
 func test() {
 	ctx := context.Background()
+	rows, e := ent.DB.QueryContext(ctx, "select TABLE_NAME, COLUMN_NAME FROM COLUMNS WHERE TABLE_SCHEMA=? ", "pd_jibei")
 
-	total, err := ent.DB.Cols.Query().Select(cols.FieldCOLUMNNAME, cols.FieldCOLUMNCOMMENT).All(ctx)
-	if err != nil {
-		fmt.Println(err)
+	if e != nil {
+		fmt.Println(e.Error())
 		return
 	}
+	defer rows.Close()
 
-	fmt.Println(len(total))
+	type Columns struct {
+		TableName     string `sql:"TABLE_NAME"`
+		ColumnName    string `sql:"COLUMN_NAME"`
+		ColumnDefault string `sql:"COLUMN_DEFAULT"`
+		ColumnComment string `sql:"COLMN_COMMENT"`
+	}
 
-	for _, v := range total {
-		fmt.Println(v.COLUMNNAME, v.COLUMNCOMMENT, v.TABLENAME)
-		// fmt.Println(v.FieldTABLESCHEMA, v.FieldTABLENAME)
+	provinces := make([]Columns, 0)
 
+	for rows.Next() {
+
+		var p Columns
+		if se := rows.Scan(&p.TableName, &p.ColumnName); se != nil {
+			fmt.Println(se.Error())
+			continue
+		} else {
+			provinces = append(provinces, p)
+		}
+	}
+	for _, v := range provinces {
+		fmt.Println(v.TableName, v.ColumnName)
 	}
 
 }

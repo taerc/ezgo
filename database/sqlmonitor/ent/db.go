@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"entgo.io/ent/dialect"
-	"github.com/taerc/ezgo"
+	ezgo "github.com/taerc/ezgo/pkg"
 )
 
 var DB *Client = nil
