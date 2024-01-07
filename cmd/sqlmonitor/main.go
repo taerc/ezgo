@@ -6,7 +6,6 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"reflect"
 	"text/template"
 
 	"github.com/taerc/ezgo/conf"
@@ -33,7 +32,7 @@ type tables struct {
 type columns struct {
 	TableName     string         `sql:"TABLE_NAME" json:"table_name"`
 	ColumnName    string         `sql:"COLUMN_NAME" json:"column_name"`
-	ColumnType    sql.NullString `sql:"COLMN_TYPE" json:"column_type"`
+	ColumnType    string         `sql:"COLMN_TYPE" json:"column_type"`
 	ColumnDefault sql.NullString `sql:"COLUMN_DEFAULT" json:"column_default"`
 	ColumnComment sql.NullString `sql:"COLMN_COMMENT" json:"column_comment"`
 }
@@ -152,7 +151,7 @@ func (c *columsMonitor) DingMessage() string {
 
 	text := buf.String()
 
-	if len(c.DelColumns) > 0 || len(c.NewColumns) > 0 || len(c.NewTable) > 0 || len(c.DelTable) > 0 {
+	if len(c.DelColumns) > 0 || len(c.NewColumns) > 0 || len(c.NewTable) > 0 || len(c.DelTable) > 0 || len(c.UpdateColumns) > 0 {
 		var receiver dd.Robot
 		receiver.AccessToken = conf.Config.Ding.Token
 		receiver.Secret = conf.Config.Ding.Secret
@@ -253,9 +252,7 @@ func main() {
 		}
 	}
 
-	cm.Report()
 	s := cm.DingMessage()
-
 	fmt.Println(s)
 
 }
@@ -283,7 +280,7 @@ func inColumnList(table_name, column string, slist []columns) bool {
 func isColumnUpdated(col columns, slist []columns) bool {
 
 	for _, s := range slist {
-		if s.TableName == col.TableName && s.ColumnName == col.ColumnName && reflect.DeepEqual(&col, &s) {
+		if s.TableName == col.TableName && s.ColumnName == col.ColumnName && s.ColumnType != col.ColumnType {
 			return true
 		}
 	}
