@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"reflect"
 	"text/template"
 
 	"github.com/taerc/ezgo/conf"
@@ -32,16 +33,18 @@ type tables struct {
 type columns struct {
 	TableName     string         `sql:"TABLE_NAME" json:"table_name"`
 	ColumnName    string         `sql:"COLUMN_NAME" json:"column_name"`
+	ColumnType    sql.NullString `sql:"COLMN_TYPE" json:"column_type"`
 	ColumnDefault sql.NullString `sql:"COLUMN_DEFAULT" json:"column_default"`
 	ColumnComment sql.NullString `sql:"COLMN_COMMENT" json:"column_comment"`
 }
 
 type columsMonitor struct {
-	TableSchema string
-	NewTable    []tables
-	DelTable    []tables
-	NewColumns  []columns
-	DelColumns  []columns
+	TableSchema   string
+	NewTable      []tables
+	DelTable      []tables
+	NewColumns    []columns
+	DelColumns    []columns
+	UpdateColumns []columns
 }
 
 func (c *columsMonitor) AddNewTable(table string) {
@@ -70,6 +73,13 @@ func (c *columsMonitor) AddDelColumn(table, column string) {
 		ColumnName: column,
 	}
 	c.DelColumns = append(c.DelColumns, v)
+}
+func (c *columsMonitor) AddUpdateColumn(table, column string) {
+	v := columns{
+		TableName:  table,
+		ColumnName: column,
+	}
+	c.UpdateColumns = append(c.UpdateColumns, v)
 }
 
 func (c *columsMonitor) Report() {
@@ -121,6 +131,12 @@ func (c *columsMonitor) DingMessage() string {
 {{- range $i, $e := .DelColumns}}
 * 表 {{$e.TableName}} 删 {{$e.ColumnName}}
 {{- end }}
+
+**属性更新**:
+
+{{- range $i, $e := .UpdateColumns}}
+* 表 {{$e.TableName}} 改 {{$e.ColumnName}}
+{{- end }}
 `
 	tpl, err := template.New("note").Parse(tplText)
 	if err != nil {
@@ -150,13 +166,14 @@ func (c *columsMonitor) DingMessage() string {
 
 }
 
-func newColumnMonitor() *columsMonitor {
+func newColumnMonitor(schema string) *columsMonitor {
 
 	return &columsMonitor{
-		NewTable:   make([]tables, 0),
-		DelTable:   make([]tables, 0),
-		NewColumns: make([]columns, 0),
-		DelColumns: make([]columns, 0),
+		TableSchema: schema,
+		NewTable:    make([]tables, 0),
+		DelTable:    make([]tables, 0),
+		NewColumns:  make([]columns, 0),
+		DelColumns:  make([]columns, 0),
 	}
 
 }
@@ -187,7 +204,7 @@ func main() {
 	}
 	ezgo.SaveJson(tablePath, tbls)
 
-	cm := newColumnMonitor()
+	cm := newColumnMonitor(tableSchema)
 
 	// 新增表
 	for _, nt := range tbls {
@@ -228,6 +245,14 @@ func main() {
 		}
 	}
 
+	// 属性更新
+
+	for _, nc := range hisColumns {
+		if isColumnUpdated(nc, currentColumns) {
+			cm.AddUpdateColumn(nc.TableName, nc.ColumnName)
+		}
+	}
+
 	cm.Report()
 	s := cm.DingMessage()
 
@@ -249,6 +274,16 @@ func inColumnList(table_name, column string, slist []columns) bool {
 
 	for _, s := range slist {
 		if s.TableName == table_name && s.ColumnName == column {
+			return true
+		}
+	}
+	return false
+}
+
+func isColumnUpdated(col columns, slist []columns) bool {
+
+	for _, s := range slist {
+		if s.TableName == col.TableName && s.ColumnName == col.ColumnName && reflect.DeepEqual(&col, &s) {
 			return true
 		}
 	}
@@ -280,7 +315,7 @@ func queryTables(ctx context.Context, schema string) ([]tables, error) {
 }
 
 func queryColumns(ctx context.Context, schema string) ([]columns, error) {
-	rows, e := ent.DB.QueryContext(ctx, "select TABLE_NAME, COLUMN_NAME, COLUMN_DEFAULT, COLUMN_COMMENT FROM COLUMNS WHERE TABLE_SCHEMA=? ", schema)
+	rows, e := ent.DB.QueryContext(ctx, "select TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLUMN_DEFAULT, COLUMN_COMMENT FROM COLUMNS WHERE TABLE_SCHEMA=? ", schema)
 	if e != nil {
 		fmt.Println(e.Error())
 		return nil, e
@@ -293,7 +328,7 @@ func queryColumns(ctx context.Context, schema string) ([]columns, error) {
 	for rows.Next() {
 
 		var col columns
-		if se := rows.Scan(&col.TableName, &col.ColumnName, &col.ColumnDefault, &col.ColumnComment); se != nil {
+		if se := rows.Scan(&col.TableName, &col.ColumnName, &col.ColumnType, &col.ColumnDefault, &col.ColumnComment); se != nil {
 			fmt.Println(se.Error())
 			continue
 		} else {
