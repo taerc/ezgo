@@ -32,7 +32,7 @@ func Init(data interface{}) error {
 		ezgo.WithComponentMySQL(ezgo.Default, &conf.Config.SQL),
 	)
 
-	ezgo.LoadModule()
+	ezgo.LoadModule(WithModuleNginxMirror())
 	return nil
 }
 
@@ -55,9 +55,19 @@ func init() {
 type nginxMirror struct {
 }
 
-func (nm *nginxMirror) AddLog(ctx *gin.Context) {
+type LoginInfo struct {
+	Name   string `json:"name"`
+	Passwd string `json:"pwd"`
+}
 
+func (nm *nginxMirror) AddLog(ctx *gin.Context) {
 	fmt.Println("Log ing ...  data data ...")
+
+	info := LoginInfo{}
+	httpmod.JsonBind(ctx, &info)
+
+	fmt.Println(info.Name)
+	fmt.Println(info.Passwd)
 
 }
 
