@@ -42,9 +42,13 @@ client:cmd/tcpclient/main.go | $(BUILD)
 test:
 	@/usr/local/go/bin/go test -all -timeout 1h -run ^TestGenerateLicence$ github.com/taerc/ezgo/licence github.com/taerc/ezgo -count=1 -v
 
-## columns
+## sqlmonitor
 sqlmonitor:cmd/sqlmonitor/main.go
 	@go build -o $(BUILD)/sqlmonitor cmd/sqlmonitor/main.go
+
+## httpmod
+httpmod:cmd/simphttp/main.go
+	@go build -o $(BUILD)/httpmod cmd/simphttp/main.go
 
 $(BUILD): 
 	@mkdir -p $(BUILD)

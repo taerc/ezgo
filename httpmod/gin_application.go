@@ -29,7 +29,7 @@ func IndJsonResponse(ctx *gin.Context, er int, data interface{}) {
 		Code:      er,
 		Data:      data,
 		Message:   ezgo.GetMessageByCode(er),
-		RequestId: ezgo.GetRequestId(ctx),
+		RequestId: GetRequestId(ctx),
 	})
 }
 
@@ -38,7 +38,7 @@ func OKResponse(ctx *gin.Context, data interface{}) {
 		Code:      ezgo.Success,
 		Data:      data,
 		Message:   ezgo.GetMessageByCode(ezgo.Success),
-		RequestId: ezgo.GetRequestId(ctx),
+		RequestId: GetRequestId(ctx),
 	})
 }
 
@@ -47,7 +47,7 @@ func ErrorResponse(ctx *gin.Context, e error) {
 		Code:      ezgo.GetErrorCode(e),
 		Data:      nil,
 		Message:   e.Error(),
-		RequestId: ezgo.GetRequestId(ctx),
+		RequestId: GetRequestId(ctx),
 	})
 }
 
@@ -101,7 +101,6 @@ func Version() string {
 }
 
 func (af *GinApplication) Do(data interface{}) error {
-	// ezgo.Info(nil, M, fmt.Sprintf("Version :%s", Version()))
 
 	if n := af.Init(data); n != nil {
 		return n

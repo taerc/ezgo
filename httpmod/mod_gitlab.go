@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/taerc/ezgo"
 	"github.com/taerc/ezgo/conf"
 	"github.com/taerc/ezgo/dd"
+	ezgo "github.com/taerc/ezgo/pkg"
 )
 
 type gitlabService struct {
