@@ -69,6 +69,8 @@ func (nm *nginxMirror) AddLog(ctx *gin.Context) {
 	fmt.Println(info.Name)
 	fmt.Println(info.Passwd)
 
+	httpmod.OKResponse(ctx, "This is wangfm response")
+
 }
 
 func WithModuleNginxMirror() func(wg *sync.WaitGroup) {
