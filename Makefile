@@ -50,5 +50,9 @@ sqlmonitor:cmd/sqlmonitor/main.go
 httpmod:cmd/simphttp/main.go
 	@go build -o $(BUILD)/httpmod cmd/simphttp/main.go
 
+## noteme
+noteme:cmd/noteme/main.go
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${BUILD}/noteme cmd/noteme/main.go
+
 $(BUILD): 
 	@mkdir -p $(BUILD)
