@@ -4,9 +4,9 @@ export GO111MODULE = on
 # alpha,release,final,auto
 MAJOR?="0"
 MINOR?="0"
-PATCH?="4"
+PATCH?="5"
 TAG_TYPE?="alpha"
-TYPE_VERSION?="28"
+TYPE_VERSION?="0"
 DATETIME=`date +%Y%m%d%H%M`
 GIT_TAG=v$(MAJOR).$(MINOR).$(PATCH)-$(TAG_TYPE).$(TYPE_VERSION)
 MESSAGE?="优化Application代码"
