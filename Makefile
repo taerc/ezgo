@@ -53,6 +53,9 @@ httpmod:cmd/simphttp/main.go
 ## noteme
 noteme:cmd/noteme/main.go
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${BUILD}/noteme cmd/noteme/main.go
+## gitlab
+gitlabnote:cmd/gitlab/main.go
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${BUILD}/gitlabnote cmd/gitlab/main.go
 
 $(BUILD): 
 	@mkdir -p $(BUILD)
