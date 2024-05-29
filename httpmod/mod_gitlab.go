@@ -158,7 +158,26 @@ func (g *gitlabService) Publish(ctx *gin.Context) {
 		sn.Items = ezgo.StringSplits(tel.Message, []string{",", "，"})
 		dd.HookSendMarkdownDingGroupWithConf(sn, conf.Config.Ding.Token, conf.Config.Ding.Secret)
 	}
-	return
+}
+func (g *gitlabService) Merge(ctx *gin.Context) {
+
+	tel := tagEventsLoad{}
+
+	if e := JsonBind(ctx, tel); e != nil {
+		ErrorResponse(ctx, e)
+		return
+	}
+
+	// Info(ctx, M, fmt.Sprintf("ObjectKind [%s]", tel.ObjectKind))
+	if tel.ObjectKind == "merge_requst" && conf.Config.Ding.Token != "" && conf.Config.Ding.Secret != "" {
+		sn := &dd.SimpleNotice{}
+		sn.Title = "合并代码"
+		sn.Project = tel.Project.Name
+		sn.Author = tel.UserName
+		sn.Tag = tel.Ref
+		sn.Items = ezgo.StringSplits(tel.Message, []string{",", "，"})
+		dd.HookSendMarkdownDingGroupWithConf(sn, conf.Config.Ding.Token, conf.Config.Ding.Secret)
+	}
 }
 
 func WithModuleGitLab() func(wg *sync.WaitGroup) {
@@ -168,6 +187,7 @@ func WithModuleGitLab() func(wg *sync.WaitGroup) {
 		route := Group("/gitlab/hook/event/")
 		POST(route, "/push", s.Update)
 		POST(route, "/pushtag", s.Publish)
+		POST(route, "/merge", s.Merge)
 		// Info(nil, M, "Load GITLAB finished!")
 	}
 }
