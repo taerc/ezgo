@@ -75,8 +75,8 @@ type pushEventPayload struct {
 
 func (g *gitlabService) Update(ctx *gin.Context) {
 
-	pep := pushEventPayload{}
-	if e := JsonBind(ctx, &pep); e != nil {
+	pep := &pushEventPayload{}
+	if e := JsonBind(ctx, pep); e != nil {
 		ErrorResponse(ctx, e)
 		return
 	}
@@ -141,7 +141,7 @@ type tagEventsLoad struct {
 
 func (g *gitlabService) Publish(ctx *gin.Context) {
 
-	tel := tagEventsLoad{}
+	tel := &tagEventsLoad{}
 
 	if e := JsonBind(ctx, tel); e != nil {
 		ErrorResponse(ctx, e)
@@ -165,28 +165,27 @@ type tagEventsMerge struct {
 	ObjectKind string `json:"object_kind"`
 	User       struct {
 		UserName string `json:"username"`
-	}
+	} `json:"user"`
 	Project struct {
-		Name              string      `json:"name"`
-		Description       string      `json:"description"`
-		WebURL            string      `json:"web_url"`
-		AvatarURL         interface{} `json:"avatar_url"`
-		GitSSHURL         string      `json:"git_ssh_url"`
-		GitHTTPURL        string      `json:"git_http_url"`
-		Namespace         string      `json:"namespace"`
-		VisibilityLevel   int         `json:"visibility_level"`
-		PathWithNamespace string      `json:"path_with_namespace"`
-		DefaultBranch     string      `json:"default_branch"`
-		Homepage          string      `json:"homepage"`
-		URL               string      `json:"url"`
-		SSHURL            string      `json:"ssh_url"`
-		HTTPURL           string      `json:"http_url"`
+		Name              string `json:"name"`
+		Description       string `json:"description"`
+		WebURL            string `json:"web_url"`
+		GitSSHURL         string `json:"git_ssh_url"`
+		GitHTTPURL        string `json:"git_http_url"`
+		Namespace         string `json:"namespace"`
+		VisibilityLevel   int    `json:"visibility_level"`
+		PathWithNamespace string `json:"path_with_namespace"`
+		DefaultBranch     string `json:"default_branch"`
+		Homepage          string `json:"homepage"`
+		URL               string `json:"url"`
+		SSHURL            string `json:"ssh_url"`
+		HTTPURL           string `json:"http_url"`
 	} `json:"project"`
 }
 
 func (g *gitlabService) Merge(ctx *gin.Context) {
 
-	tel := tagEventsMerge{}
+	tel := &tagEventsMerge{}
 
 	if e := JsonBind(ctx, tel); e != nil {
 		ErrorResponse(ctx, e)
@@ -194,12 +193,12 @@ func (g *gitlabService) Merge(ctx *gin.Context) {
 	}
 
 	// Info(ctx, M, fmt.Sprintf("ObjectKind [%s]", tel.ObjectKind))
-	if tel.ObjectKind == "merge_requst" && conf.Config.Ding.Token != "" && conf.Config.Ding.Secret != "" {
+	if tel.ObjectKind == "merge_request" && conf.Config.Ding.Token != "" && conf.Config.Ding.Secret != "" {
 		sn := &dd.SimpleNotice{}
 		sn.Title = "合并代码"
 		sn.Project = tel.Project.Name
 		sn.Author = tel.User.UserName
-		sn.Tag = tel.Project.PathWithNamespace
+		sn.Tag = "-"
 		sn.Items = []string{}
 		dd.HookSendMarkdownDingGroupWithConf(sn, conf.Config.Ding.Token, conf.Config.Ding.Secret)
 	}
@@ -213,6 +212,5 @@ func WithModuleGitLab() func(wg *sync.WaitGroup) {
 		POST(route, "/push", s.Update)
 		POST(route, "/pushtag", s.Publish)
 		POST(route, "/merge", s.Merge)
-		// Info(nil, M, "Load GITLAB finished!")
 	}
 }
