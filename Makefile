@@ -57,5 +57,9 @@ noteme:cmd/noteme/main.go
 gitlabnote:cmd/gitlab/main.go
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${BUILD}/gitlabnote cmd/gitlab/main.go
 
+## token
+token:cmd/token/main.go
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${BUILD}/token cmd/token/main.go
+
 $(BUILD): 
 	@mkdir -p $(BUILD)
