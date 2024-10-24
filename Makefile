@@ -19,7 +19,6 @@ version:Makefile
 
 init:
 	@go  mod download
-	@go generate ./database/sqlmonitor/ent
 	@go mod tidy
 
 
