@@ -4,10 +4,12 @@ import (
 	"flag"
 	"fmt"
 
+	_ "gorm.io/driver/mysql"
+	_ "github.com/didi/sharingan"
+
 	"github.com/taerc/ezgo/conf"
 	"github.com/taerc/ezgo/httpmod"
 	ezgo "github.com/taerc/ezgo/pkg"
-	_ "gorm.io/driver/mysql"
 )
 
 var M string = "MAIN"

@@ -3,9 +3,10 @@ phony:token
 export GO111MODULE = on
 BUILD?=build
 
+init:
+	@go  mod download
+	@go mod tidy
 ## token 
 ## @CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${BUILD}/gitlabnote cmd/gitlab/main.go
 token:cmd\token\main.go
 	@go build -o ${BUILD}\token.exe cmd\token\main.go
-litoken:cmd\token\main.go
-	@GOOS=linux GOARCH=amd64 go build -o ${BUILD}/token cmd\token\main.go
