@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"runtime"
-	"sync"
 	"time"
 )
 
@@ -44,22 +43,19 @@ func monitorGoroutines(interval time.Duration) {
 	}
 }
 
-func createGoroutines(wg *sync.WaitGroup, num int) {
-	for i := 0; i < num; i++ {
-		go func() {
-			// 模拟工作负载
-			time.Sleep(2 * time.Second)
-			wg.Done()
-		}()
-	}
-}
-
 func main() {
 	// 启动goroutine监控，每隔1秒打印一次当前goroutine数量
 	go monitorGoroutines(1 * time.Second)
 
-	var wg sync.WaitGroup
 	// 创建500个goroutine
-	createGoroutines(&wg, 500)
-	wg.Wait() // 等待所有goroutine完成工作
+	for i := 0; i < 500; i++ {
+		go func() {
+			for {
+				// 模拟工作负载
+				time.Sleep(2 * time.Second)
+				fmt.Println("T")
+			}
+		}()
+		time.Sleep(1 * time.Second)
+	}
 }
