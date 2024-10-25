@@ -20,7 +20,7 @@ func main() {
 	for {
 
 		go Work()
-		fmt.Println("D", i)
+		fmt.Println("Done", i)
 		i += 1
 		time.Sleep(9)
 	}
