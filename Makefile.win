@@ -10,3 +10,5 @@ init:
 ## @CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${BUILD}/gitlabnote cmd/gitlab/main.go
 token:cmd\token\main.go
 	@go build -o ${BUILD}\token.exe cmd\token\main.go
+expthreads:cmd\example\main.go
+	@go build -o ${BUILD}\threads.exe cmd\example\main.go
