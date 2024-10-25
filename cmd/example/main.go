@@ -48,7 +48,7 @@ func createGoroutines(wg *sync.WaitGroup, num int) {
 	for i := 0; i < num; i++ {
 		go func() {
 			// 模拟工作负载
-			time.Sleep(10 * time.Millisecond)
+			time.Sleep(2 * time.Second)
 			wg.Done()
 		}()
 	}
