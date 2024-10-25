@@ -3,6 +3,11 @@ phony:token
 export GO111MODULE = on
 BUILD?=build
 
+commit:
+	@git pull 
+	@git add .
+	@git commit -m  "upload by haier"
+	@git push
 init:
 	@go  mod download
 	@go mod tidy
