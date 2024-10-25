@@ -19,10 +19,10 @@ func main() {
 	i := 1
 	for {
 
-		go Work()
+		// go Work()
 		fmt.Println("Done", i)
 		i += 1
-		time.Sleep(9)
+		time.Sleep(3)
 	}
 
 }
