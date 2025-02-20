@@ -17,3 +17,6 @@ token:cmd\token\main.go
 	@go build -o ${BUILD}\token.exe cmd\token\main.go
 expthreads:cmd\example\main.go
 	@go build -o ${BUILD}\threads.exe cmd\example\main.go
+
+zentao:cmd\zentao\main.go
+	@go build -o ${BUILD}\zentao.exe cmd\zentao\main.go

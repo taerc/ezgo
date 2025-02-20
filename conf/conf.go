@@ -84,6 +84,13 @@ type SqlMonitorConf struct {
 	HistoryColumnPath string `ini:"history_column_path"`
 }
 
+// ZenTaoConf
+type ZenTaoConf struct {
+	// [zentao]
+	Mode string `ini:"mode"`
+	Secret string `ini:"dingding_secret"`
+}
+
 var Config *Configure = nil
 
 func init() {
