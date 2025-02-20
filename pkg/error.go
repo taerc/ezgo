@@ -67,10 +67,6 @@ var codeMessage = map[int]string{}
 
 func RegisterCodeMessage(cm map[int]string) int {
 	for code, mgs := range cm {
-
-		if _, ok := cm[code]; ok {
-			fmt.Println(fmt.Sprintf("WARN error code [%d] is used as [%s]", code, GetMessageByCode(code)))
-		}
 		cm[code] = mgs
 	}
 	return 0
