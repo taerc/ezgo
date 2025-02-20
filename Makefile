@@ -65,5 +65,7 @@ token:cmd/token/main.go
 expthreads:cmd/example/main.go | update
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${BUILD}/thread cmd/example/main.go
 
+zentao:cmd/zentao/main.go
+	@go build -o ${BUILD}/zentao cmd/zentao/main.go
 $(BUILD): 
 	@mkdir -p $(BUILD)
