@@ -218,7 +218,8 @@ func (gs *gitlabService) load(fd string) map[string]int {
 	file, err := os.Open(fd)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
-		return nil
+		data := make(map[string]int, 256)
+		return data
 	}
 	defer file.Close()
 
@@ -232,7 +233,8 @@ func (gs *gitlabService) load(fd string) map[string]int {
 	err = decoder.Decode(&data)
 	if err != nil {
 		fmt.Println("Error decoding data:", err)
-		return nil
+		data := make(map[string]int, 256)
+		return data
 	}
 	return data
 }
