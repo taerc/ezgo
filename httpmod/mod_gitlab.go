@@ -1,6 +1,9 @@
 package httpmod
 
 import (
+	"encoding/gob"
+	"fmt"
+	"os"
 	"sync"
 	"time"
 
@@ -9,6 +12,8 @@ import (
 	"github.com/taerc/ezgo/dd"
 	ezgo "github.com/taerc/ezgo/pkg"
 )
+
+var gitOpChan = make(chan string, 100)
 
 type gitlabService struct {
 }
@@ -91,6 +96,7 @@ func (g *gitlabService) Update(ctx *gin.Context) {
 			sn.Append(msg.Message)
 		}
 
+		gitOpChan <- sn.Author
 		dd.HookSendMarkdownDingGroupWithConf(sn, conf.Config.Ding.Token, conf.Config.Ding.Secret)
 	}
 	return
@@ -156,6 +162,7 @@ func (g *gitlabService) Publish(ctx *gin.Context) {
 		sn.Author = tel.UserName
 		sn.Tag = tel.Ref
 		sn.Items = ezgo.StringSplits(tel.Message, []string{",", "，"})
+		gitOpChan <- sn.Author
 		dd.HookSendMarkdownDingGroupWithConf(sn, conf.Config.Ding.Token, conf.Config.Ding.Secret)
 	}
 }
@@ -200,8 +207,79 @@ func (g *gitlabService) Merge(ctx *gin.Context) {
 		sn.Author = tel.User.UserName
 		sn.Tag = "-"
 		sn.Items = []string{}
+		gitOpChan <- sn.Author
 		dd.HookSendMarkdownDingGroupWithConf(sn, conf.Config.Ding.Token, conf.Config.Ding.Secret)
 	}
+}
+
+func (gs *gitlabService) load(fd string) map[string]int {
+
+	// 打开文件
+	file, err := os.Open(fd)
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return nil
+	}
+	defer file.Close()
+
+	// 创建 Gob 解码器
+	decoder := gob.NewDecoder(file)
+
+	// 创建一个空的 map 对象，用于存储解码后的数据
+	var data map[string]int
+
+	// 解码数据
+	err = decoder.Decode(&data)
+	if err != nil {
+		fmt.Println("Error decoding data:", err)
+		return nil
+	}
+	return data
+}
+
+func (gs *gitlabService) filename() string {
+	y, d := time.Now().ISOWeek()
+	return fmt.Sprintf("gitops-count-%v-%v.gob", y, d)
+}
+
+func (gs *gitlabService) save(fd string, data map[string]int) {
+
+	// 创建文件
+	file, err := os.Create(fd)
+	if err != nil {
+		fmt.Println("Error creating file:", err)
+		return
+	}
+	defer file.Close()
+
+	// 创建 Gob 编码器
+	encoder := gob.NewEncoder(file)
+
+	// 将 map 编码并写入文件
+	err = encoder.Encode(data)
+	if err != nil {
+		fmt.Println("Error encoding map:", err)
+		return
+	}
+}
+
+func (gs *gitlabService) GitOpsCount(sn <-chan string) {
+
+	fd := gs.filename()
+	for name := range sn {
+		db := gs.load(fd)
+
+		_, ok := db[name]
+		if ok {
+			db[name] += 1
+		} else {
+			db[name] = 1
+		}
+
+		fmt.Println(name, db[name])
+		gs.save(fd, db)
+	}
+
 }
 
 func WithModuleGitLab() func(wg *sync.WaitGroup) {
@@ -212,5 +290,7 @@ func WithModuleGitLab() func(wg *sync.WaitGroup) {
 		POST(route, "/push", s.Update)
 		POST(route, "/pushtag", s.Publish)
 		POST(route, "/merge", s.Merge)
+
+		go s.GitOpsCount(gitOpChan)
 	}
 }

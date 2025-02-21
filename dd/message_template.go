@@ -7,14 +7,14 @@ import (
 )
 
 type SimpleNotice struct {
-	Title    string
-	ImageUrl string
-	UrlName  string
-	Url      string
-	Project  string
-	Tag      string
-	Author   string
-	Items    []string
+	Title    string   `json:"title"`
+	ImageUrl string   `json:"imgeurl"`
+	UrlName  string   `json:"urlname"`
+	Url      string   `json:"url"`
+	Project  string   `json:"project"`
+	Tag      string   `json:"tag"`
+	Author   string   `json:"author"`
+	Items    []string `json:"items"`
 }
 
 func (sn *SimpleNotice) Append(item string) {
