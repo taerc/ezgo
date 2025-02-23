@@ -129,8 +129,6 @@ func (pk ProjectWeekly) weekCompare(dt string) bool {
 	y1, w1 := parsedTime.ISOWeek()
 	y2, w2 := time.Now().ISOWeek()
 
-	fmt.Println("This week .. ", y2, w2)
-
 	if y1 == y2 && w1 == w2 {
 		return true
 	}
@@ -324,8 +322,8 @@ func main() {
 		var receiver dd.Robot
 		receiver.AccessToken = AccessToken
 		receiver.Secret = AccessSecret
-		// sign := receiver.Signature()
-		// params := receiver.SendMarkdown("钉助理", reportText, []string{}, []string{}, false)
-		// dd.SendRequest(sign, params)
+		sign := receiver.Signature()
+		params := receiver.SendMarkdown("钉助理", reportText, []string{}, []string{}, false)
+		dd.SendRequest(sign, params)
 	}
 }

@@ -66,6 +66,7 @@ expthreads:cmd/example/main.go | update
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${BUILD}/thread cmd/example/main.go
 
 zentao:cmd/zentao/main.go
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -extldflags '-static'" -o ${BUILD}/zentao cmd/zentao/main.go
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${BUILD}/zentao cmd/zentao/main.go
+#	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -extldflags '-static'" -o ${BUILD}/zentao cmd/zentao/main.go
 $(BUILD): 
 	@mkdir -p $(BUILD)
