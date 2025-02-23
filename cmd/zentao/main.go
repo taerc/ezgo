@@ -182,7 +182,7 @@ func (pk *ProjectWeekly) incStoryWeekClosed(st zentao.StoriesBody) {
 
 }
 
-func (pk *ProjectWeekly) report() {
+func (pk *ProjectWeekly) report() string {
 	tplText := `
 **{{.Name}}** 
 * 编号 {{.ID}}
@@ -207,10 +207,10 @@ func (pk *ProjectWeekly) report() {
 	err = tmpl.Execute(&buf, pk)
 	if err != nil {
 		fmt.Printf("failed execute tpltext,err:%s\n", err.Error())
+		return ""
 	}
 	pk.ReportText = buf.String()
-	// fmt.Println(buf.String())
-	// return buf.String()
+	return pk.ReportText
 }
 
 // operation between project
@@ -293,8 +293,7 @@ func main() {
 			pk.Parse(zt)
 			comProjects.Add(pk)
 		}
-		comProjects.report()
-		reportText = comProjects.MergeSubReportText()
+		reportText = comProjects.report()
 	}
 
 	if WorkMode == "platform" {
@@ -312,6 +311,7 @@ func main() {
 			comProjects.AppendReport(pk)
 		}
 		comProjects.report()
+		comProjects.AppendReport(comProjects)
 		reportText = comProjects.MergeSubReportText()
 	}
 
