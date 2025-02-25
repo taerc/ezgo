@@ -20,3 +20,6 @@ expthreads:cmd\example\main.go
 
 zentao:cmd\zentao\main.go
 	@go build -o ${BUILD}\zentao.exe cmd\zentao\main.go
+
+topology:cmd\topology\main.go
+	@go build -o ${BUILD}\topology.exe cmd\topology\main.go
