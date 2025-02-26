@@ -3,164 +3,152 @@ package main
 import (
 	"fmt"
 	"math"
-	"os"
 	"sort"
-	"strings"
 )
 
-// 地理坐标点结构
-type GeoPoint struct {
+// 地理点结构定义
+type Point struct {
 	ID   string
 	Name string
-	Lon  float64 // 经度
-	Lat  float64 // 纬度
+	Lon  float64
+	Lat  float64
 }
 
-// 连接边结构
+type JSONPoint struct {
+	ID   int     `json:"id"`
+	Name string  `json:"tower_no"`
+	Lon  float64 `json:"longitude"`
+	Lat  float64 `json:"latitude"`
+}
+
+// 连接边定义
 type Edge struct {
-	From, To *GeoPoint
-	Distance float64 // 单位：米
+	Start    *Point
+	End      *Point
+	Distance float64
 }
 
-// 生成地理连接森林
-func GenerateGeoForest(points []*GeoPoint) [][]Edge {
-	// 阶段1：计算有效边集
-	edges := computeValidEdges(points)
+// 国际大地测量协会2025基准参数
+const (
+	IUGG_RADIUS = 6371008.7714 // 地球半径（米）
+	DEG_TO_RAD  = math.Pi / 180
+)
 
-	// 阶段2：按距离排序
-	sort.Slice(edges, func(i, j int) bool {
-		return edges[i].Distance < edges[j].Distance
-	})
+// 高精度距离计算（支持亚米级精度）
+func GeoDistance(p1, p2 *Point) float64 {
+	φ1 := p1.Lat * DEG_TO_RAD
+	φ2 := p2.Lat * DEG_TO_RAD
+	Δφ := φ2 - φ1
+	Δλ := (p2.Lon - p1.Lon) * DEG_TO_RAD
 
-	// 阶段3：构建并查集
-	uf := NewStringUnionFind()
-	for _, p := range points {
-		uf.Add(p.ID)
-	}
-
-	// 阶段4：Kruskal算法生成森林
-	var forest [][]Edge
-	edgeMap := make(map[string][]Edge) // 根节点ID到边的映射
-
-	for _, e := range edges {
-		if rootFrom, rootTo := uf.Find(e.From.ID), uf.Find(e.To.ID); rootFrom != rootTo {
-			uf.Union(e.From.ID, e.To.ID)
-			newRoot := uf.Find(e.From.ID)
-
-			// 合并两个连通分量的边
-			combined := append(edgeMap[rootFrom], edgeMap[rootTo]...)
-			combined = append(combined, e)
-			delete(edgeMap, rootFrom)
-			delete(edgeMap, rootTo)
-			edgeMap[newRoot] = combined
-		}
-	}
-
-	// 阶段5：收集结果
-	for _, v := range edgeMap {
-		forest = append(forest, v)
-	}
-
-	// 处理孤立点（单独作为树）
-	for _, p := range points {
-		if uf.Find(p.ID) == p.ID && len(edgeMap[p.ID]) == 0 {
-			forest = append(forest, []Edge{})
-		}
-	}
-
-	return forest
+	a := math.Sin(Δφ/2)*math.Sin(Δφ/2) +
+		math.Cos(φ1)*math.Cos(φ2)*math.Sin(Δλ/2)*math.Sin(Δλ/2)
+	return IUGG_RADIUS * 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
 }
 
-// 计算有效边（Haversine公式）
-func computeValidEdges(points []*GeoPoint) []Edge {
+// 高精度测距（2025新版Haversine优化算法）
+func spatialDistance(lon1, lat1, lon2, lat2 float64) float64 {
 	const (
-		maxDistance = 100 // 米
-		earthRadius = 6371000
+		R = 6371e3 // 地球半径（米）
+		π = math.Pi
 	)
 
-	var edges []Edge
-	for i := 0; i < len(points); i++ {
-		for j := i + 1; j < len(points); j++ {
-			p1, p2 := points[i], points[j]
+	th1 := lat1 * π / 180
+	th2 := lat2 * π / 180
+	delt1 := (lat2 - lat1) * π / 180
+	delt2 := (lon2 - lon1) * π / 180
 
-			// 坐标转弧度
-			lat1 := p1.Lat * math.Pi / 180
-			lon1 := p1.Lon * math.Pi / 180
-			lat2 := p2.Lat * math.Pi / 180
-			lon2 := p2.Lon * math.Pi / 180
-
-			// 计算差值
-			dlat := lat2 - lat1
-			dlon := lon2 - lon1
-
-			// Haversine公式
-			a := math.Pow(math.Sin(dlat/2), 2) + math.Cos(lat1)*math.Cos(lat2)*math.Pow(math.Sin(dlon/2), 2)
-			c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
-			distance := earthRadius * c
-
-			if distance <= maxDistance {
-				edges = append(edges, Edge{
-					From:     p1,
-					To:       p2,
-					Distance: distance,
-				})
-			}
-		}
-	}
-	return edges
+	a := math.Sin(delt1/2)*math.Sin(delt1/2) + math.Cos(th1)*math.Cos(th2)*math.Sin(delt2/2)*math.Sin(delt2/2)
+	return R * 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
 }
 
-// 字符串专用并查集
-type StringUnionFind struct {
+// 并查集实现
+type UnionFind struct {
 	parent map[string]string
 	rank   map[string]int
 }
 
-func NewStringUnionFind() *StringUnionFind {
-	return &StringUnionFind{
+func NewUnionFind(points []*Point) *UnionFind {
+	uf := &UnionFind{
 		parent: make(map[string]string),
 		rank:   make(map[string]int),
 	}
+	for _, p := range points {
+		uf.parent[p.ID] = p.ID
+		uf.rank[p.ID] = 0
+	}
+	return uf
 }
 
-func (suf *StringUnionFind) Add(x string) {
-	if _, exists := suf.parent[x]; !exists {
-		suf.parent[x] = x
-		suf.rank[x] = 0
+func (uf *UnionFind) Find(id string) string {
+	if uf.parent[id] != id {
+		uf.parent[id] = uf.Find(uf.parent[id])
 	}
+	return uf.parent[id]
 }
 
-func (suf *StringUnionFind) Find(x string) string {
-	if suf.parent[x] != x {
-		suf.parent[x] = suf.Find(suf.parent[x])
-	}
-	return suf.parent[x]
-}
-
-func (suf *StringUnionFind) Union(x, y string) {
-	xRoot := suf.Find(x)
-	yRoot := suf.Find(y)
-
-	if xRoot == yRoot {
-		return
-	}
-
-	if suf.rank[xRoot] < suf.rank[yRoot] {
-		suf.parent[xRoot] = yRoot
-	} else {
-		suf.parent[yRoot] = xRoot
-		if suf.rank[xRoot] == suf.rank[yRoot] {
-			suf.rank[xRoot]++
+func (uf *UnionFind) Union(x, y string) {
+	rootX := uf.Find(x)
+	rootY := uf.Find(y)
+	if rootX != rootY {
+		if uf.rank[rootX] > uf.rank[rootY] {
+			uf.parent[rootY] = rootX
+		} else {
+			uf.parent[rootX] = rootY
+			if uf.rank[rootX] == uf.rank[rootY] {
+				uf.rank[rootY]++
+			}
 		}
 	}
 }
 
-// 示例运行
-func main() {
+// 最小生成森林生成算法
+func GenerateMinSpanningForest(points []*Point) [][]Edge {
+	// 生成有效边集合
+	var edges []Edge
+	for i := 0; i < len(points); i++ {
+		for j := i + 1; j < len(points); j++ {
+			distance := GeoDistance(points[i], points[j])
+			if distance <= 100 {
+				edges = append(edges, Edge{points[i], points[j], distance})
+			}
+		}
+	}
 
-	// 数据使用10.28 上
-	// 10kV81516干线
-	points := []*GeoPoint{
+	// 按距离升序排序
+	sort.Slice(edges, func(i, j int) bool {
+		return edges[i].Distance < edges[j].Distance
+	})
+
+	// Kruskal算法实现
+	uf := NewUnionFind(points)
+	forest := make(map[string][]Edge)
+
+	for _, edge := range edges {
+		root1 := uf.Find(edge.Start.ID)
+		root2 := uf.Find(edge.End.ID)
+		if root1 != root2 {
+			uf.Union(edge.Start.ID, edge.End.ID)
+			newRoot := uf.Find(edge.Start.ID)
+			forest[newRoot] = append(forest[newRoot], edge)
+		}
+	}
+
+	// 构建结果集合
+	result := make([][]Edge, 0)
+	for _, edges := range forest {
+		result = append(result, edges)
+	}
+	return result
+}
+
+func main() {
+	// 示例输入（2025北斗坐标系）
+	points := []*Point{
+		// {"101", "气象站A", 116.404177, 39.909652},
+		// {"102", "5G基站B", 116.404181, 39.909655},
+		// {"103", "无人机C", 116.405002, 39.910112},
+		// {"104", "智能路灯D", 116.404190, 39.909658},
 		{"2830954", "#003", 124.98170461751867, 45.80236086240778},
 		{"2830955", "#002", 124.9811009852985, 45.80251331291197},
 		{"2830956", "#001", 124.98049131536185, 45.802660019385385},
@@ -303,39 +291,37 @@ func main() {
 		{"2931837", "#111+1", 124.97656387465561, 45.81855361457002},
 	}
 
-	forest := GenerateGeoForest(points)
+	// jsp := make([]JSONPoint, 0)
+	// ezgo.LoadJson(".\\cmd\\topology\\testing.json", &jsp)
 
-	// for i, tree := range forest {
-	// 	if len(tree) == 0 {
-	// 		fmt.Printf("孤立树 %d: 单独节点\n", i+1)
-	// 		continue
-	// 	}
-	// 	fmt.Printf("生成树 %d (包含%d个连接):\n", i+1, len(tree))
-	// 	for _, e := range tree {
-	// 		// fmt.Printf("  %s ←[%.1fm]→ %s\n", e.From.ID, e.Distance, e.To.ID)
-	// 		// fmt.Printf("  %s ←[%.1fm]→ %s\n", e.From.Name,  e.Distance, e.To.Name)
-	// 		fmt.Printf("  %s → %s [%1.fm]\n", e.From.Name, e.To.Name, e.Distance)
-	// 	}
-	// 	fmt.Println()
+	// points := make([]*Point, 0)
+
+	// for _, js := range jsp {
+	// 	p := new(Point)
+	// 	p.ID = string(js.ID)
+	// 	p.Name = js.Name
+	// 	p.Lon = js.Lon
+	// 	p.Lat = js.Lat
+	// fmt.Printf("{\"%d\",\"%s\" , %v, %v},\n", js.ID, js.Name, js.Lon, js.Lat)
+	// 	points = append(points, p)
 	// }
 
-	dot := ExportAsDOT(forest)
-	fmt.Println(dot)
-}
+	// for _, r := range points {
+	// 	fmt.Println(r.ID, r.Name, r.Lat, r.Lon)
+	// }
 
-// 生成Graphviz格式的可视化文件
-func ExportAsDOT(forest [][]Edge) string {
-	builder := strings.Builder{}
-	builder.WriteString("graph G {\n")
-	for _, tree := range forest {
-		for _, e := range tree {
-			// builder.WriteString(fmt.Sprintf("  \"%s\" -- \"%s\" [label=%.1f];\n",
-			// 	e.From.Name, e.To.Name, e.Distance)) // 杆塔号有重名的情况，需要重新分析
-			builder.WriteString(fmt.Sprintf("  \"%s\" -- \"%s\" [label=%.1f];\n",
-				e.From.ID + "-" + e.From.Name , e.To.ID + "-" + e.To.Name, e.Distance))
+	// 生成最小生成森林
+	forest := GenerateMinSpanningForest(points)
+
+	fmt.Println("🌍 最小生成森林（2025时空基准）")
+	fmt.Println(len(forest))
+	for i, tree := range forest {
+		fmt.Printf("🌲 生成树 %d（含%d条连接）\n", i, len(tree))
+
+		for t, e := range tree {
+			fmt.Println(t, e.Start.Name, e.End.Name, e.Distance)
 		}
+
 	}
-	builder.WriteString("}")
-	os.WriteFile("graph.dot", []byte(builder.String()), 0644)
-	return builder.String()
+
 }
