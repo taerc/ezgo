@@ -23,3 +23,11 @@ zentao:cmd\zentao\main.go
 
 topology:cmd\topology\main.go
 	@go build -o ${BUILD}\topology.exe cmd\topology\main.go
+
+trlparse:cmd\topology\trl-main.go
+	@go build -o ${BUILD}\trlparse.exe cmd\topology\trl-main.go
+trlconvert:cmd\topology\trl-convert-main.go
+	@go build -o ${BUILD}\trlconvert.exe cmd\topology\trl-convert-main.go
+
+gobshow:cmd\topology\gob-main.go
+	@go build -o ${BUILD}\gobshow.exe cmd\topology\gob-main.go

@@ -267,8 +267,8 @@ func (gs *gitlabService) save(fd string, data map[string]int) {
 
 func (gs *gitlabService) GitOpsCount(sn <-chan string) {
 
-	fd := gs.filename()
 	for name := range sn {
+	fd := gs.filename()
 		db := gs.load(fd)
 
 		_, ok := db[name]
