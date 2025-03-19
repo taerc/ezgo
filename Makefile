@@ -70,5 +70,8 @@ zentao:cmd/zentao/main.go
 #	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -extldflags '-static'" -o ${BUILD}/zentao cmd/zentao/main.go
 topology:cmd/topology/main.go
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${BUILD}/topology cmd/topology/main.go
+
+docmain:cmd/doc/main.go
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${BUILD}/docmain cmd/doc/main.go
 $(BUILD): 
 	@mkdir -p $(BUILD)

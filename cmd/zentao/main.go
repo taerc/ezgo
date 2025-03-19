@@ -20,59 +20,59 @@ const (
 	BaseUrl  = "http://172.16.10.21:9000/zentao"
 )
 
+// 项目描述信息
 type TargetDesc struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID   int    `json:"id"`   // 项目ID
+	Name string `json:"name"` // 项目名称
 }
 
+
+
+
+// ProjectWeekly 项目周报统计
 type ProjectWeekly struct {
 	ID   int
 	Name string // 关注的项目信息
 
-	// 关注的  bug 工作信息
-	WeekNewBugs    int
-	WeekResolvedBugs  int
-	WeekCloseBugs  int
-	ToBeClosedBugs int
-	ClosedBugs     int
-	// bug list
+	// Bug相关统计
+	WeekNewBugs      int // 本周新增的bug数量
+	WeekResolvedBugs int // 本周解决的bug数量
+	WeekCloseBugs    int // 本周关闭的bug数量
+	ToBeClosedBugs   int // 待解决的bug数量
+	ClosedBugs       int // 已解决的bug总数
 
-	// 关注的Story
-	WeekNewStories    int
-	WeekResolvedStories int
-	WeekCloseStories  int
-	ToBeClosedStories int
-	ClosedStories     int
+	// Story相关统计
+	WeekNewStories      int // 本周新增的需求数量
+	WeekResolvedStories int // 本周解决的需求数量
+	WeekCloseStories    int // 本周关闭的需求数量
+	ToBeClosedStories   int // 待完成的需求数量
+	ClosedStories       int // 已完成的需求总数
 
-	BugList []Event
-	BugToDoMetric map[string]int
+	BugList        []Event          // bug列表
+	BugToDoMetric  map[string]int   // bug待办统计，key为指派人，value为待办数量
+	StoryList      []Event          // 需求列表
+	StoryToDoMetric map[string]int  // 需求待办统计，key为指派人，value为待办数量
 
-	StoryList []Event
-	StoryToDoMetric map[string]int
-
-	// 报告文本模版
-	ReportText  string
-	SubProjects []*ProjectWeekly
+	ReportText  string           // 报告文本内容
+	SubProjects []*ProjectWeekly // 子项目列表
+	UserMap map[string]string // 用户信息 account -> realname
 }
 
-type StaffWeekly struct {
-	NewBugs    int
-	CloseBugs  int
-	ToBeSolved int
+// Event 事件信息（Bug或Story）
+type Event struct {
+	ID         int    // 事件ID
+	Title      string // 事件标题
+	AssignName string // 指派人
 }
 
-type kv struct {
+// MapToSortedKV 将map转换为按Value降序排列的KV数组
+type KV struct {
 	Key   string
 	Value int
 }
-type Event struct {
-	ID         int
-	Title      string
-	AssignName string
-}
 
+// NewProject 创建新的项目周报实例
 func NewProject(id int, name string) *ProjectWeekly {
-
 	pk := new(ProjectWeekly)
 	pk.ID = id
 	pk.Name = name
@@ -81,12 +81,34 @@ func NewProject(id int, name string) *ProjectWeekly {
 	pk.BugToDoMetric = make(map[string]int,256)
 	pk.StoryList = make([]Event, 0)
 	pk.StoryToDoMetric = make(map[string]int, 256)
+	pk.UserMap = make(map[string]string, 256)
 			
 	return pk
 }
 
+func (pk *ProjectWeekly) InitUserMap(zt *zentao.Client) {
+		users, _, err := zt.Users.List("1000", "1")
+		if err!= nil {
+			panic(err)
+		}
+
+		for _, user := range users.Users {
+			pk.UserMap[user.Account] =user.Realname 
+		}
+}
+
+func (pk *ProjectWeekly) getUserRealName(acc string) string {
+	if real, ok := pk.UserMap[acc]; ok {
+		return real
+	}
+	return  ""
+}
+
+// Parse 解析项目数据，包括Bug和Story的统计
 func (pk *ProjectWeekly) Parse(zt *zentao.Client) {
+
 	// page size
+	pk.InitUserMap(zt)
 
 	// 测试 bug
 	total := 50
@@ -128,6 +150,7 @@ func (pk *ProjectWeekly) Parse(zt *zentao.Client) {
 
 }
 
+// isCurrentWeek 判断给定日期是否在本周
 func (pk ProjectWeekly) isCurrentWeek(dt string) bool {
 
 	if dt == "" {
@@ -148,7 +171,7 @@ func (pk *ProjectWeekly) incBugWeekNew(bug zentao.BugBody) {
 	if bug.Status != zentao.ResolvedBugStatus && bug.Status!= zentao.ClosedBugStatus {
 		realname := ""
 		realname = bug.AssignedTo.(string)
-		pk.BugList = append(pk.BugList, Event{ID: bug.ID, Title: bug.Title, AssignName: realname})
+		pk.BugList = append(pk.BugList, Event{ID: bug.ID, Title: bug.Title, AssignName: pk.getUserRealName(realname)})
 		pk.ToBeClosedBugs++
 	}
 	if bug.OpenedDate != "" && pk.isCurrentWeek(bug.OpenedDate) {
@@ -175,7 +198,7 @@ func (pk *ProjectWeekly) incBugWeekClosed(bug zentao.BugBody) {
 
 func (pk *ProjectWeekly) incStoryWeekNew(st zentao.StoriesBody) {
 
-	if st.Status == zentao.StatusActive {
+	if st.Status != zentao.StatusClosed {
 		pk.ToBeClosedStories++
 
 		realname := ""
@@ -282,10 +305,10 @@ func (pk *ProjectWeekly) MergeSubReportText() string {
 	return buf.String()
 }
 
-func (pk *ProjectWeekly)mapToSortedKV(data map[string]int) []kv {
-    var sorted []kv
+func (pk *ProjectWeekly)mapToSortedKV(data map[string]int) []KV {
+    var sorted []KV
     for k, v := range data {
-        sorted = append(sorted, kv{k, v})
+        sorted = append(sorted,KV{k, v})
     }
     // 按 Value 降序排序
     sort.Slice(sorted, func(i, j int) bool {
@@ -325,6 +348,31 @@ func (pk *ProjectWeekly) ReportBugToDoMetric() string {
     }
     return buf.String()
 }
+func (pk *ProjectWeekly) ReportBugList() string {
+    // 统计数据
+    tplText := `
+** 待办BUG列表 **
+{{- range .}}
+ID:{{.ID}} 指派:{{.AssignName}} 标题:{{.Title}}
+{{- end }}
+`
+    tmpl, err := template.New("example").Parse(tplText)
+    if err != nil {
+        panic(err)
+    }
+
+    sort.Slice(pk.BugList, func(i, j int) bool {
+        return pk.BugList[i].AssignName > pk.BugList[j].AssignName
+    })
+
+    var buf bytes.Buffer
+    err = tmpl.Execute(&buf, pk.BugList)
+    if err != nil {
+        fmt.Printf("failed execute tpltext,err:%s\n", err.Error())
+        return ""
+    }
+    return buf.String()
+}
 
 func (pk *ProjectWeekly) ReportStoryToDoMetric() string {
     // 统计数据
@@ -355,6 +403,31 @@ func (pk *ProjectWeekly) ReportStoryToDoMetric() string {
     return buf.String()
 }
 
+func (pk *ProjectWeekly) ReportStoryList() string {
+    // 统计数据
+    tplText := `
+** 待做story列表 **
+{{- range .}}
+ID:{{.ID}} 指派:{{.AssignName}} 标题:{{.Title}}
+{{- end }}
+`
+    tmpl, err := template.New("example").Parse(tplText)
+    if err != nil {
+        panic(err)
+    }
+
+    sort.Slice(pk.StoryList, func(i, j int) bool {
+        return pk.StoryList[i].AssignName > pk.StoryList[j].AssignName
+    })
+
+    var buf bytes.Buffer
+    err = tmpl.Execute(&buf, pk.StoryList)
+    if err != nil {
+        fmt.Printf("failed execute tpltext,err:%s\n", err.Error())
+        return ""
+    }
+    return buf.String()
+}
 
 
 var WorkMode string
@@ -372,7 +445,7 @@ func init() {
 
 func sendMsg(msg string) {
 	// send message to dingding
-	if AccessToken != "" && AccessSecret != "" && WorkMode != "test"{
+	if AccessToken != "" && AccessSecret != "" && WorkMode != "beta" && WorkMode!= "test"{
 		var receiver dd.Robot
 		receiver.AccessToken = AccessToken
 		receiver.Secret = AccessSecret
@@ -395,7 +468,31 @@ func main() {
 	}
 	comProjects := NewProject(0, "中科方寸公司")
 	reportText := ""
-	if WorkMode == "all" {
+
+	if WorkMode == "todo" {
+
+		pros, _, err := zt.Projects.List("9999", "1")
+		if err != nil {
+			panic(err)
+		}
+
+		for _, pro := range pros.Projects {
+			pk := NewProject(pro.ID, pro.Name)
+			pk.Parse(zt)
+			comProjects.Add(pk)
+		}
+		reportText = comProjects.report()
+
+		bugsToDo := comProjects.ReportBugList()
+		fmt.Println(bugsToDo)
+		sendMsg(bugsToDo)
+
+		storiesToDo := comProjects.ReportStoryList()
+		fmt.Println(storiesToDo)
+		sendMsg(storiesToDo)
+
+	}
+	if WorkMode == "all" || WorkMode == "beta"  {
 		pros, _, err := zt.Projects.List("9999", "1")
 		if err != nil {
 			panic(err)
@@ -409,9 +506,18 @@ func main() {
 		reportText = comProjects.report()
 
 		bugsToDo := comProjects.ReportBugToDoMetric()
+		fmt.Println(bugsToDo)
+		sendMsg(bugsToDo)
+		bugsToDo = comProjects.ReportBugList()
+		fmt.Println(bugsToDo)
 		sendMsg(bugsToDo)
 
 		storiesToDo := comProjects.ReportStoryToDoMetric()
+		fmt.Println(storiesToDo)
+		sendMsg(storiesToDo)
+
+		storiesToDo = comProjects.ReportStoryList()
+		fmt.Println(storiesToDo)
 		sendMsg(storiesToDo)
 	}
 
@@ -436,7 +542,7 @@ func main() {
 
 	if WorkMode == "test" {
 
-			pk := NewProject(152, "冀北项目")
+			pk := NewProject(458, "山东平台")
 			pk.Parse(zt)
 			comProjects.Add(pk)
 			reportText = comProjects.report()
