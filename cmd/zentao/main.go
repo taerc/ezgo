@@ -436,7 +436,7 @@ var AccessSecret string
 var TargetCfgPath string
 
 func init() {
-	flag.StringVar(&WorkMode, "m", "all", "模式, all, platform,test")
+	flag.StringVar(&WorkMode, "m", "all", "模式, todo, all, platform,test")
 	flag.StringVar(&AccessToken, "token", "6fb261b244f9ef169b001cbe967b210576607bcee0873885436f5cfe54581d36", "钉钉token")
 	flag.StringVar(&AccessSecret, "secret", "SEC67141ab5e29e2dce7196d46a7e0dedf8a7bb96887e880137d8ad6817e64bdc8b", "钉钉sec")
 	flag.StringVar(&TargetCfgPath, "p", "target_platform.json", "目标平台清单")
