@@ -466,8 +466,12 @@ var users *Users
 
 func init() {
 	flag.StringVar(&WorkMode, "m", "all", "模式, todo, all, platform,test")
+	// 平台群参数
 	flag.StringVar(&AccessToken, "token", "14c092e8a82ef5197797f1275f043420c0bb83cd5f4e3bfeaf3e03fe798503a9", "钉钉token")
 	flag.StringVar(&AccessSecret, "secret", "SECa8df6b21c98bec8f46f3b6681bf40ae19570092f7a512f912d7614eb8150b740", "钉钉sec")
+	// 项目技术负责人[普]
+	// flag.StringVar(&AccessToken, "token", "6fb261b244f9ef169b001cbe967b210576607bcee0873885436f5cfe54581d36", "钉钉token")
+	// flag.StringVar(&AccessSecret, "secret", "SEC67141ab5e29e2dce7196d46a7e0dedf8a7bb96887e880137d8ad6817e64bdc8b", "钉钉sec")
 	flag.StringVar(&TargetCfgPath, "p", "target_platform.json", "目标平台清单")
 	flag.StringVar(&TargetDate, "d", "yyyy-mm-dd", "目标日期,yyyy-mm-dd")
 	flag.Parse()
