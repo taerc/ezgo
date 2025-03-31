@@ -55,8 +55,12 @@ type ProjectWeekly struct {
 
 	ReportText  string           // 报告文本内容
 	SubProjects []*ProjectWeekly // 子项目列表
-	UserMap map[string]string // 用户信息 account -> realname
+
 }
+
+type Users struct {
+	UserMap map[string]string // 用户信息 account -> realname
+}	
 
 // Event 事件信息（Bug或Story）
 type Event struct {
@@ -71,6 +75,30 @@ type KV struct {
 	Value int
 }
 
+func NewUsers() *Users {
+	users := new(Users)
+	users.UserMap = make(map[string]string, 256)
+	return users	
+}
+
+func (u *Users) InitUserMap(zt *zentao.Client) {
+		users, _, err := zt.Users.List("1000", "1")
+		if err!= nil {
+			panic(err)
+		}
+
+		for _, user := range users.Users {
+			u.UserMap[user.Account] =user.Realname 
+		}
+}
+
+func (u *Users) getUserRealName(acc string) string {
+	if real, ok := u.UserMap[acc]; ok {
+		return real
+	}
+	return  ""
+}
+
 // NewProject 创建新的项目周报实例
 func NewProject(id int, name string) *ProjectWeekly {
 	pk := new(ProjectWeekly)
@@ -81,40 +109,21 @@ func NewProject(id int, name string) *ProjectWeekly {
 	pk.BugToDoMetric = make(map[string]int,256)
 	pk.StoryList = make([]Event, 0)
 	pk.StoryToDoMetric = make(map[string]int, 256)
-	pk.UserMap = make(map[string]string, 256)
 			
 	return pk
-}
-
-func (pk *ProjectWeekly) InitUserMap(zt *zentao.Client) {
-		users, _, err := zt.Users.List("1000", "1")
-		if err!= nil {
-			panic(err)
-		}
-
-		for _, user := range users.Users {
-			pk.UserMap[user.Account] =user.Realname 
-		}
-}
-
-func (pk *ProjectWeekly) getUserRealName(acc string) string {
-	if real, ok := pk.UserMap[acc]; ok {
-		return real
-	}
-	return  ""
 }
 
 // Parse 解析项目数据，包括Bug和Story的统计
 func (pk *ProjectWeekly) Parse(zt *zentao.Client) {
 
 	// page size
-	pk.InitUserMap(zt)
+	// pk.InitUserMap(zt)
 
 	// 测试 bug
 	total := 50
 	limit := 50
 	page := 1
-	for total > 0 && limit > 0 && page > 0 && limit*page <= (total/limit+1)*limit {
+	for total > 0 && limit > 0 && page > 0 && limit*page < (total/limit+1)*limit {
 		p1, _, err := zt.Bugs.ListByProjects(int64(pk.ID), zentao.ListOptions{
 			Page:  page,
 			Limit: limit,
@@ -133,7 +142,7 @@ func (pk *ProjectWeekly) Parse(zt *zentao.Client) {
 	total = 50
 	limit = 50
 	page = 1
-	for total > 0 && limit > 0 && page > 0 && limit*page <= (total/limit+1)*limit {
+	for total > 0 && limit > 0 && page > 0 && limit*page < (total/limit+1)*limit {
 		st, _, err := zt.Stories.ProjectsList(pk.ID, strconv.Itoa(limit), strconv.Itoa(page), "all")
 		if err == nil {
 			for _, s := range st.Stories {
@@ -161,6 +170,12 @@ func (pk ProjectWeekly) isCurrentWeek(dt string) bool {
 	y1, w1 := parsedTime.ISOWeek()
 	y2, w2 := time.Now().ISOWeek()
 
+	// 手动指定目标日期
+	if TargetDate != "yyyy-mm-dd" {
+		targetDt,_ := time.Parse(time.DateOnly, TargetDate)
+		y2, w2 = targetDt.ISOWeek()
+	}
+
 	if y1 == y2 && w1 == w2 {
 		return true
 	}
@@ -171,7 +186,7 @@ func (pk *ProjectWeekly) incBugWeekNew(bug zentao.BugBody) {
 	if bug.Status != zentao.ResolvedBugStatus && bug.Status!= zentao.ClosedBugStatus {
 		realname := ""
 		realname = bug.AssignedTo.(string)
-		pk.BugList = append(pk.BugList, Event{ID: bug.ID, Title: bug.Title, AssignName: pk.getUserRealName(realname)})
+		pk.BugList = append(pk.BugList, Event{ID: bug.ID, Title: bug.Title, AssignName: users.getUserRealName(realname)})
 		pk.ToBeClosedBugs++
 	}
 	if bug.OpenedDate != "" && pk.isCurrentWeek(bug.OpenedDate) {
@@ -331,7 +346,7 @@ func (pk *ProjectWeekly) ReportBugToDoMetric() string {
     tplText := `
 ** 待办BUG **
 {{- range .}}
-{{.Key}} : {{.Value}}
+* {{.Key}} : {{.Value}}
 {{- end }}
 `
     tmpl, err := template.New("example").Parse(tplText)
@@ -353,7 +368,7 @@ func (pk *ProjectWeekly) ReportBugList() string {
     tplText := `
 ** 待办BUG列表 **
 {{- range .}}
-ID:{{.ID}} 指派:{{.AssignName}} 标题:{{.Title}}
+* ID:{{.ID}} 指派:{{.AssignName}} 标题:{{.Title}}
 {{- end }}
 `
     tmpl, err := template.New("example").Parse(tplText)
@@ -386,7 +401,7 @@ func (pk *ProjectWeekly) ReportStoryToDoMetric() string {
     tplText := `
 ** 待办Story **
 {{- range .}}
-{{.Key}} : {{.Value}}
+* {{.Key}} : {{.Value}}
 {{- end }}
 `
     tmpl, err := template.New("example").Parse(tplText)
@@ -408,7 +423,7 @@ func (pk *ProjectWeekly) ReportStoryList() string {
     tplText := `
 ** 待做story列表 **
 {{- range .}}
-ID:{{.ID}} 指派:{{.AssignName}} 标题:{{.Title}}
+* ID:{{.ID}} 指派:{{.AssignName}} 标题:{{.Title}}
 {{- end }}
 `
     tmpl, err := template.New("example").Parse(tplText)
@@ -434,13 +449,26 @@ var WorkMode string
 var AccessToken string
 var AccessSecret string
 var TargetCfgPath string
+var TargetDate string
+
+var users *Users
+
+//平台群参数
+// SECa8df6b21c98bec8f46f3b6681bf40ae19570092f7a512f912d7614eb8150b740
+// https://oapi.dingtalk.com/robot/send?access_token=14c092e8a82ef5197797f1275f043420c0bb83cd5f4e3bfeaf3e03fe798503a9
+// 项目技术负责人[普]
+// flag.StringVar(&AccessToken, "token", "6fb261b244f9ef169b001cbe967b210576607bcee0873885436f5cfe54581d36", "钉钉token")
+// flag.StringVar(&AccessSecret, "secret", "SEC67141ab5e29e2dce7196d46a7e0dedf8a7bb96887e880137d8ad6817e64bdc8b", "钉钉sec")
 
 func init() {
 	flag.StringVar(&WorkMode, "m", "all", "模式, todo, all, platform,test")
-	flag.StringVar(&AccessToken, "token", "6fb261b244f9ef169b001cbe967b210576607bcee0873885436f5cfe54581d36", "钉钉token")
-	flag.StringVar(&AccessSecret, "secret", "SEC67141ab5e29e2dce7196d46a7e0dedf8a7bb96887e880137d8ad6817e64bdc8b", "钉钉sec")
+	flag.StringVar(&AccessToken, "token", "14c092e8a82ef5197797f1275f043420c0bb83cd5f4e3bfeaf3e03fe798503a9", "钉钉token")
+	flag.StringVar(&AccessSecret, "secret", "SECa8df6b21c98bec8f46f3b6681bf40ae19570092f7a512f912d7614eb8150b740", "钉钉sec")
 	flag.StringVar(&TargetCfgPath, "p", "target_platform.json", "目标平台清单")
+	flag.StringVar(&TargetDate, "d", "yyyy-mm-dd", "目标日期,yyyy-mm-dd")
 	flag.Parse()
+
+	users = NewUsers()
 }
 
 func sendMsg(msg string) {
@@ -466,6 +494,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// 初始化用户信息
+	users.InitUserMap(zt)
 	comProjects := NewProject(0, "中科方寸公司")
 	reportText := ""
 
@@ -499,6 +530,7 @@ func main() {
 		}
 
 		for _, pro := range pros.Projects {
+			fmt.Println(pro.ID, pro.Name)
 			pk := NewProject(pro.ID, pro.Name)
 			pk.Parse(zt)
 			comProjects.Add(pk)
