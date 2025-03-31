@@ -523,7 +523,6 @@ func sendMsg(msg string) {
 		for _, m := range msgs {
 			params := receiver.SendMarkdown("钉助理", m, []string{}, []string{}, false)
 			dd.SendRequest(sign, params)
-			dd.SendRequest(sign, params)
 		}
 	}
 
