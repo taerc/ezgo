@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"flag"
 	"fmt"
 	"sort"
 	"strconv"
+	"strings"
 	"text/template"
 	"time"
 
@@ -191,6 +193,8 @@ func (pk *ProjectWeekly) incBugWeekNew(bug zentao.BugBody) {
 	}
 	if bug.OpenedDate != "" && pk.isCurrentWeek(bug.OpenedDate) {
 		pk.WeekNewBugs++
+
+		fmt.Println("bug:", bug.ID, bug.Title, bug.OpenedDate)
 	}
 }
 
@@ -471,6 +475,43 @@ func init() {
 	users = NewUsers()
 }
 
+// SplitStringByMaxLineSize 按最大字节数切割字符串，保证每块都是完整的行
+func SplitStringByMaxLineSize(str string, maxBytes int) []string {
+    var chunks []string
+    var buffer bytes.Buffer
+    scanner := bufio.NewScanner(strings.NewReader(str))
+    
+    for scanner.Scan() {
+        line := scanner.Text() + "\n"  // 补回被Scanner去除的换行符
+        lineBytes := []byte(line)
+        
+        // 如果当前行单独超过限制
+        if len(lineBytes) > maxBytes {
+            if buffer.Len() > 0 {
+                chunks = append(chunks, buffer.String())
+                buffer.Reset()
+            }
+            chunks = append(chunks, string(lineBytes))
+            continue
+        }
+        
+        // 检查添加后是否超限
+        if buffer.Len() + len(lineBytes) > maxBytes {
+            chunks = append(chunks, buffer.String())
+            buffer.Reset()
+        }
+        
+        buffer.Write(lineBytes)
+    }
+    
+    // 添加最后剩余内容
+    if buffer.Len() > 0 {
+        chunks = append(chunks, buffer.String())
+    }
+    
+    return chunks
+}
+
 func sendMsg(msg string) {
 	// send message to dingding
 	if AccessToken != "" && AccessSecret != "" && WorkMode != "beta" && WorkMode!= "test"{
@@ -478,13 +519,18 @@ func sendMsg(msg string) {
 		receiver.AccessToken = AccessToken
 		receiver.Secret = AccessSecret
 		sign := receiver.Signature()
-		params := receiver.SendMarkdown("钉助理", msg, []string{}, []string{}, false)
-		dd.SendRequest(sign, params)
+		msgs := SplitStringByMaxLineSize(msg, 1024*16)
+		for _, m := range msgs {
+			params := receiver.SendMarkdown("钉助理", m, []string{}, []string{}, false)
+			dd.SendRequest(sign, params)
+			dd.SendRequest(sign, params)
+		}
 	}
 
 }
 
 func main() {
+
 	zt, err := zentao.NewBasicAuthClient(
 		UserName,
 		Passwd,
