@@ -240,8 +240,9 @@ func (gs *gitlabService) load(fd string) map[string]int {
 }
 
 func (gs *gitlabService) filename() string {
-	y, d := time.Now().ISOWeek()
-	return fmt.Sprintf("gitops-count-%v-%v.gob", y, d)
+	y, _ := time.Now().ISOWeek()
+	m := time.Now().Month()
+	return fmt.Sprintf("gitops-count-%v-%v.gob", y, m)
 }
 
 func (gs *gitlabService) save(fd string, data map[string]int) {

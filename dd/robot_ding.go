@@ -1,6 +1,7 @@
 package dd
 
 import (
+	"bufio"
 	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
@@ -10,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 	"unsafe"
 
@@ -289,4 +291,41 @@ func SendRequest(webhook string, params []byte) {
 	//byte数组直接转成string，优化内存
 	str := (*string)(unsafe.Pointer(&respBytes))
 	log.Info(*str)
+}
+
+// SplitStringByMaxLineSize 按最大字节数切割字符串，保证每块都是完整的行
+func SplitStringByMaxLineSize(str string, maxBytes int) []string {
+    var chunks []string
+    var buffer bytes.Buffer
+    scanner := bufio.NewScanner(strings.NewReader(str))
+    
+    for scanner.Scan() {
+        line := scanner.Text() + "\n"  // 补回被Scanner去除的换行符
+        lineBytes := []byte(line)
+        
+        // 如果当前行单独超过限制
+        if len(lineBytes) > maxBytes {
+            if buffer.Len() > 0 {
+                chunks = append(chunks, buffer.String())
+                buffer.Reset()
+            }
+            chunks = append(chunks, string(lineBytes))
+            continue
+        }
+        
+        // 检查添加后是否超限
+        if buffer.Len() + len(lineBytes) > maxBytes {
+            chunks = append(chunks, buffer.String())
+            buffer.Reset()
+        }
+        
+        buffer.Write(lineBytes)
+    }
+    
+    // 添加最后剩余内容
+    if buffer.Len() > 0 {
+        chunks = append(chunks, buffer.String())
+    }
+    
+    return chunks
 }
