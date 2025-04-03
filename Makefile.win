@@ -33,4 +33,5 @@ gobshow:cmd\topology\gob-main.go
 	@go build -o ${BUILD}\gobshow.exe cmd\topology\gob-main.go
 gofocal:cmd\focalboard\main.go
 	@go build -o ${BUILD}\gofocal.exe cmd\focalboard\main.go
-	
+godoc:cmd\doc\main.go
+	@go build -o ${BUILD}\godoc.exe cmd\doc\main.go
