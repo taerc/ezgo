@@ -26,9 +26,6 @@ type TargetDesc struct {
 	Name string `json:"name"` // 项目名称
 }
 
-
-
-
 // ProjectWeekly 项目周报统计
 type ProjectWeekly struct {
 	ID   int
@@ -48,10 +45,10 @@ type ProjectWeekly struct {
 	ToBeClosedStories   int // 待完成的需求数量
 	ClosedStories       int // 已完成的需求总数
 
-	BugList        []Event          // bug列表
-	BugToDoMetric  map[string]int   // bug待办统计，key为指派人，value为待办数量
-	StoryList      []Event          // 需求列表
-	StoryToDoMetric map[string]int  // 需求待办统计，key为指派人，value为待办数量
+	BugList         []Event        // bug列表
+	BugToDoMetric   map[string]int // bug待办统计，key为指派人，value为待办数量
+	StoryList       []Event        // 需求列表
+	StoryToDoMetric map[string]int // 需求待办统计，key为指派人，value为待办数量
 
 	ReportText  string           // 报告文本内容
 	SubProjects []*ProjectWeekly // 子项目列表
@@ -60,13 +57,14 @@ type ProjectWeekly struct {
 
 type Users struct {
 	UserMap map[string]string // 用户信息 account -> realname
-}	
+}
 
 // Event 事件信息（Bug或Story）
 type Event struct {
 	ID         int    // 事件ID
 	Title      string // 事件标题
 	AssignName string // 指派人
+	Level      string // 如果时间超过20 天， A 级， 14 B 级， 5 C 级
 }
 
 // MapToSortedKV 将map转换为按Value降序排列的KV数组
@@ -78,25 +76,58 @@ type KV struct {
 func NewUsers() *Users {
 	users := new(Users)
 	users.UserMap = make(map[string]string, 256)
-	return users	
+	return users
 }
 
 func (u *Users) InitUserMap(zt *zentao.Client) {
-		users, _, err := zt.Users.List("1000", "1")
-		if err!= nil {
-			panic(err)
-		}
+	users, _, err := zt.Users.List("1000", "1")
+	if err != nil {
+		panic(err)
+	}
 
-		for _, user := range users.Users {
-			u.UserMap[user.Account] =user.Realname 
-		}
+	for _, user := range users.Users {
+		u.UserMap[user.Account] = user.Realname
+	}
 }
 
 func (u *Users) getUserRealName(acc string) string {
 	if real, ok := u.UserMap[acc]; ok {
 		return real
 	}
-	return  ""
+	return ""
+}
+
+// 属于平台人员名单
+func IsPlatWorker(name string) bool {
+	platWorkerList := []string{
+		"张桐馨", "汪峰", "包容", "朱水龙", "胡叶涛",
+		"刘昂", "曲洪良", "王子岳", "刘涛", "李杨", "李杨-后端",
+		"叶鑫", "李杨-前端", "罗健键", "董爽", "刑康",
+		"曹梦玄", "韩振豪", "赵加兴", "刘凌云", "孙光勇",
+		"魏龙飞", "师伟恒", "姚文杰", "王晓旺", "张一凡",
+		"袁永剑", "田浩", "李向阳", "陈浩楠", "李裕龙",
+		"吴宸如", "余震",
+	}
+	for _, worker := range platWorkerList {
+		if worker == name {
+			return true
+		}
+	}
+	return false
+}
+
+func CheckEventLevel(beginDate string) string {
+	parsedTime, _ := time.Parse(time.RFC3339, beginDate)
+	n := time.Now().Sub(parsedTime)
+	n = n / (24 * time.Hour)
+
+	if n >= 14 {
+		return "P1"
+	} else if n >= 7 {
+		return "P2"
+	} else {
+		return "P3"
+	}
 }
 
 // NewProject 创建新的项目周报实例
@@ -106,10 +137,10 @@ func NewProject(id int, name string) *ProjectWeekly {
 	pk.Name = name
 	pk.BugList = make([]Event, 0)
 	pk.SubProjects = make([]*ProjectWeekly, 0)
-	pk.BugToDoMetric = make(map[string]int,256)
+	pk.BugToDoMetric = make(map[string]int, 256)
 	pk.StoryList = make([]Event, 0)
 	pk.StoryToDoMetric = make(map[string]int, 256)
-			
+
 	return pk
 }
 
@@ -172,7 +203,7 @@ func (pk ProjectWeekly) isCurrentWeek(dt string) bool {
 
 	// 手动指定目标日期
 	if TargetDate != "yyyy-mm-dd" {
-		targetDt,_ := time.Parse(time.DateOnly, TargetDate)
+		targetDt, _ := time.Parse(time.DateOnly, TargetDate)
 		y2, w2 = targetDt.ISOWeek()
 	}
 
@@ -183,11 +214,14 @@ func (pk ProjectWeekly) isCurrentWeek(dt string) bool {
 	return false
 }
 func (pk *ProjectWeekly) incBugWeekNew(bug zentao.BugBody) {
-	if bug.Status != zentao.ResolvedBugStatus && bug.Status!= zentao.ClosedBugStatus {
+	if bug.Status != zentao.ResolvedBugStatus && bug.Status != zentao.ClosedBugStatus {
 		realname := ""
-		realname = bug.AssignedTo.(string)
-		pk.BugList = append(pk.BugList, Event{ID: bug.ID, Title: bug.Title, AssignName: users.getUserRealName(realname)})
-		pk.ToBeClosedBugs++
+		realname = users.getUserRealName(bug.AssignedTo.(string))
+		// 只统计平台人员的bug
+		if IsPlatWorker(realname) {
+			pk.BugList = append(pk.BugList, Event{ID: bug.ID, Title: bug.Title, AssignName: realname, Level: CheckEventLevel(bug.OpenedDate)})
+			pk.ToBeClosedBugs++
+		}
 	}
 	if bug.OpenedDate != "" && pk.isCurrentWeek(bug.OpenedDate) {
 		pk.WeekNewBugs++
@@ -197,9 +231,9 @@ func (pk *ProjectWeekly) incBugWeekNew(bug zentao.BugBody) {
 }
 
 func (pk *ProjectWeekly) incBugWeekClosed(bug zentao.BugBody) {
-	if bug.Status == zentao.ResolvedBugStatus || bug.Status == zentao.ClosedBugStatus{
+	if bug.Status == zentao.ResolvedBugStatus || bug.Status == zentao.ClosedBugStatus {
 		pk.ClosedBugs++
-	} 
+	}
 
 	if bug.Status == zentao.ResolvedBugStatus || bug.Status == zentao.ClosedBugStatus {
 		if resolvedDate, ok := bug.ResolvedDate.(string); ok && resolvedDate != "" {
@@ -207,7 +241,7 @@ func (pk *ProjectWeekly) incBugWeekClosed(bug zentao.BugBody) {
 				pk.WeekResolvedBugs++
 			}
 		}
-	} 
+	}
 	if bug.Status == zentao.ClosedBugStatus && bug.ClosedDate != "" && pk.isCurrentWeek(bug.ClosedDate) {
 		pk.WeekCloseBugs++
 	}
@@ -216,14 +250,17 @@ func (pk *ProjectWeekly) incBugWeekClosed(bug zentao.BugBody) {
 func (pk *ProjectWeekly) incStoryWeekNew(st zentao.StoriesBody) {
 
 	if st.Status != zentao.StatusClosed {
-		pk.ToBeClosedStories++
 
 		realname := ""
 		if st.Assignedto != "" {
 			if assign, ok := st.Assignedto.(map[string]interface{}); ok {
 				realname = assign["realname"].(string)
 			}
-			pk.StoryList = append(pk.StoryList, Event{ID: st.ID, Title: st.Title, AssignName: realname})
+			// 只统计平台人员的story
+			if IsPlatWorker(realname) {
+				pk.StoryList = append(pk.StoryList, Event{ID: st.ID, Title: st.Title, AssignName: realname, Level: CheckEventLevel(st.Openeddate)})
+				pk.ToBeClosedStories++
+			}
 		}
 	}
 	if st.Status == zentao.StatusActive && pk.isCurrentWeek(st.Openeddate) {
@@ -322,130 +359,129 @@ func (pk *ProjectWeekly) MergeSubReportText() string {
 	return buf.String()
 }
 
-func (pk *ProjectWeekly)mapToSortedKV(data map[string]int) []KV {
-    var sorted []KV
-    for k, v := range data {
-        sorted = append(sorted,KV{k, v})
-    }
-    // 按 Value 降序排序
-    sort.Slice(sorted, func(i, j int) bool {
-        return sorted[i].Value > sorted[j].Value
-    })
+func (pk *ProjectWeekly) mapToSortedKV(data map[string]int) []KV {
+	var sorted []KV
+	for k, v := range data {
+		sorted = append(sorted, KV{k, v})
+	}
+	// 按 Value 降序排序
+	sort.Slice(sorted, func(i, j int) bool {
+		return sorted[i].Value > sorted[j].Value
+	})
 
 	return sorted
 }
 
 func (pk *ProjectWeekly) ReportBugToDoMetric() string {
-    // 统计数据
-    for _, bug := range pk.BugList {
-        if _, ok := pk.BugToDoMetric[bug.AssignName]; ok {
-            pk.BugToDoMetric[bug.AssignName] += 1
-        } else {
-            pk.BugToDoMetric[bug.AssignName] = 1
-        }
-    }
+	// 统计数据
+	for _, bug := range pk.BugList {
+		if _, ok := pk.BugToDoMetric[bug.AssignName]; ok {
+			pk.BugToDoMetric[bug.AssignName] += 1
+		} else {
+			pk.BugToDoMetric[bug.AssignName] = 1
+		}
+	}
 
-    tplText := `
+	tplText := `
 ** 待办BUG **
 {{- range .}}
 * {{.Key}} : {{.Value}}
 {{- end }}
 `
-    tmpl, err := template.New("example").Parse(tplText)
-    if err != nil {
-        panic(err)
-    }
+	tmpl, err := template.New("example").Parse(tplText)
+	if err != nil {
+		panic(err)
+	}
 
 	sorted := pk.mapToSortedKV(pk.BugToDoMetric)
-    var buf bytes.Buffer
-    err = tmpl.Execute(&buf, sorted)
-    if err != nil {
-        fmt.Printf("failed execute tpltext,err:%s\n", err.Error())
-        return ""
-    }
-    return buf.String()
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, sorted)
+	if err != nil {
+		fmt.Printf("failed execute tpltext,err:%s\n", err.Error())
+		return ""
+	}
+	return buf.String()
 }
 func (pk *ProjectWeekly) ReportBugList() string {
-    // 统计数据
-    tplText := `
+	// 统计数据
+	tplText := `
 ** 待办BUG列表 **
 {{- range .}}
-* ID:{{.ID}} 指派:{{.AssignName}} 标题:{{.Title}}
+* ID:{{.ID}} TM:{{.Level}} 指派:{{.AssignName}} 标题:{{.Title}}
 {{- end }}
 `
-    tmpl, err := template.New("example").Parse(tplText)
-    if err != nil {
-        panic(err)
-    }
+	tmpl, err := template.New("example").Parse(tplText)
+	if err != nil {
+		panic(err)
+	}
 
-    sort.Slice(pk.BugList, func(i, j int) bool {
-        return pk.BugList[i].AssignName > pk.BugList[j].AssignName
-    })
+	sort.Slice(pk.BugList, func(i, j int) bool {
+		return pk.BugList[i].AssignName > pk.BugList[j].AssignName
+	})
 
-    var buf bytes.Buffer
-    err = tmpl.Execute(&buf, pk.BugList)
-    if err != nil {
-        fmt.Printf("failed execute tpltext,err:%s\n", err.Error())
-        return ""
-    }
-    return buf.String()
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, pk.BugList)
+	if err != nil {
+		fmt.Printf("failed execute tpltext,err:%s\n", err.Error())
+		return ""
+	}
+	return buf.String()
 }
 
 func (pk *ProjectWeekly) ReportStoryToDoMetric() string {
-    // 统计数据
-    for _, story := range pk.StoryList {
-        if _, ok := pk.StoryToDoMetric[story.AssignName]; ok {
-            pk.StoryToDoMetric[story.AssignName] += 1
-        } else {
-            pk.StoryToDoMetric[story.AssignName] = 1
-        }
-    }
-    tplText := `
+	// 统计数据
+	for _, story := range pk.StoryList {
+		if _, ok := pk.StoryToDoMetric[story.AssignName]; ok {
+			pk.StoryToDoMetric[story.AssignName] += 1
+		} else {
+			pk.StoryToDoMetric[story.AssignName] = 1
+		}
+	}
+	tplText := `
 ** 待办Story **
 {{- range .}}
 * {{.Key}} : {{.Value}}
 {{- end }}
 `
-    tmpl, err := template.New("example").Parse(tplText)
-    if err != nil {
-        panic(err)
-    }
+	tmpl, err := template.New("example").Parse(tplText)
+	if err != nil {
+		panic(err)
+	}
 	sorted := pk.mapToSortedKV(pk.StoryToDoMetric)
-    var buf bytes.Buffer
-    err = tmpl.Execute(&buf, sorted)
-    if err != nil {
-        fmt.Printf("failed execute tpltext,err:%s\n", err.Error())
-        return ""
-    }
-    return buf.String()
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, sorted)
+	if err != nil {
+		fmt.Printf("failed execute tpltext,err:%s\n", err.Error())
+		return ""
+	}
+	return buf.String()
 }
 
 func (pk *ProjectWeekly) ReportStoryList() string {
-    // 统计数据
-    tplText := `
+	// 统计数据
+	tplText := `
 ** 待做story列表 **
 {{- range .}}
-* ID:{{.ID}} 指派:{{.AssignName}} 标题:{{.Title}}
+* ID:{{.ID}} TM:{{.Level}} 指派:{{.AssignName}} 标题:{{.Title}}
 {{- end }}
 `
-    tmpl, err := template.New("example").Parse(tplText)
-    if err != nil {
-        panic(err)
-    }
+	tmpl, err := template.New("example").Parse(tplText)
+	if err != nil {
+		panic(err)
+	}
 
-    sort.Slice(pk.StoryList, func(i, j int) bool {
-        return pk.StoryList[i].AssignName > pk.StoryList[j].AssignName
-    })
+	sort.Slice(pk.StoryList, func(i, j int) bool {
+		return pk.StoryList[i].AssignName > pk.StoryList[j].AssignName
+	})
 
-    var buf bytes.Buffer
-    err = tmpl.Execute(&buf, pk.StoryList)
-    if err != nil {
-        fmt.Printf("failed execute tpltext,err:%s\n", err.Error())
-        return ""
-    }
-    return buf.String()
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, pk.StoryList)
+	if err != nil {
+		fmt.Printf("failed execute tpltext,err:%s\n", err.Error())
+		return ""
+	}
+	return buf.String()
 }
-
 
 var WorkMode string
 var AccessToken string
@@ -477,10 +513,9 @@ func init() {
 	users = NewUsers()
 }
 
-
 func sendMsg(msg string) {
 	// send message to dingding
-	if AccessToken != "" && AccessSecret != "" && WorkMode != "beta" && WorkMode!= "test"{
+	if AccessToken != "" && AccessSecret != "" && WorkMode != "beta" && WorkMode != "test" {
 		var receiver dd.Robot
 		receiver.AccessToken = AccessToken
 		receiver.Secret = AccessSecret
@@ -534,7 +569,7 @@ func main() {
 		sendMsg(storiesToDo)
 
 	}
-	if WorkMode == "all" || WorkMode == "beta"  {
+	if WorkMode == "all" || WorkMode == "beta" {
 		pros, _, err := zt.Projects.List("9999", "1")
 		if err != nil {
 			panic(err)
@@ -585,15 +620,15 @@ func main() {
 
 	if WorkMode == "test" {
 
-			pk := NewProject(458, "山东平台")
-			pk.Parse(zt)
-			comProjects.Add(pk)
-			reportText = comProjects.report()
+		pk := NewProject(458, "山东平台")
+		pk.Parse(zt)
+		comProjects.Add(pk)
+		reportText = comProjects.report()
 
-			txt := comProjects.ReportBugToDoMetric()
-			fmt.Println(txt)
-			txt = comProjects.ReportStoryToDoMetric()
-			fmt.Println(txt)
+		txt := comProjects.ReportBugToDoMetric()
+		fmt.Println(txt)
+		txt = comProjects.ReportStoryToDoMetric()
+		fmt.Println(txt)
 
 	}
 
